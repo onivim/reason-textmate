@@ -1,0 +1,7 @@
+(library
+    (name TextMateTest)
+    (public_name textmate-test)
+    (flags (:standard (-w -39)))
+    (ocamlopt_flags -linkall -g)
+    (libraries rely.lib textmate)
+)

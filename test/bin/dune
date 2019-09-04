@@ -1,0 +1,7 @@
+(executable
+    (name TextMateUnitTestRunner)
+    (public_name TextMateUnitTestRunner)
+    (package textmate-test)
+    (libraries
+        TextMateTest
+            ))

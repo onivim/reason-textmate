@@ -1,0 +1,33 @@
+{
+  "name": "reason-tree-sitter",
+  "version": "1.0.1000",
+  "description": "Reason bindings for tree-sitter",
+  "license": "MIT",
+  "scripts": {
+    "format": "esy dune build @fmt --auto-promote"
+  },
+  "esy": {
+    "build": ["refmterr dune build -p textmate"],
+    "buildsInSource": "_build",
+    "install": [
+        "esy-installer textmate.install"
+    ]
+  },
+  "resolutions": {
+    "@opam/biniou": "1.2.0",
+    "@opam/easy-format": "1.3.1",
+    "reason-oniguruma": "github:onivim/reason-oniguruma#f6e77f1"
+  },
+  "dependencies": {
+    "@opam/dune": "^1.6.0",
+    "@esy-ocaml/reason": "^3.4.0",
+    "@reason-native/rely": "^1.3.1",
+    "refmterr": "*",
+    "ocaml": ">=4.6.0",
+    "reason-oniguruma": "*",
+    "reperf": "^1.3.0"
+  },
+  "devDependencies": {
+    "ocaml": ">=4.6.0"
+  }
+}
