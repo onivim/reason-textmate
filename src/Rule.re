@@ -63,14 +63,13 @@ let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => 
     switch (pattern) {
     | Pattern.Include(inc) =>
       switch (getScope(inc)) {
-      | None =>
-        prev;
+      | None => prev
       | Some(v) =>
         List.concat([
           ofPatterns(~getScope, ~getFirstRangeScope, ~scopeStack, v),
           prev,
-        ]);
-      };
+        ])
+      }
     | Pattern.Match(match) =>
       switch (ofMatch(match)) {
       | None => prev
@@ -95,8 +94,7 @@ let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => 
     | Some(matchRange) =>
       switch (ofMatchRangeEnd(matchRange)) {
       | None => patterns
-      | Some(v) =>
-        [v, ...patterns];
+      | Some(v) => [v, ...patterns]
       }
     }
   };
