@@ -1,3 +1,4 @@
 (library
     (name textmate)
-    (public_name textmate))
+    (public_name textmate)
+    (libraries oniguruma))
