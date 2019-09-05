@@ -78,8 +78,7 @@ describe("Grammar", ({describe, _}) => {
   describe("tokenize", ({test, describe, _}) => {
     describe("begin / end rules", ({test, _}) => {
       test("multi-line begin/end", ({expect, _}) => {
-        let (line1Token, line1Scope) =
-          Grammar.tokenize(~grammar, "(");
+        let (line1Token, line1Scope) = Grammar.tokenize(~grammar, "(");
         let (line2Token, line2Scope) =
           Grammar.tokenize(~grammar, ~scopes=Some(line1Scope), "a");
         let (line3Token, _) =
@@ -125,10 +124,7 @@ describe("Grammar", ({describe, _}) => {
       test("nested begin/end", ({expect, _}) => {
         prerr_endline("!!! BEGIN");
         let (tokens, _) = Grammar.tokenize(~grammar, "((a))");
-        List.iter(
-          t => prerr_endline(Token.show(t)),
-          tokens,
-        );
+        List.iter(t => prerr_endline(Token.show(t)), tokens);
         expect.int(List.length(tokens)).toBe(5);
         let firstToken = List.hd(tokens);
         expect.bool(
@@ -177,10 +173,7 @@ describe("Grammar", ({describe, _}) => {
       test("simple begin/end", ({expect, _}) => {
         prerr_endline("!!! BEGIN");
         let (tokens, _) = Grammar.tokenize(~grammar, "(a)");
-        List.iter(
-          t => prerr_endline(Token.show(t)),
-          tokens,
-        );
+        List.iter(t => prerr_endline(Token.show(t)), tokens);
         expect.int(List.length(tokens)).toBe(3);
         let firstToken = List.hd(tokens);
         expect.bool(
