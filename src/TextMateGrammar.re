@@ -111,7 +111,13 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         grammar,
       );
 
-    let rules = Rule.ofPatterns(~getScope=(v) => getScope(v, grammar), ~getFirstRangeScope=(v)=>getFirstRangeScope(v, grammar),  ~scopeStack=currentScopeStack, patterns);
+    let rules =
+      Rule.ofPatterns(
+        ~getScope=v => getScope(v, grammar),
+        ~getFirstRangeScope=v => getFirstRangeScope(v, grammar),
+        ~scopeStack=currentScopeStack,
+        patterns,
+      );
     let bestRule = _getBestRule(rules, line, i);
 
     prerr_endline("PATTERNS: " ++ string_of_int(List.length(patterns)));

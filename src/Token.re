@@ -3,67 +3,67 @@
  */
 
 open Oniguruma;
-  
-  type t = {
-    position: int,
-    length: int,
-    scopes: list(string),
-  };
 
-  let create =
-      (~position, ~length, ~scope: string, ~scopeStack: ScopeStack.t, ()) => {
-    let scopeNames =
-      List.map((s: ScopeStack.scope) => s.scopeName, scopeStack);
+type t = {
+  position: int,
+  length: int,
+  scopes: list(string),
+};
 
-    let ret: t = {length, position, scopes: [scope, ...scopeNames]};
-    ret;
-  };
+let create =
+    (~position, ~length, ~scope: string, ~scopeStack: ScopeStack.t, ()) => {
+  let scopeNames =
+    List.map((s: ScopeStack.scope) => s.scopeName, scopeStack);
 
-  let show = (v: t) => {
-    let scopes =
-      List.fold_left((prev, curr) => prev ++ "." ++ curr, "", v.scopes);
-    "Token("
-    ++ string_of_int(v.position)
-    ++ ","
-    ++ string_of_int(v.position + v.length)
-    ++ ":"
-    ++ scopes
-    ++ ")";
-  };
+  let ret: t = {length, position, scopes: [scope, ...scopeNames]};
+  ret;
+};
 
-  let ofMatch =
-      (
-        ~matches: array(OnigRegExp.Match.t),
-        ~rule: Rule.t,
-        ~scopeStack: ScopeStack.t,
+let show = (v: t) => {
+  let scopes =
+    List.fold_left((prev, curr) => prev ++ "." ++ curr, "", v.scopes);
+  "Token("
+  ++ string_of_int(v.position)
+  ++ ","
+  ++ string_of_int(v.position + v.length)
+  ++ ":"
+  ++ scopes
+  ++ ")";
+};
+
+let ofMatch =
+    (
+      ~matches: array(OnigRegExp.Match.t),
+      ~rule: Rule.t,
+      ~scopeStack: ScopeStack.t,
+      (),
+    ) => {
+  switch (rule.captures) {
+  | [] =>
+    let match = matches[0];
+    [
+      create(
+        ~position=match.startPos,
+        ~length=match.length,
+        ~scope=rule.name,
+        ~scopeStack,
         (),
-      ) => {
-    switch (rule.captures) {
-    | [] =>
-      let match = matches[0];
-      [
+      ),
+    ];
+  | v =>
+    List.map(
+      cap => {
+        let (idx, scope) = cap;
+        let match = matches[idx];
         create(
           ~position=match.startPos,
           ~length=match.length,
-          ~scope=rule.name,
+          ~scope,
           ~scopeStack,
           (),
-        ),
-      ];
-    | v =>
-      List.map(
-        cap => {
-          let (idx, scope) = cap;
-          let match = matches[idx];
-          create(
-            ~position=match.startPos,
-            ~length=match.length,
-            ~scope,
-            ~scopeStack,
-            (),
-          );
-        },
-        v,
-      )
-    };
+        );
+      },
+      v,
+    )
   };
+};
