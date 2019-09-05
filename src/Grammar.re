@@ -120,11 +120,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       );
     let bestRule = _getBestRule(rules, line, i);
 
-    prerr_endline("PATTERNS: " ++ string_of_int(List.length(patterns)));
-    prerr_endline("RULES: " ++ string_of_int(List.length(patterns)));
-    List.iter(r => prerr_endline("!!" ++ Rule.show(r) ++ "!"), rules);
-    prerr_endline("---");
-
     switch (bestRule) {
     // No matching rule... just increment position and try again
     | None => incr(idx)

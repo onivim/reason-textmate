@@ -62,13 +62,10 @@ let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => 
   let f = (prev, pattern) => {
     switch (pattern) {
     | Pattern.Include(inc) =>
-      prerr_endline("Rule::ofPatterns - processing Include: " ++ inc);
       switch (getScope(inc)) {
       | None =>
-        prerr_endline("Rule::ofPatterns - inc not found");
         prev;
       | Some(v) =>
-        prerr_endline("Rule::ofPatterns - found!");
         List.concat([
           ofPatterns(~getScope, ~getFirstRangeScope, ~scopeStack, v),
           prev,
@@ -99,7 +96,6 @@ let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => 
       switch (ofMatchRangeEnd(matchRange)) {
       | None => patterns
       | Some(v) =>
-        prerr_endline("Got an end rule to apply!");
         [v, ...patterns];
       }
     }
