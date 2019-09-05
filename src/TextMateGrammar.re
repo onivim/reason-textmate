@@ -47,108 +47,6 @@ let create =
   ret;
 };
 
-module Rule = {
-  type t = {
-    regex: OnigRegExp.t,
-    name: string,
-    captures: list(Pattern.Capture.t),
-    popStack: bool,
-    pushStack: option((string, string)),
-  };
-
-  let show = (v: t) => {
-    "Rule " ++ v.name;
-  };
-
-  let ofMatch = (match: Pattern.match_) => {
-    switch (match.matchRegex) {
-    | Error(_) => None
-    | Ok(v) =>
-      Some({
-        regex: v,
-        name: match.matchName,
-        captures: match.captures,
-        popStack: false,
-        pushStack: None,
-      })
-    };
-  };
-
-  let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
-    switch (matchRange.beginRegex) {
-    | Error(_) => None
-    | Ok(v) =>
-      Some({
-        regex: v,
-        name: matchRange.matchScopeName,
-        captures: matchRange.beginCaptures,
-        popStack: false,
-        pushStack:
-          Some((matchRange.matchScopeName, matchRange.matchRuleName)),
-      })
-    };
-  };
-
-  let ofMatchRangeEnd = (matchRange: Pattern.matchRange) => {
-    switch (matchRange.endRegex) {
-    | Error(_) => None
-    | Ok(v) =>
-      Some({
-        regex: v,
-        name: matchRange.matchScopeName,
-        captures: matchRange.endCaptures,
-        popStack: true,
-        pushStack: None,
-      })
-    };
-  };
-
-  let rec ofPatterns = (patterns, grammar, scopeStack) => {
-    let f = (prev, pattern) => {
-      switch (pattern) {
-      | Pattern.Include(inc) =>
-        prerr_endline("Rule::ofPatterns - processing Include: " ++ inc);
-        switch (getScope(inc, grammar)) {
-        | None =>
-          prerr_endline("Rule::ofPatterns - inc not found");
-          prev;
-        | Some(v) =>
-          prerr_endline("Rule::ofPatterns - found!");
-          List.concat([ofPatterns(v, grammar, scopeStack), prev]);
-        };
-      | Pattern.Match(match) =>
-        switch (ofMatch(match)) {
-        | None => prev
-        | Some(v) => [v, ...prev]
-        }
-      | Pattern.MatchRange(matchRange) =>
-        switch (ofMatchRangeBegin(matchRange)) {
-        | None => prev
-        | Some(v) => [v, ...prev]
-        }
-      };
-    };
-
-    let patterns = List.fold_left(f, [], patterns);
-
-    // If there is an active 'begin'/'end' rule - we need to grab the original range too
-    switch (ScopeStack.activeRule(scopeStack)) {
-    | None => patterns
-    | Some(v) =>
-      switch (getFirstRangeScope(v, grammar)) {
-      | None => patterns
-      | Some(matchRange) =>
-        switch (ofMatchRangeEnd(matchRange)) {
-        | None => patterns
-        | Some(v) =>
-          prerr_endline("Got an end rule to apply!");
-          [v, ...patterns];
-        }
-      }
-    };
-  };
-};
-
 module Token = {
   type t = {
     position: int,
@@ -279,7 +177,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         grammar,
       );
 
-    let rules = Rule.ofPatterns(patterns, grammar, currentScopeStack);
+    let rules = Rule.ofPatterns(~getScope=(v) => getScope(v, grammar), ~getFirstRangeScope=(v)=>getFirstRangeScope(v, grammar),  ~scopeStack=currentScopeStack, patterns);
     let bestRule = _getBestRule(rules, line, i);
 
     prerr_endline("PATTERNS: " ++ string_of_int(List.length(patterns)));
