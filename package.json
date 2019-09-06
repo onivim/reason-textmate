@@ -1,7 +1,7 @@
 {
-  "name": "reason-tree-sitter",
+  "name": "reason-textmate",
   "version": "1.0.1000",
-  "description": "Reason bindings for tree-sitter",
+  "description": "Native reason utilities for working with textmate grammars",
   "license": "MIT",
   "scripts": {
     "format": "esy dune build @fmt --auto-promote"
@@ -16,18 +16,20 @@
   "resolutions": {
     "@opam/biniou": "1.2.0",
     "@opam/easy-format": "1.3.1",
-    "reason-oniguruma": "github:onivim/reason-oniguruma#f6e77f1"
+    "reason-oniguruma": "github:onivim/reason-oniguruma#f6e77f1",
+    "@esy-ocaml/reason": "github:facebook/reason#474900e"
   },
   "dependencies": {
     "@opam/dune": "^1.6.0",
+    "@opam/ppx_let": "*",
     "@esy-ocaml/reason": "^3.4.0",
     "@reason-native/rely": "^1.3.1",
     "refmterr": "*",
-    "ocaml": ">=4.6.0",
+    "ocaml": "~4.7.0",
     "reason-oniguruma": "*",
     "reperf": "^1.3.0"
   },
   "devDependencies": {
-    "ocaml": ">=4.6.0"
+    "ocaml": "~4.7.0"
   }
 }
