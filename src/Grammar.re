@@ -116,10 +116,6 @@ module Json = {
      let%bind patterns = patterns_of_yojson(member("patterns", json));
      let%bind repository = repository_of_yojson(member("repository", json));
 
-     
-
-     print_endline ("Patterns: " ++ string_of_int(List.length(patterns)));
-     print_endline ("Repostiry: " ++ string_of_int(List.length(repository)));
      Ok(create(
       ~scopeName,
       ~patterns,
@@ -171,24 +167,17 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
   while (idx^ < len) {
     let i = idx^;
 
-    print_endline ("Looking at index: " ++ string_of_int(i));
-
     let currentScopeStack = scopeStack^;
     let patterns = ScopeStack.activePatterns(currentScopeStack);
     
-    print_endline ("Got curent patterns: " ++ string_of_int(List.length(patterns)));
-
     let rules =
       Rule.ofPatterns(
         ~getScope=v => getScope(v, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
       );
-    print_endline ("Got rules: " ++ string_of_int(List.length(rules)));
     let bestRule = _getBestRule(rules, line, i);
     
-    print_endline ("Got best rule!");
-
     switch (bestRule) {
     // No matching rule... just increment position and try again
     | None => incr(idx)
