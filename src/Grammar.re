@@ -14,6 +14,8 @@ type t = {
 let getScope = (scope: string, v: t) =>
   StringMap.find_opt(scope, v.repository);
 
+let getScopeName = (v: t) => v.scopeName;
+
 let getFirstRangeScope = (scope: string, v: t) => {
   switch (getScope(scope, v)) {
   | Some([MatchRange(matchRange), ..._]) => Some(matchRange)
@@ -48,9 +50,81 @@ let create =
 };
 
 module Json = {
+   open Yojson.Safe.Util;
+  
+  let patterns_of_yojson = (json: Yojson.Safe.t) => {
+    switch(json) {
+    | `List(v) => {
+      List.fold_left((prev, curr) => {
+        switch (prev) {
+        | Error(e) => Error(e)
+        | Ok(currItems) => switch (Pattern.Json.of_yojson(curr)) {
+          | Error(e) => Error(e)
+          | Ok(v) => Ok([v, ...currItems])
+        }
+        }
+      }, Ok([]), v);
+    }
+    | _ => Error("Patterns is expected to be a list");
+    }
+  };
 
-  let of_yojson = (_json: Yojson.Safe.t) => {
-      ();
+  let repository_of_yojson = (json: Yojson.Safe.t) => {
+    switch(json) {
+    | `Assoc(v) => {
+      List.fold_left((prev, curr) => {
+        switch (prev) {
+        | Error(e) => Error(e)
+        | Ok(currItems) => 
+          let (key, json) = curr;
+
+          // Is this a nested set of patterns?
+          switch ((member("begin", json), member("patterns", json))) {
+          // Yes... 
+          | (`Null, `List(_) as patternList) => {
+            let patterns = patterns_of_yojson(patternList);
+            switch (patterns) {
+            | Error(e) => Error(e);
+            | Ok(v) => Ok([(key, v), ...currItems]);
+            }
+          }
+          // Nope... just a single pattern
+          | _ => {
+              switch (Pattern.Json.of_yojson(json)) {
+              | Error(e) => Error(e)
+              | Ok(v) => Ok([(key, [v]), ...currItems])
+            }
+          }
+          }
+
+        }
+      }, Ok([]), v);
+    }
+    | _ => Error("Patterns is expected to be a list");
+    }
+  };
+  
+  let string_of_yojson: Yojson.Safe.t => result(string, string) = json => {
+    switch (json) {
+    | `String(v) => Ok(v)
+    | _ => Error("Missing expected property")
+    }
+  };
+
+  let of_yojson = (json: Yojson.Safe.t) => {
+     let%bind scopeName = string_of_yojson(member("scopeName", json));
+     let%bind patterns = patterns_of_yojson(member("patterns", json));
+     let%bind repository = repository_of_yojson(member("repository", json));
+
+     
+
+     print_endline ("Patterns: " ++ string_of_int(List.length(patterns)));
+     print_endline ("Repostiry: " ++ string_of_int(List.length(repository)));
+     Ok(create(
+      ~scopeName,
+      ~patterns,
+      ~repository,
+      ()));
   };
 }
 
@@ -97,8 +171,12 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
   while (idx^ < len) {
     let i = idx^;
 
+    print_endline ("Looking at index: " ++ string_of_int(i));
+
     let currentScopeStack = scopeStack^;
     let patterns = ScopeStack.activePatterns(currentScopeStack);
+    
+    print_endline ("Got curent patterns: " ++ string_of_int(List.length(patterns)));
 
     let rules =
       Rule.ofPatterns(
@@ -106,7 +184,10 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         ~scopeStack=currentScopeStack,
         patterns,
       );
+    print_endline ("Got rules: " ++ string_of_int(List.length(rules)));
     let bestRule = _getBestRule(rules, line, i);
+    
+    print_endline ("Got best rule!");
 
     switch (bestRule) {
     // No matching rule... just increment position and try again

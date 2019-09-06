@@ -20,7 +20,7 @@ let create =
 
 let show = (v: t) => {
   let scopes =
-    List.fold_left((prev, curr) => prev ++ "." ++ curr, "", v.scopes);
+    List.fold_left((prev, curr) => prev ++ ", " ++ curr, "", v.scopes);
   "Token("
   ++ string_of_int(v.position)
   ++ ","

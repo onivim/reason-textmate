@@ -12,10 +12,33 @@ let createRegex = str => {
   }
 };
 
+let getExecutingDirectory = () => {
+  Filename.dirname(Sys.argv[0]);
+};
+
 describe("Grammar", ({describe, _}) => {
   /* Test case inspired by:
       https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide
      */
+
+  describe("json parsing", ({test, _}) => {
+    
+    test("json grammar", ({expect, _}) => {
+      let json = Yojson.Safe.from_file(getExecutingDirectory() ++ "/json.json");
+      let gr = Grammar.Json.of_yojson(json);
+      switch (gr) {
+      | Ok(grammar) => 
+        expect.string(Grammar.getScopeName(grammar)).toEqual("source.json");
+        let (tokens, _) = Grammar.tokenize(~grammar, "[1, true]");
+        List.iter(t => prerr_endline(Token.show(t)), tokens);
+        
+        let (tokens, _) = Grammar.tokenize(~grammar, {|{ "name": ["a", "b" ]}|});
+        List.iter(t => prerr_endline(Token.show(t)), tokens);
+      | _ => failwith("Unable to load grammar");
+      }
+
+    });
+  });
 
   let grammar =
     Grammar.create(

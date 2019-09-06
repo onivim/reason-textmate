@@ -27,20 +27,6 @@ and matchRange = {
   patterns: list(t),
 };
 
-module Let_syntax = {
-let bind = (~f, v) => {
-  switch (v) {
-  | Ok(v) => f(v)
-  | Error(e) => Error(e)
-  };
-};
-
-let map = (~f) =>
-  fun
-  | Ok(v) => Ok(f(v))
-  | Error(e) => Error(e);
-};
-
 module Json = {
   let string_of_yojson: Yojson.Safe.t => result(string, string) = json => {
     switch (json) {
@@ -97,23 +83,7 @@ module Json = {
     }));
   };
 
-  let matchRange_of_yojson: (Yojson.Safe.t) => result(t, string) = (json) => {
-    open Yojson.Safe.Util;
-    let%bind beginRegex = regex_of_yojson(member("begin", json));
-    let%bind endRegex = regex_of_yojson(member("end", json));
-    let%bind name = string_of_yojson(member("name", json));
-    
-    Ok(MatchRange({
-      matchScopeName: name,
-      beginRegex,
-      endRegex,
-      beginCaptures: captures_of_yojson(member("beginCaptures", json)),
-      endCaptures: captures_of_yojson(member("endCaptures", json)),
-      patterns: [],
-    }));
-  };
-
-  let of_yojson: (Yojson.Safe.t) => result(t, string) = (json) => {
+  let rec of_yojson: (Yojson.Safe.t) => result(t, string) = (json) => {
     open Yojson.Safe.Util;
     let incl = member("include", json);
     let mat = member("match", json);
@@ -125,6 +95,36 @@ module Json = {
     | (_, _, `String(_)) => matchRange_of_yojson(json);
     | _ => Ok(Include("#no-op"));
     }
+  } and matchRange_of_yojson: (Yojson.Safe.t) => result(t, string) = (json) => {
+    open Yojson.Safe.Util;
+    let%bind beginRegex = regex_of_yojson(member("begin", json));
+    let%bind endRegex = regex_of_yojson(member("end", json));
+    let%bind name = string_of_yojson(member("name", json));
+
+    let%bind nestedPatterns = switch(member("patterns", json)) {
+    | `List(items) => List.fold_left((prev, curr) => {
+        
+        switch (prev) {
+        | Error(e) => Error(e)
+        | Ok(currItems) =>  {
+          switch (of_yojson(curr)) {
+          | Ok(p) => Ok([p, ...currItems])
+          | Error(e) => Error(e)
+          }
+        }
+      }
+    }, Ok([]), items);
+    | _ => Ok([])
+    };
+    
+    Ok(MatchRange({
+      matchScopeName: name,
+      beginRegex,
+      endRegex,
+      beginCaptures: captures_of_yojson(member("beginCaptures", json)),
+      endCaptures: captures_of_yojson(member("endCaptures", json)),
+      patterns: nestedPatterns,
+    }));
   };
 
   let of_string: (string) => result(t, string) = (jsonString) => {
