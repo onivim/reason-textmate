@@ -44,22 +44,19 @@ let map = (~f) =>
 };
 
 module Json = {
-
-
   let string_of_yojson: Yojson.Safe.t => result(string, string) = json => {
     switch (json) {
     | `String(v) => Ok(v)
     | _ => Error("Missing expected property")
     }
-
   };
   
   let captures_of_yojson: Yojson.Safe.t => list(Capture.t) = json => {
-
+    open Yojson.Safe.Util;
     let f = (keyValuePair) => {
       let (key, json) = keyValuePair;
       let captureGroup = int_of_string_opt(key);
-      let captureName = switch(json) {
+      let captureName = switch(member("name",  json)) {
       | `String(v) => Ok(v)
       | _ => Error("Capture name must be a string");
       };
@@ -102,11 +99,24 @@ module Json = {
     }));
   };
 
-  /*let matchRange_of_yojson: Yojson.Safe.t => result(match_, string) => {
+  let matchRange_of_yojson: (string, Yojson.Safe.t) => result(t, string) = (ruleName, json) => {
+    open Yojson.Safe.Util;
+    let%bind beginRegex = regex_of_yojson(member("begin", json));
+    let%bind endRegex = regex_of_yojson(member("end", json));
+    let%bind name = string_of_yojson(member("name", json));
     
-  };*/
+    Ok(MatchRange({
+      matchScopeName: name,
+      matchRuleName: "#" ++ ruleName,
+      beginRegex,
+      endRegex,
+      beginCaptures: captures_of_yojson(member("beginCaptures", json)),
+      endCaptures: captures_of_yojson(member("endCaptures", json)),
+      patterns: [],
+    }));
+  };
 
-  let of_yojson: Yojson.Safe.t => result(t, string) = (json) => {
+  let of_yojson: (string, Yojson.Safe.t) => result(t, string) = (name, json) => {
     open Yojson.Safe.Util;
     let incl = member("include", json);
     let mat = member("match", json);
@@ -115,12 +125,13 @@ module Json = {
     switch ((incl, mat, beg)) {
     | (`String(inc), _, _) => Ok(Include(inc))
     | (_, `String(_), _) => match_of_yojson(json);
+    | (_, _, `String(_)) => matchRange_of_yojson(name, json);
     | _ => Ok(Include("#no-op"));
     }
   };
 
-  let of_string: string => result(t, string) = (jsonString) => {
+  let of_string: (string, string) => result(t, string) = (name, jsonString) => {
     Yojson.Safe.from_string(jsonString)
-    |> of_yojson;
+    |> of_yojson(name);
   };
 };
