@@ -19,6 +19,15 @@ describe("Pattern", ({describe, _}) => {
           expect.int(List.length(v.captures)).toBe(0);
         | _ => failwith("Parse failed for match");
         }
+        
+        let matchWithCapture = Pattern.Json.of_string({|{ "match": "a|b|c", name: "match2", captures: { "0": "derp" } }|});
+
+        switch (matchWithCapture) {
+        | Ok(Match(v)) =>
+          expect.string(v.matchName).toEqual("match2");
+          expect.int(List.length(v.captures)).toBe(1);
+        | _ => failwith("Parse failed for match");
+        }
       });
     });
   });

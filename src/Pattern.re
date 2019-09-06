@@ -45,12 +45,42 @@ let map = (~f) =>
 
 module Json = {
 
+
   let string_of_yojson: Yojson.Safe.t => result(string, string) = json => {
     switch (json) {
     | `String(v) => Ok(v)
     | _ => Error("Missing expected property")
     }
 
+  };
+  
+  let captures_of_yojson: Yojson.Safe.t => list(Capture.t) = json => {
+
+    let f = (keyValuePair) => {
+      let (key, json) = keyValuePair;
+      let captureGroup = int_of_string_opt(key);
+      let captureName = switch(json) {
+      | `String(v) => Ok(v)
+      | _ => Error("Capture name must be a string");
+      };
+
+      switch ((captureGroup, captureName)) {
+      | (Some(n), Ok(name)) => Ok((n, name))
+      | _ => Error("Invalid capture group")
+      };
+    };
+
+    let fold = (prev, curr) => {
+        switch (f(curr)) {
+        | Ok(v) => [v, ...prev]
+        | _ => prev
+        }
+    };
+
+    switch (json) {
+    | `Assoc(list) => List.fold_left(fold, [], list);
+    | _ => []
+    }
   };
 
   let regex_of_yojson: Yojson.Safe.t => result(OnigRegExp.t, string) = json => {
@@ -68,7 +98,7 @@ module Json = {
     Ok(Match({
       matchName: name,
       matchRegex: regex,
-      captures: [],
+      captures: captures_of_yojson(member("captures", json)),
     }));
   };
 
