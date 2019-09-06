@@ -47,6 +47,13 @@ let create =
   ret;
 };
 
+module Json = {
+
+  let of_yojson = (_json: Yojson.Safe.t) => {
+      ();
+  };
+}
+
 let _getPatternsToMatchAgainst = (ruleName: option(string), grammar: t) => {
   let patterns =
     switch (ruleName) {

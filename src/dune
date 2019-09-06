@@ -1,4 +1,6 @@
 (library
     (name textmate)
     (public_name textmate)
-    (libraries oniguruma))
+    (libraries oniguruma yojson)
+    (preprocess (pps ppx_let)))
+

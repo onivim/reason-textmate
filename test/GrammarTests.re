@@ -5,6 +5,13 @@ open Oniguruma;
 module Grammar = Textmate.Grammar;
 module Token = Textmate.Token;
 
+let createRegex = str => {
+  switch(OnigRegExp.create(str)) {
+  | Ok(v) => v
+  | Error(msg) => failwith("Unable to parse regex: " ++ str ++ " message: " ++ msg);
+  }
+};
+
 describe("Grammar", ({describe, _}) => {
   /* Test case inspired by:
       https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide
@@ -28,7 +35,7 @@ describe("Grammar", ({describe, _}) => {
           "letter",
           [
             Match({
-              matchRegex: OnigRegExp.create("a|b|c"),
+              matchRegex: createRegex("a|b|c"),
               matchName: "keyword.letter",
               captures: [],
             }),
@@ -38,7 +45,7 @@ describe("Grammar", ({describe, _}) => {
           "word",
           [
             Match({
-              matchRegex: OnigRegExp.create("def"),
+              matchRegex: createRegex("def"),
               matchName: "keyword.word",
               captures: [],
             }),
@@ -48,7 +55,7 @@ describe("Grammar", ({describe, _}) => {
           "capture-groups",
           [
             Match({
-              matchRegex: OnigRegExp.create("(@selector\\()(.*?)(\\))"),
+              matchRegex: createRegex("(@selector\\()(.*?)(\\))"),
               matchName: "",
               captures: [
                 (1, "storage.type.objc"),
@@ -61,8 +68,8 @@ describe("Grammar", ({describe, _}) => {
           "paren-expression",
           [
             MatchRange({
-              beginRegex: OnigRegExp.create("\\("),
-              endRegex: OnigRegExp.create("\\)"),
+              beginRegex: createRegex("\\("),
+              endRegex: createRegex("\\)"),
               beginCaptures: [(0, "punctuation.paren.open")],
               endCaptures: [(0, "punctuation.paren.close")],
               matchRuleName: "#paren-expression",

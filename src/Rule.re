@@ -17,45 +17,33 @@ let show = (v: t) => {
 };
 
 let ofMatch = (match: Pattern.match_) => {
-  switch (match.matchRegex) {
-  | Error(_) => None
-  | Ok(v) =>
     Some({
-      regex: v,
+      regex: match.matchRegex,
       name: match.matchName,
       captures: match.captures,
       popStack: false,
       pushStack: None,
     })
-  };
 };
 
 let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
-  switch (matchRange.beginRegex) {
-  | Error(_) => None
-  | Ok(v) =>
     Some({
-      regex: v,
+      regex: matchRange.beginRegex,
       name: matchRange.matchScopeName,
       captures: matchRange.beginCaptures,
       popStack: false,
       pushStack: Some((matchRange.matchScopeName, matchRange.matchRuleName)),
     })
-  };
 };
 
 let ofMatchRangeEnd = (matchRange: Pattern.matchRange) => {
-  switch (matchRange.endRegex) {
-  | Error(_) => None
-  | Ok(v) =>
     Some({
-      regex: v,
+      regex: matchRange.endRegex,
       name: matchRange.matchScopeName,
       captures: matchRange.endCaptures,
       popStack: true,
       pushStack: None,
     })
-  };
 };
 
 let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => {
