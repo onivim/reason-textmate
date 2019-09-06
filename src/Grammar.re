@@ -50,79 +50,80 @@ let create =
 };
 
 module Json = {
-   open Yojson.Safe.Util;
-  
+  open Yojson.Safe.Util;
+
   let patterns_of_yojson = (json: Yojson.Safe.t) => {
-    switch(json) {
-    | `List(v) => {
-      List.fold_left((prev, curr) => {
-        switch (prev) {
-        | Error(e) => Error(e)
-        | Ok(currItems) => switch (Pattern.Json.of_yojson(curr)) {
+    switch (json) {
+    | `List(v) =>
+      List.fold_left(
+        (prev, curr) => {
+          switch (prev) {
           | Error(e) => Error(e)
-          | Ok(v) => Ok([v, ...currItems])
-        }
-        }
-      }, Ok([]), v);
-    }
-    | _ => Error("Patterns is expected to be a list");
-    }
+          | Ok(currItems) =>
+            switch (Pattern.Json.of_yojson(curr)) {
+            | Error(e) => Error(e)
+            | Ok(v) => Ok([v, ...currItems])
+            }
+          }
+        },
+        Ok([]),
+        v,
+      )
+    | _ => Error("Patterns is expected to be a list")
+    };
   };
 
   let repository_of_yojson = (json: Yojson.Safe.t) => {
-    switch(json) {
-    | `Assoc(v) => {
-      List.fold_left((prev, curr) => {
-        switch (prev) {
-        | Error(e) => Error(e)
-        | Ok(currItems) => 
-          let (key, json) = curr;
+    switch (json) {
+    | `Assoc(v) =>
+      List.fold_left(
+        (prev, curr) => {
+          switch (prev) {
+          | Error(e) => Error(e)
+          | Ok(currItems) =>
+            let (key, json) = curr;
 
-          // Is this a nested set of patterns?
-          switch ((member("begin", json), member("patterns", json))) {
-          // Yes... 
-          | (`Null, `List(_) as patternList) => {
-            let patterns = patterns_of_yojson(patternList);
-            switch (patterns) {
-            | Error(e) => Error(e);
-            | Ok(v) => Ok([(key, v), ...currItems]);
-            }
-          }
-          // Nope... just a single pattern
-          | _ => {
+            // Is this a nested set of patterns?
+            switch (member("begin", json), member("patterns", json)) {
+            // Yes...
+            | (`Null, `List(_) as patternList) =>
+              let patterns = patterns_of_yojson(patternList);
+              switch (patterns) {
+              | Error(e) => Error(e)
+              | Ok(v) => Ok([(key, v), ...currItems])
+              };
+            // Nope... just a single pattern
+            | _ =>
               switch (Pattern.Json.of_yojson(json)) {
               | Error(e) => Error(e)
               | Ok(v) => Ok([(key, [v]), ...currItems])
-            }
+              }
+            };
           }
-          }
+        },
+        Ok([]),
+        v,
+      )
+    | _ => Error("Patterns is expected to be a list")
+    };
+  };
 
-        }
-      }, Ok([]), v);
-    }
-    | _ => Error("Patterns is expected to be a list");
-    }
-  };
-  
-  let string_of_yojson: Yojson.Safe.t => result(string, string) = json => {
-    switch (json) {
-    | `String(v) => Ok(v)
-    | _ => Error("Missing expected property")
-    }
-  };
+  let string_of_yojson: Yojson.Safe.t => result(string, string) =
+    json => {
+      switch (json) {
+      | `String(v) => Ok(v)
+      | _ => Error("Missing expected property")
+      };
+    };
 
   let of_yojson = (json: Yojson.Safe.t) => {
-     let%bind scopeName = string_of_yojson(member("scopeName", json));
-     let%bind patterns = patterns_of_yojson(member("patterns", json));
-     let%bind repository = repository_of_yojson(member("repository", json));
+    let%bind scopeName = string_of_yojson(member("scopeName", json));
+    let%bind patterns = patterns_of_yojson(member("patterns", json));
+    let%bind repository = repository_of_yojson(member("repository", json));
 
-     Ok(create(
-      ~scopeName,
-      ~patterns,
-      ~repository,
-      ()));
+    Ok(create(~scopeName, ~patterns, ~repository, ()));
   };
-}
+};
 
 let _getBestRule = (rules: list(Rule.t), str, position) => {
   List.fold_left(
@@ -169,7 +170,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
     let currentScopeStack = scopeStack^;
     let patterns = ScopeStack.activePatterns(currentScopeStack);
-    
+
     let rules =
       Rule.ofPatterns(
         ~getScope=v => getScope(v, grammar),
@@ -177,7 +178,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         patterns,
       );
     let bestRule = _getBestRule(rules, line, i);
-    
+
     switch (bestRule) {
     // No matching rule... just increment position and try again
     | None => incr(idx)
@@ -191,11 +192,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         | None => ()
         | Some(matchRange) =>
           scopeStack :=
-            ScopeStack.push(
-              ~matchRange,
-              ~line=lineNumber,
-              scopeStack^,
-            )
+            ScopeStack.push(~matchRange, ~line=lineNumber, scopeStack^)
         };
 
         tokens :=

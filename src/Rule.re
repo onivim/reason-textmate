@@ -17,31 +17,31 @@ let show = (v: t) => {
 };
 
 let ofMatch = (match: Pattern.match_) => {
-    Some({
-      regex: match.matchRegex,
-      name: match.matchName,
-      captures: match.captures,
-      popStack: false,
-      pushStack: None,
-    })
+  Some({
+    regex: match.matchRegex,
+    name: match.matchName,
+    captures: match.captures,
+    popStack: false,
+    pushStack: None,
+  });
 };
 
 let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
-    Some({
-      regex: matchRange.beginRegex,
-      name: matchRange.matchScopeName,
-      captures: matchRange.beginCaptures,
-      popStack: false,
-      pushStack: Some(matchRange),
-    })
+  Some({
+    regex: matchRange.beginRegex,
+    name: matchRange.matchScopeName,
+    captures: matchRange.beginCaptures,
+    popStack: false,
+    pushStack: Some(matchRange),
+  });
 };
 
 let ofMatchRangeEnd = (matchRange: Pattern.matchRange) => {
-      regex: matchRange.endRegex,
-      name: matchRange.matchScopeName,
-      captures: matchRange.endCaptures,
-      popStack: true,
-      pushStack: None,
+  regex: matchRange.endRegex,
+  name: matchRange.matchScopeName,
+  captures: matchRange.endCaptures,
+  popStack: true,
+  pushStack: None,
 };
 
 let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
@@ -50,11 +50,7 @@ let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
     | Pattern.Include(inc) =>
       switch (getScope(inc)) {
       | None => prev
-      | Some(v) =>
-        List.concat([
-          ofPatterns(~getScope, ~scopeStack, v),
-          prev,
-        ])
+      | Some(v) => List.concat([ofPatterns(~getScope, ~scopeStack, v), prev])
       }
     | Pattern.Match(match) =>
       switch (ofMatch(match)) {
@@ -69,10 +65,11 @@ let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
     };
   };
 
-  let initialList = switch(ScopeStack.activeRange(scopeStack)) {
-  | Some(v) => [ofMatchRangeEnd(v)]
-  | None => []
-  };
+  let initialList =
+    switch (ScopeStack.activeRange(scopeStack)) {
+    | Some(v) => [ofMatchRangeEnd(v)]
+    | None => []
+    };
 
   List.fold_left(f, initialList, patterns);
 };

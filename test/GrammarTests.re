@@ -6,10 +6,11 @@ module Grammar = Textmate.Grammar;
 module Token = Textmate.Token;
 
 let createRegex = str => {
-  switch(OnigRegExp.create(str)) {
+  switch (OnigRegExp.create(str)) {
   | Ok(v) => v
-  | Error(msg) => failwith("Unable to parse regex: " ++ str ++ " message: " ++ msg);
-  }
+  | Error(msg) =>
+    failwith("Unable to parse regex: " ++ str ++ " message: " ++ msg)
+  };
 };
 
 let getExecutingDirectory = () => {
@@ -22,22 +23,22 @@ describe("Grammar", ({describe, _}) => {
      */
 
   describe("json parsing", ({test, _}) => {
-    
     test("json grammar", ({expect, _}) => {
-      let json = Yojson.Safe.from_file(getExecutingDirectory() ++ "/json.json");
+      let json =
+        Yojson.Safe.from_file(getExecutingDirectory() ++ "/json.json");
       let gr = Grammar.Json.of_yojson(json);
       switch (gr) {
-      | Ok(grammar) => 
+      | Ok(grammar) =>
         expect.string(Grammar.getScopeName(grammar)).toEqual("source.json");
         let (tokens, _) = Grammar.tokenize(~grammar, "[1, true]");
         List.iter(t => prerr_endline(Token.show(t)), tokens);
-        
-        let (tokens, _) = Grammar.tokenize(~grammar, {|{ "name": ["a", "b" ]}|});
-        List.iter(t => prerr_endline(Token.show(t)), tokens);
-      | _ => failwith("Unable to load grammar");
-      }
 
-    });
+        let (tokens, _) =
+          Grammar.tokenize(~grammar, {|{ "name": ["a", "b" ]}|});
+        List.iter(t => prerr_endline(Token.show(t)), tokens);
+      | _ => failwith("Unable to load grammar")
+      };
+    })
   });
 
   let grammar =
