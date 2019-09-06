@@ -1,5 +1,5 @@
 {
-  "checksum": "6742b5742cedb7e1457f21e3e89d0ef0",
+  "checksum": "542198f823b17266285a429c3de3b532",
   "root": "reason-tree-sitter@link-dev:./package.json",
   "node": {
     "reperf@1.4.0@d41d8cd9": {
@@ -55,6 +55,7 @@
         "reperf@1.4.0@d41d8cd9", "refmterr@3.2.2@d41d8cd9",
         "reason-oniguruma@github:onivim/reason-oniguruma#f6e77f1@d41d8cd9",
         "ocaml@4.8.1000@d41d8cd9", "@reason-native/rely@1.3.1@d41d8cd9",
+        "@opam/yojson@opam:1.7.0@7056d985",
         "@opam/dune@opam:1.11.3@9894df55", "@esy-ocaml/reason@3.5.0@d41d8cd9"
       ],
       "devDependencies": [ "ocaml@4.8.1000@d41d8cd9" ]
