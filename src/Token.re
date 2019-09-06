@@ -64,5 +64,6 @@ let ofMatch =
       },
       v,
     )
+    |> List.filter(v => v.length > 0)
   };
 };

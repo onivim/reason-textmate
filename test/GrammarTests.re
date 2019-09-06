@@ -34,7 +34,7 @@ describe("Grammar", ({describe, _}) => {
         List.iter(t => prerr_endline(Token.show(t)), tokens);
 
         let (tokens, _) =
-          Grammar.tokenize(~grammar, {|{ "name": ["a", "b" ]}|});
+          Grammar.tokenize(~grammar, {|{ "name": ["a", "b"]}|});
         List.iter(t => prerr_endline(Token.show(t)), tokens);
       | _ => failwith("Unable to load grammar")
       };
