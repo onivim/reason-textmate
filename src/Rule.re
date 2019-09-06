@@ -1,5 +1,5 @@
 /*
- TextMateGrammar.re
+ Rule.re
  */
 
 open Oniguruma;
@@ -9,7 +9,7 @@ type t = {
   name: string,
   captures: list(Pattern.Capture.t),
   popStack: bool,
-  pushStack: option((string, string)),
+  pushStack: option(Pattern.matchRange),
 };
 
 let show = (v: t) => {
@@ -32,21 +32,19 @@ let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
       name: matchRange.matchScopeName,
       captures: matchRange.beginCaptures,
       popStack: false,
-      pushStack: Some((matchRange.matchScopeName, matchRange.matchRuleName)),
+      pushStack: Some(matchRange),
     })
 };
 
 let ofMatchRangeEnd = (matchRange: Pattern.matchRange) => {
-    Some({
       regex: matchRange.endRegex,
       name: matchRange.matchScopeName,
       captures: matchRange.endCaptures,
       popStack: true,
       pushStack: None,
-    })
 };
 
-let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => {
+let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
   let f = (prev, pattern) => {
     switch (pattern) {
     | Pattern.Include(inc) =>
@@ -54,7 +52,7 @@ let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => 
       | None => prev
       | Some(v) =>
         List.concat([
-          ofPatterns(~getScope, ~getFirstRangeScope, ~scopeStack, v),
+          ofPatterns(~getScope, ~scopeStack, v),
           prev,
         ])
       }
@@ -71,19 +69,10 @@ let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => 
     };
   };
 
-  let patterns = List.fold_left(f, [], patterns);
-
-  // If there is an active 'begin'/'end' rule - we need to grab the original range too
-  switch (ScopeStack.activeRule(scopeStack)) {
-  | None => patterns
-  | Some(v) =>
-    switch (getFirstRangeScope(v)) {
-    | None => patterns
-    | Some(matchRange) =>
-      switch (ofMatchRangeEnd(matchRange)) {
-      | None => patterns
-      | Some(v) => [v, ...patterns]
-      }
-    }
+  let initialList = switch(ScopeStack.activeRange(scopeStack)) {
+  | Some(v) => [ofMatchRangeEnd(v)]
+  | None => []
   };
+
+  List.fold_left(f, initialList, patterns);
 };

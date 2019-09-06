@@ -2,34 +2,57 @@
  ScopeStack.re
  */
 
-type scope = {
-  ruleName: option(string),
-  scopeName: string,
-  line: int,
+type t = {
+  initialScopeName: string,
+  initialPatterns: list(Pattern.t),
+  scopes: list(Pattern.matchRange),
 };
 
-type t = list(scope);
-
-let empty: t = [];
-
-let ofToplevelScope = scopeName => {
-  [{ruleName: None, scopeName, line: (-1)}];
+let ofToplevelScope = (patterns, scopeName) => {
+  {
+    initialScopeName: scopeName,
+    initialPatterns: patterns,
+    scopes: [],
+  }
 };
 
-let activeRule = (v: t) => {
-  switch (v) {
-  | [hd, ..._] => hd.ruleName
-  | [] => None
+let activeRange = (v:t) => {
+  switch (v.scopes) {
+  | [hd, ..._] => Some(hd)
+  | _ => None
   };
+}
+
+let activePatterns = (v: t) => {
+  switch (v.scopes) {
+  | [hd, ..._] => hd.patterns
+  | [] => v.initialPatterns
+  };
+};
+
+let getScopes = (v: t) => {
+  List.fold_left((prev, curr: Pattern.matchRange) => {
+    [curr.matchScopeName, ...prev]; 
+  }, [v.initialScopeName], v.scopes);
 };
 
 let pop = (v: t) => {
-  switch (v) {
-  | [] => v
+  let scopes = switch (v.scopes) {
+  | [] => []
   | [_, ...tail] => tail
   };
+
+  {
+    ...v,
+    scopes,
+  }
 };
 
-let push = (~ruleName: string, ~scopeName: string, ~line: int, v: t) => {
-  [{ruleName: Some(ruleName), scopeName, line}, ...v];
+let push = (~matchRange: Pattern.matchRange, ~line: int, v: t) => {
+  ignore(line);
+  let scopes = [matchRange, ...v.scopes];
+  {
+    ...v,
+    scopes
+  }
 };

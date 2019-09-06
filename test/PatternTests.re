@@ -5,13 +5,13 @@ module Pattern = Textmate.Pattern;
 describe("Pattern", ({describe, _}) => {
     describe("json parsing", ({test, _}) => {
       test("include", ({expect, _}) => {
-        let inc = Pattern.Json.of_string("", {|{ "include": "#value" }|});
+        let inc = Pattern.Json.of_string({|{ "include": "#value" }|});
         expect.bool(inc == Ok(Pattern.Include("#value"))).toBe(true);
-        let inc2 = Pattern.Json.of_string("", {|{ "include": "#value2" }|});
+        let inc2 = Pattern.Json.of_string({|{ "include": "#value2" }|});
         expect.bool(inc2 == Ok(Pattern.Include("#value2"))).toBe(true);
       });
       test("match", ({expect, _}) => {
-        let match1 = Pattern.Json.of_string("",  {|{ "match": "a|b|c", name: "match1" }|});
+        let match1 = Pattern.Json.of_string({|{ "match": "a|b|c", name: "match1" }|});
 
         switch (match1) {
         | Ok(Match(v)) =>
@@ -20,7 +20,7 @@ describe("Pattern", ({describe, _}) => {
         | _ => failwith("Parse failed for match");
         }
         
-        let matchWithCapture = Pattern.Json.of_string("", {|{ "match": "a|b|c", name: "match2", captures: { "0": { "name": "derp" } } }|});
+        let matchWithCapture = Pattern.Json.of_string({|{ "match": "a|b|c", name: "match2", captures: { "0": { "name": "derp" } } }|});
 
         switch (matchWithCapture) {
         | Ok(Match(v)) =>
@@ -30,7 +30,7 @@ describe("Pattern", ({describe, _}) => {
         }
       });
       test("matchRange", ({expect, _}) => {
-        let matchRange1 = Pattern.Json.of_string("rule1",  {|
+        let matchRange1 = Pattern.Json.of_string({|
           { 
               "begin": "\\[", 
               "beginCaptures": { "0": { "name": "array-json-begin" } }, 
@@ -46,7 +46,6 @@ describe("Pattern", ({describe, _}) => {
         switch (matchRange1) {
         | Ok(MatchRange(v)) =>
           expect.string(v.matchScopeName).toEqual("array-json");
-          expect.string(v.matchRuleName).toEqual("#rule1");
           expect.int(List.length(v.beginCaptures)).toBe(1);
           expect.int(List.length(v.endCaptures)).toBe(1);
         | _ => failwith("Parse failed for match");

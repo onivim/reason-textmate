@@ -72,7 +72,6 @@ describe("Grammar", ({describe, _}) => {
               endRegex: createRegex("\\)"),
               beginCaptures: [(0, "punctuation.paren.open")],
               endCaptures: [(0, "punctuation.paren.close")],
-              matchRuleName: "#paren-expression",
               matchScopeName: "expression.group",
               patterns: [Include("#expression")],
             }),

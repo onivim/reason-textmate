@@ -12,8 +12,7 @@ type t = {
 
 let create =
     (~position, ~length, ~scope: string, ~scopeStack: ScopeStack.t, ()) => {
-  let scopeNames =
-    List.map((s: ScopeStack.scope) => s.scopeName, scopeStack);
+  let scopeNames = ScopeStack.getScopes(scopeStack);
 
   let ret: t = {length, position, scopes: [scope, ...scopeNames]};
   ret;

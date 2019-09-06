@@ -24,8 +24,6 @@ and matchRange = {
   endCaptures: list(Capture.t),
   // The scope to append to the tokens
   matchScopeName: string,
-  // The rule to use when the capture group is on the top of the stack
-  matchRuleName: string,
   patterns: list(t),
 };
 
@@ -99,7 +97,7 @@ module Json = {
     }));
   };
 
-  let matchRange_of_yojson: (string, Yojson.Safe.t) => result(t, string) = (ruleName, json) => {
+  let matchRange_of_yojson: (Yojson.Safe.t) => result(t, string) = (json) => {
     open Yojson.Safe.Util;
     let%bind beginRegex = regex_of_yojson(member("begin", json));
     let%bind endRegex = regex_of_yojson(member("end", json));
@@ -107,7 +105,6 @@ module Json = {
     
     Ok(MatchRange({
       matchScopeName: name,
-      matchRuleName: "#" ++ ruleName,
       beginRegex,
       endRegex,
       beginCaptures: captures_of_yojson(member("beginCaptures", json)),
@@ -116,7 +113,7 @@ module Json = {
     }));
   };
 
-  let of_yojson: (string, Yojson.Safe.t) => result(t, string) = (name, json) => {
+  let of_yojson: (Yojson.Safe.t) => result(t, string) = (json) => {
     open Yojson.Safe.Util;
     let incl = member("include", json);
     let mat = member("match", json);
@@ -125,13 +122,13 @@ module Json = {
     switch ((incl, mat, beg)) {
     | (`String(inc), _, _) => Ok(Include(inc))
     | (_, `String(_), _) => match_of_yojson(json);
-    | (_, _, `String(_)) => matchRange_of_yojson(name, json);
+    | (_, _, `String(_)) => matchRange_of_yojson(json);
     | _ => Ok(Include("#no-op"));
     }
   };
 
-  let of_string: (string, string) => result(t, string) = (name, jsonString) => {
+  let of_string: (string) => result(t, string) = (jsonString) => {
     Yojson.Safe.from_string(jsonString)
-    |> of_yojson(name);
+    |> of_yojson;
   };
 };

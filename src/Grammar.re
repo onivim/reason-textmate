@@ -39,7 +39,7 @@ let create =
     );
 
   let ret: t = {
-    initialScopeStack: ScopeStack.ofToplevelScope(scopeName),
+    initialScopeStack: ScopeStack.ofToplevelScope(patterns, scopeName),
     scopeName,
     patterns,
     repository: repositoryMap,
@@ -53,20 +53,6 @@ module Json = {
       ();
   };
 }
-
-let _getPatternsToMatchAgainst = (ruleName: option(string), grammar: t) => {
-  let patterns =
-    switch (ruleName) {
-    | None => grammar.patterns
-    | Some(v) =>
-      switch (getFirstRangeScope(v, grammar)) {
-      | None => grammar.patterns
-      | Some(matchRange) => matchRange.patterns
-      }
-    };
-
-  patterns;
-};
 
 let _getBestRule = (rules: list(Rule.t), str, position) => {
   List.fold_left(
@@ -112,16 +98,11 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     let i = idx^;
 
     let currentScopeStack = scopeStack^;
-    let patterns =
-      _getPatternsToMatchAgainst(
-        ScopeStack.activeRule(currentScopeStack),
-        grammar,
-      );
+    let patterns = ScopeStack.activePatterns(currentScopeStack);
 
     let rules =
       Rule.ofPatterns(
         ~getScope=v => getScope(v, grammar),
-        ~getFirstRangeScope=v => getFirstRangeScope(v, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
       );
@@ -138,11 +119,10 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         switch (rule.pushStack) {
         // If there is nothing to push... nothing to worry about
         | None => ()
-        | Some((scopeName, ruleName)) =>
+        | Some(matchRange) =>
           scopeStack :=
             ScopeStack.push(
-              ~ruleName,
-              ~scopeName,
+              ~matchRange,
               ~line=lineNumber,
               scopeStack^,
             )
