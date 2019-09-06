@@ -5,3 +5,8 @@
     (ocamlopt_flags -linkall -g)
     (libraries rely.lib textmate)
 )
+
+(install
+    (section bin)
+    (package textmate-test)
+    (files json.json))

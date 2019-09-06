@@ -1,5 +1,5 @@
 /*
- TextMateGrammar.re
+ Rule.re
  */
 
 open Oniguruma;
@@ -9,7 +9,7 @@ type t = {
   name: string,
   captures: list(Pattern.Capture.t),
   popStack: bool,
-  pushStack: option((string, string)),
+  pushStack: option(Pattern.matchRange),
 };
 
 let show = (v: t) => {
@@ -17,58 +17,40 @@ let show = (v: t) => {
 };
 
 let ofMatch = (match: Pattern.match_) => {
-  switch (match.matchRegex) {
-  | Error(_) => None
-  | Ok(v) =>
-    Some({
-      regex: v,
-      name: match.matchName,
-      captures: match.captures,
-      popStack: false,
-      pushStack: None,
-    })
-  };
+  Some({
+    regex: match.matchRegex,
+    name: match.matchName,
+    captures: match.captures,
+    popStack: false,
+    pushStack: None,
+  });
 };
 
 let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
-  switch (matchRange.beginRegex) {
-  | Error(_) => None
-  | Ok(v) =>
-    Some({
-      regex: v,
-      name: matchRange.matchScopeName,
-      captures: matchRange.beginCaptures,
-      popStack: false,
-      pushStack: Some((matchRange.matchScopeName, matchRange.matchRuleName)),
-    })
-  };
+  Some({
+    regex: matchRange.beginRegex,
+    name: matchRange.matchScopeName,
+    captures: matchRange.beginCaptures,
+    popStack: false,
+    pushStack: Some(matchRange),
+  });
 };
 
 let ofMatchRangeEnd = (matchRange: Pattern.matchRange) => {
-  switch (matchRange.endRegex) {
-  | Error(_) => None
-  | Ok(v) =>
-    Some({
-      regex: v,
-      name: matchRange.matchScopeName,
-      captures: matchRange.endCaptures,
-      popStack: true,
-      pushStack: None,
-    })
-  };
+  regex: matchRange.endRegex,
+  name: matchRange.matchScopeName,
+  captures: matchRange.endCaptures,
+  popStack: true,
+  pushStack: None,
 };
 
-let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => {
+let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
   let f = (prev, pattern) => {
     switch (pattern) {
     | Pattern.Include(inc) =>
       switch (getScope(inc)) {
       | None => prev
-      | Some(v) =>
-        List.concat([
-          ofPatterns(~getScope, ~getFirstRangeScope, ~scopeStack, v),
-          prev,
-        ])
+      | Some(v) => List.concat([ofPatterns(~getScope, ~scopeStack, v), prev])
       }
     | Pattern.Match(match) =>
       switch (ofMatch(match)) {
@@ -83,19 +65,11 @@ let rec ofPatterns = (~getScope, ~getFirstRangeScope, ~scopeStack, patterns) => 
     };
   };
 
-  let patterns = List.fold_left(f, [], patterns);
+  let initialList =
+    switch (ScopeStack.activeRange(scopeStack)) {
+    | Some(v) => [ofMatchRangeEnd(v)]
+    | None => []
+    };
 
-  // If there is an active 'begin'/'end' rule - we need to grab the original range too
-  switch (ScopeStack.activeRule(scopeStack)) {
-  | None => patterns
-  | Some(v) =>
-    switch (getFirstRangeScope(v)) {
-    | None => patterns
-    | Some(matchRange) =>
-      switch (ofMatchRangeEnd(matchRange)) {
-      | None => patterns
-      | Some(v) => [v, ...patterns]
-      }
-    }
-  };
+  List.fold_left(f, initialList, patterns);
 };

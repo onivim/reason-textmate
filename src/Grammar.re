@@ -14,6 +14,8 @@ type t = {
 let getScope = (scope: string, v: t) =>
   StringMap.find_opt(scope, v.repository);
 
+let getScopeName = (v: t) => v.scopeName;
+
 let getFirstRangeScope = (scope: string, v: t) => {
   switch (getScope(scope, v)) {
   | Some([MatchRange(matchRange), ..._]) => Some(matchRange)
@@ -39,7 +41,7 @@ let create =
     );
 
   let ret: t = {
-    initialScopeStack: ScopeStack.ofToplevelScope(scopeName),
+    initialScopeStack: ScopeStack.ofToplevelScope(patterns, scopeName),
     scopeName,
     patterns,
     repository: repositoryMap,
@@ -47,18 +49,80 @@ let create =
   ret;
 };
 
-let _getPatternsToMatchAgainst = (ruleName: option(string), grammar: t) => {
-  let patterns =
-    switch (ruleName) {
-    | None => grammar.patterns
-    | Some(v) =>
-      switch (getFirstRangeScope(v, grammar)) {
-      | None => grammar.patterns
-      | Some(matchRange) => matchRange.patterns
-      }
+module Json = {
+  open Yojson.Safe.Util;
+
+  let patterns_of_yojson = (json: Yojson.Safe.t) => {
+    switch (json) {
+    | `List(v) =>
+      List.fold_left(
+        (prev, curr) => {
+          switch (prev) {
+          | Error(e) => Error(e)
+          | Ok(currItems) =>
+            switch (Pattern.Json.of_yojson(curr)) {
+            | Error(e) => Error(e)
+            | Ok(v) => Ok([v, ...currItems])
+            }
+          }
+        },
+        Ok([]),
+        v,
+      )
+    | _ => Error("Patterns is expected to be a list")
+    };
+  };
+
+  let repository_of_yojson = (json: Yojson.Safe.t) => {
+    switch (json) {
+    | `Assoc(v) =>
+      List.fold_left(
+        (prev, curr) => {
+          switch (prev) {
+          | Error(e) => Error(e)
+          | Ok(currItems) =>
+            let (key, json) = curr;
+
+            // Is this a nested set of patterns?
+            switch (member("begin", json), member("patterns", json)) {
+            // Yes...
+            | (`Null, `List(_) as patternList) =>
+              let patterns = patterns_of_yojson(patternList);
+              switch (patterns) {
+              | Error(e) => Error(e)
+              | Ok(v) => Ok([(key, v), ...currItems])
+              };
+            // Nope... just a single pattern
+            | _ =>
+              switch (Pattern.Json.of_yojson(json)) {
+              | Error(e) => Error(e)
+              | Ok(v) => Ok([(key, [v]), ...currItems])
+              }
+            };
+          }
+        },
+        Ok([]),
+        v,
+      )
+    | _ => Error("Patterns is expected to be a list")
+    };
+  };
+
+  let string_of_yojson: Yojson.Safe.t => result(string, string) =
+    json => {
+      switch (json) {
+      | `String(v) => Ok(v)
+      | _ => Error("Missing expected property")
+      };
     };
 
-  patterns;
+  let of_yojson = (json: Yojson.Safe.t) => {
+    let%bind scopeName = string_of_yojson(member("scopeName", json));
+    let%bind patterns = patterns_of_yojson(member("patterns", json));
+    let%bind repository = repository_of_yojson(member("repository", json));
+
+    Ok(create(~scopeName, ~patterns, ~repository, ()));
+  };
 };
 
 let _getBestRule = (rules: list(Rule.t), str, position) => {
@@ -105,16 +169,11 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     let i = idx^;
 
     let currentScopeStack = scopeStack^;
-    let patterns =
-      _getPatternsToMatchAgainst(
-        ScopeStack.activeRule(currentScopeStack),
-        grammar,
-      );
+    let patterns = ScopeStack.activePatterns(currentScopeStack);
 
     let rules =
       Rule.ofPatterns(
         ~getScope=v => getScope(v, grammar),
-        ~getFirstRangeScope=v => getFirstRangeScope(v, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
       );
@@ -131,14 +190,9 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         switch (rule.pushStack) {
         // If there is nothing to push... nothing to worry about
         | None => ()
-        | Some((scopeName, ruleName)) =>
+        | Some(matchRange) =>
           scopeStack :=
-            ScopeStack.push(
-              ~ruleName,
-              ~scopeName,
-              ~line=lineNumber,
-              scopeStack^,
-            )
+            ScopeStack.push(~matchRange, ~line=lineNumber, scopeStack^)
         };
 
         tokens :=

@@ -12,8 +12,7 @@ type t = {
 
 let create =
     (~position, ~length, ~scope: string, ~scopeStack: ScopeStack.t, ()) => {
-  let scopeNames =
-    List.map((s: ScopeStack.scope) => s.scopeName, scopeStack);
+  let scopeNames = ScopeStack.getScopes(scopeStack);
 
   let ret: t = {length, position, scopes: [scope, ...scopeNames]};
   ret;
@@ -21,7 +20,7 @@ let create =
 
 let show = (v: t) => {
   let scopes =
-    List.fold_left((prev, curr) => prev ++ "." ++ curr, "", v.scopes);
+    List.fold_left((prev, curr) => prev ++ ", " ++ curr, "", v.scopes);
   "Token("
   ++ string_of_int(v.position)
   ++ ","
@@ -65,5 +64,6 @@ let ofMatch =
       },
       v,
     )
+    |> List.filter(v => v.length > 0)
   };
 };
