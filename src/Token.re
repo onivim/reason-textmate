@@ -76,11 +76,37 @@ let ofMatch =
         None
       }
 
+      /*
+      If the rule is a 'push stack', the outer rule has already been applied
+      because the scope stack has been updated.
+      If there rule is not a 'push stack', then we need to apply the rule here
+      locally, for patterns like this:
+      
+		{
+			"match": "world(!?)",
+			"captures": {
+				"1": {
+					"name": "emphasis.hello"
+				}
+			},
+			"name": "suffix.hello"
+		}
+
+        For a string like "world!", we'd expect two tokens:
+        - "hello" - ["suffix.hello"]
+        - "!" - ["emphasis.hello", "suffix.hello"]
+      */
+      
+      let outerScope = switch((rule.pushStack, rule.popStack)) {
+      | (None, false) => Some(rule.name)
+      | _ => None;
+      }
+
       let captureToken = create(
         ~position=match.startPos,
         ~length=match.length,
         ~scope,
-        ~outerScope=Some(rule.name),
+        ~outerScope,
         ~scopeStack,
         (),
       );

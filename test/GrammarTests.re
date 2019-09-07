@@ -80,7 +80,7 @@ describe("Grammar", ({describe, _}) => {
           [
             Match({
               matchRegex: createRegex("(@selector\\()(.*?)(\\))"),
-              matchName: "",
+              matchName: "capture-group",
               captures: [
                 (1, "storage.type.objc"),
                 (3, "storage.type.objc"),
@@ -290,22 +290,22 @@ describe("Grammar", ({describe, _}) => {
     test("capture groups", ({expect, _}) => {
       let (tokens, _) =
         Grammar.tokenize(~grammar, "@selector(windowWillClose:)");
-      expect.int(List.length(tokens)).toBe(2);
+      expect.int(List.length(tokens)).toBe(3);
       let firstToken = List.hd(tokens);
-      expect.bool(firstToken.scopes == ["storage.type.objc", "source.abc"]).
+      expect.bool(firstToken.scopes == ["storage.type.objc", "capture-group", "source.abc"]).
         toBe(
         true,
       );
       expect.int(firstToken.position).toBe(0);
       expect.int(firstToken.length).toBe(10);
 
-      let secondToken = List.nth(tokens, 1);
-      expect.bool(secondToken.scopes == ["storage.type.objc", "source.abc"]).
+      let thirdToken = List.nth(tokens, 2);
+      expect.bool(thirdToken.scopes == ["storage.type.objc", "capture-group", "source.abc"]).
         toBe(
         true,
       );
-      expect.int(secondToken.position).toBe(26);
-      expect.int(secondToken.length).toBe(1);
+      expect.int(thirdToken.position).toBe(26);
+      expect.int(thirdToken.length).toBe(1);
     });
     test("simple letter token", ({expect, _}) => {
       let (tokens, _) = Grammar.tokenize(~grammar, "a");
@@ -353,26 +353,6 @@ describe("Grammar", ({describe, _}) => {
       );
       expect.int(thirdToken.position).toBe(6);
       expect.int(thirdToken.length).toBe(1);
-    });
-    test("capture groups", ({expect, _}) => {
-      let (tokens, _) =
-        Grammar.tokenize(~grammar, "@selector(windowWillClose:)");
-      expect.int(List.length(tokens)).toBe(2);
-      let firstToken = List.hd(tokens);
-      expect.bool(firstToken.scopes == ["storage.type.objc", "source.abc"]).
-        toBe(
-        true,
-      );
-      expect.int(firstToken.position).toBe(0);
-      expect.int(firstToken.length).toBe(10);
-
-      let secondToken = List.nth(tokens, 1);
-      expect.bool(secondToken.scopes == ["storage.type.objc", "source.abc"]).
-        toBe(
-        true,
-      );
-      expect.int(secondToken.position).toBe(26);
-      expect.int(secondToken.length).toBe(1);
     });
   });
 });
