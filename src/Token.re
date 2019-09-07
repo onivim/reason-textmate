@@ -22,7 +22,7 @@ let create =
   let scopeNames = ScopeStack.getScopes(scopeStack);
 
   let scopes =
-    switch ((scope, outerScope)) {
+    switch (scope, outerScope) {
     | (Some(s), Some(o)) => [s, o, ...scopeNames]
     | (Some(s), None) => [s, ...scopeNames]
     | (None, Some(o)) => [o, ...scopeNames]
