@@ -6,6 +6,7 @@
   "override": {
       "build": ["dune build --root . -j4"],
       "dependencies": {
+        "@opam/ppx_deriving_yojson": "*"
       },
       "install": [
           "esy-installer textmate.install",
