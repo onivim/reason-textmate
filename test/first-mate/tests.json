@@ -1,0 +1,43 @@
+[
+	{
+		"grammarPath": "fixtures/hello.json",
+		"lines": [
+			{
+				"line": "hello world!",
+				"tokens": [
+					{
+						"value": "hello",
+						"scopes": [
+							"source.hello",
+							"prefix.hello"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.hello"
+						]
+					},
+					{
+						"value": "world",
+						"scopes": [
+							"source.hello",
+							"suffix.hello"
+						]
+					},
+					{
+						"value": "!",
+						"scopes": [
+							"source.hello",
+							"suffix.hello",
+							"emphasis.hello"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+		],
+		"desc": "TEST #3"
+	}
+]

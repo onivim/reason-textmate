@@ -1,5 +1,5 @@
 {
-  "checksum": "89416ba996910afe328bb0e24edd9b84",
+  "checksum": "82bac4d3cfdc4219daf865323b2ed4ef",
   "root": "reason-textmate@link-dev:./package.json",
   "node": {
     "reperf@1.4.0@d41d8cd9": {
@@ -61,7 +61,9 @@
         "@opam/dune@opam:1.11.3@9894df55",
         "@esy-ocaml/reason@github:facebook/reason#474900e@d41d8cd9"
       ],
-      "devDependencies": [ "ocaml@4.7.1004@d41d8cd9" ]
+      "devDependencies": [
+        "ocaml@4.7.1004@d41d8cd9", "@opam/merlin@opam:3.2.2@e3edecdd"
+      ]
     },
     "reason-oniguruma@github:onivim/reason-oniguruma#f6e77f1@d41d8cd9": {
       "id":
@@ -874,6 +876,34 @@
       ],
       "devDependencies": [
         "ocaml@4.7.1004@d41d8cd9", "@opam/dune@opam:1.11.3@9894df55"
+      ]
+    },
+    "@opam/merlin@opam:3.2.2@e3edecdd": {
+      "id": "@opam/merlin@opam:3.2.2@e3edecdd",
+      "name": "@opam/merlin",
+      "version": "opam:3.2.2",
+      "source": {
+        "type": "install",
+        "source": [
+          "archive:https://opam.ocaml.org/cache/md5/ed/ede35b65f8ac9c440cfade5445662c54#md5:ede35b65f8ac9c440cfade5445662c54",
+          "archive:https://github.com/ocaml/merlin/releases/download/v3.2.2/merlin-v3.2.2.tbz#md5:ede35b65f8ac9c440cfade5445662c54"
+        ],
+        "opam": {
+          "name": "merlin",
+          "version": "3.2.2",
+          "path": "esy.lock/opam/merlin.3.2.2"
+        }
+      },
+      "overrides": [],
+      "dependencies": [
+        "ocaml@4.7.1004@d41d8cd9", "@opam/yojson@opam:1.7.0@7056d985",
+        "@opam/ocamlfind@opam:1.8.1@ff07b0f9",
+        "@opam/dune@opam:1.11.3@9894df55", "@esy-ocaml/substs@0.0.1@d41d8cd9"
+      ],
+      "devDependencies": [
+        "ocaml@4.7.1004@d41d8cd9", "@opam/yojson@opam:1.7.0@7056d985",
+        "@opam/ocamlfind@opam:1.8.1@ff07b0f9",
+        "@opam/dune@opam:1.11.3@9894df55"
       ]
     },
     "@opam/menhir@opam:20190626@bbeb8953": {
