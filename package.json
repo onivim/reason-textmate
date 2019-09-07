@@ -31,6 +31,7 @@
     "reperf": "^1.3.0"
   },
   "devDependencies": {
-    "ocaml": "~4.7.0"
+    "ocaml": "~4.7.0",
+    "@opam/merlin": "3.2.2"
   }
 }

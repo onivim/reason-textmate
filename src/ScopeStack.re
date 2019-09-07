@@ -8,7 +8,7 @@ type t = {
   scopes: list(Pattern.matchRange),
 };
 
-let ofToplevelScope = (patterns, scopeName) => {
+let ofTopLevelScope = (patterns, scopeName) => {
   {initialScopeName: scopeName, initialPatterns: patterns, scopes: []};
 };
 

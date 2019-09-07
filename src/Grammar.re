@@ -23,6 +23,10 @@ let getFirstRangeScope = (scope: string, v: t) => {
   };
 };
 
+let getScopeStack = (v: t) => {
+  ScopeStack.ofTopLevelScope(v.patterns, v.scopeName);
+};
+
 let create =
     (
       ~scopeName: string,
@@ -41,7 +45,7 @@ let create =
     );
 
   let ret: t = {
-    initialScopeStack: ScopeStack.ofToplevelScope(patterns, scopeName),
+    initialScopeStack: ScopeStack.ofTopLevelScope(patterns, scopeName),
     scopeName,
     patterns,
     repository: repositoryMap,
@@ -104,7 +108,7 @@ module Json = {
         Ok([]),
         v,
       )
-    | _ => Error("Patterns is expected to be a list")
+    | _ => Ok([])
     };
   };
 
