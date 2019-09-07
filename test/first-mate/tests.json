@@ -159,5 +159,42 @@
 			"fixtures/coffee-script.json"
 		],
 		"desc": "TEST #7"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "class Quicksort",
+				"tokens": [
+					{
+						"value": "class",
+						"scopes": [
+							"source.coffee",
+							"meta.class.coffee",
+							"storage.type.class.coffee"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.coffee",
+							"meta.class.coffee"
+						]
+					},
+					{
+						"value": "Quicksort",
+						"scopes": [
+							"source.coffee",
+							"meta.class.coffee",
+							"entity.name.type.class.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/coffee-script.json"
+		],
+		"desc": "TEST #8"
 	}
 ]
