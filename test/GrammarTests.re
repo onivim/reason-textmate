@@ -292,7 +292,10 @@ describe("Grammar", ({describe, _}) => {
         Grammar.tokenize(~grammar, "@selector(windowWillClose:)");
       expect.int(List.length(tokens)).toBe(3);
       let firstToken = List.hd(tokens);
-      expect.bool(firstToken.scopes == ["storage.type.objc", "capture-group", "source.abc"]).
+      expect.bool(
+        firstToken.scopes
+        == ["storage.type.objc", "capture-group", "source.abc"],
+      ).
         toBe(
         true,
       );
@@ -300,7 +303,10 @@ describe("Grammar", ({describe, _}) => {
       expect.int(firstToken.length).toBe(10);
 
       let thirdToken = List.nth(tokens, 2);
-      expect.bool(thirdToken.scopes == ["storage.type.objc", "capture-group", "source.abc"]).
+      expect.bool(
+        thirdToken.scopes
+        == ["storage.type.objc", "capture-group", "source.abc"],
+      ).
         toBe(
         true,
       );

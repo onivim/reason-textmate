@@ -3,9 +3,7 @@
 
  Tests specific to 'capture' behavior
 */
-
 open TestFramework;
-
 
 open Oniguruma;
 module Grammar = Textmate.Grammar;
@@ -31,40 +29,34 @@ describe("GrammarCaptureTests", ({test, _}) => {
         Match({
           matchRegex: createRegex("world(!?)"),
           matchName: "suffix.hello",
-          captures: [
-          (1, "emphasis.hello")
-          ],
-        })
+          captures: [(1, "emphasis.hello")],
+        }),
       ],
       ~repository=[],
       (),
     );
 
-      test("match with both name + capture gets both scopes applied", ({expect, _}) => {
-        let (tokens, _) = Grammar.tokenize(~grammar, "world!");
-        
-        expect.int(List.length(tokens)).toBe(2);
+  test(
+    "match with both name + capture gets both scopes applied", ({expect, _}) => {
+    let (tokens, _) = Grammar.tokenize(~grammar, "world!");
 
-        let firstToken = List.hd(tokens);
-        expect.bool(
-          firstToken.scopes
-          == ["suffix.hello", "source.hello"],
-        ).
-          toBe(
-          true,
-        );
-        expect.int(firstToken.position).toBe(0);
-        expect.int(firstToken.length).toBe(5);
+    expect.int(List.length(tokens)).toBe(2);
 
-        let secondToken = List.nth(tokens, 1);
-        expect.bool(
-          secondToken.scopes
-          == ["emphasis.hello", "suffix.hello", "source.hello"],
-        ).
-          toBe(
-          true,
-        );
-        expect.int(secondToken.position).toBe(5);
-        expect.int(secondToken.length).toBe(1);
-      });
-    });
+    let firstToken = List.hd(tokens);
+    expect.bool(firstToken.scopes == ["suffix.hello", "source.hello"]).toBe(
+      true,
+    );
+    expect.int(firstToken.position).toBe(0);
+    expect.int(firstToken.length).toBe(5);
+
+    let secondToken = List.nth(tokens, 1);
+    expect.bool(
+      secondToken.scopes == ["emphasis.hello", "suffix.hello", "source.hello"],
+    ).
+      toBe(
+      true,
+    );
+    expect.int(secondToken.position).toBe(5);
+    expect.int(secondToken.length).toBe(1);
+  });
+});
