@@ -158,6 +158,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
   ignore(line);
 
   let idx = ref(0);
+  let lastTokenPosition = ref(0);
   let len = String.length(line);
 
   let tokens = ref([]);
@@ -191,6 +192,21 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       open Oniguruma.OnigRegExp.Match;
       let (_, matches, rule) = v;
       if (Array.length(matches) > 0) {
+        let ltp = lastTokenPosition^;
+        let prevToken =
+          if (ltp < matches[0].startPos) {
+            [
+              Token.create(
+                ~position=ltp,
+                ~length=matches[0].startPos - ltp,
+                ~scopeStack=scopeStack^,
+                (),
+              ),
+            ];
+          } else {
+            [];
+          };
+
         switch (rule.pushStack) {
         // If there is nothing to push... nothing to worry about
         | None => ()
@@ -202,6 +218,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         tokens :=
           [
             Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
+            prevToken,
             ...tokens^,
           ];
 
@@ -210,6 +227,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         };
 
         idx := matches[0].endPos;
+        lastTokenPosition := matches[0].endPos;
       } else {
         incr(idx);
       };

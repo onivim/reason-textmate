@@ -14,7 +14,7 @@ let create =
     (
       ~position,
       ~length,
-      ~scope: string,
+      ~scope=None,
       ~outerScope=None,
       ~scopeStack: ScopeStack.t,
       (),
@@ -22,9 +22,11 @@ let create =
   let scopeNames = ScopeStack.getScopes(scopeStack);
 
   let scopes =
-    switch (outerScope) {
-    | None => [scope, ...scopeNames]
-    | Some(v) => [scope, v, ...scopeNames]
+    switch (scope, outerScope) {
+    | (Some(s), Some(o)) => [s, o, ...scopeNames]
+    | (Some(s), None) => [s, ...scopeNames]
+    | (None, Some(o)) => [o, ...scopeNames]
+    | _ => scopeNames
     };
 
   let ret: t = {length, position, scopes};
@@ -57,7 +59,7 @@ let ofMatch =
       create(
         ~position=match.startPos,
         ~length=match.length,
-        ~scope=rule.name,
+        ~scope=Some(rule.name),
         ~scopeStack,
         (),
       ),
@@ -80,7 +82,7 @@ let ofMatch =
                 create(
                   ~position=pos,
                   ~length=match.startPos - pos,
-                  ~scope=rule.name,
+                  ~scope=Some(rule.name),
                   ~scopeStack,
                   (),
                 ),
@@ -120,7 +122,7 @@ let ofMatch =
             create(
               ~position=match.startPos,
               ~length=match.length,
-              ~scope,
+              ~scope=Some(scope),
               ~outerScope,
               ~scopeStack,
               (),

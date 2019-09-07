@@ -253,39 +253,40 @@ describe("Grammar", ({describe, _}) => {
     });
     test("simple word tokens", ({expect, _}) => {
       let (tokens, _) = Grammar.tokenize(~grammar, " def");
-      expect.int(List.length(tokens)).toBe(1);
-
-      let firstToken = List.hd(tokens);
-      expect.bool(firstToken.scopes == ["keyword.word", "source.abc"]).toBe(
-        true,
-      );
-      expect.int(firstToken.position).toBe(1);
-      expect.int(firstToken.length).toBe(3);
-    });
-    test("different tokens", ({expect, _}) => {
-      let (tokens, _) = Grammar.tokenize(~grammar, " adef b");
-      expect.int(List.length(tokens)).toBe(3);
-
-      let firstToken = List.hd(tokens);
-      expect.bool(firstToken.scopes == ["keyword.letter", "source.abc"]).toBe(
-        true,
-      );
-      expect.int(firstToken.position).toBe(1);
-      expect.int(firstToken.length).toBe(1);
+      expect.int(List.length(tokens)).toBe(2);
 
       let secondToken = List.nth(tokens, 1);
       expect.bool(secondToken.scopes == ["keyword.word", "source.abc"]).toBe(
         true,
       );
-      expect.int(secondToken.position).toBe(2);
+      expect.int(secondToken.position).toBe(1);
       expect.int(secondToken.length).toBe(3);
+    });
+    test("different tokens", ({expect, _}) => {
+      let (tokens, _) = Grammar.tokenize(~grammar, " adef b");
+      expect.int(List.length(tokens)).toBe(5);
 
-      let thirdToken = List.nth(tokens, 2);
-      expect.bool(thirdToken.scopes == ["keyword.letter", "source.abc"]).toBe(
+      let secondToken = List.nth(tokens, 1);
+      expect.bool(secondToken.scopes == ["keyword.letter", "source.abc"]).
+        toBe(
         true,
       );
-      expect.int(thirdToken.position).toBe(6);
-      expect.int(thirdToken.length).toBe(1);
+      expect.int(secondToken.position).toBe(1);
+      expect.int(secondToken.length).toBe(1);
+
+      let thirdToken = List.nth(tokens, 2);
+      expect.bool(thirdToken.scopes == ["keyword.word", "source.abc"]).toBe(
+        true,
+      );
+      expect.int(thirdToken.position).toBe(2);
+      expect.int(thirdToken.length).toBe(3);
+
+      let fifthToken = List.nth(tokens, 4);
+      expect.bool(fifthToken.scopes == ["keyword.letter", "source.abc"]).toBe(
+        true,
+      );
+      expect.int(fifthToken.position).toBe(6);
+      expect.int(fifthToken.length).toBe(1);
     });
     test("capture groups", ({expect, _}) => {
       let (tokens, _) =
@@ -323,42 +324,6 @@ describe("Grammar", ({describe, _}) => {
       );
       expect.int(firstToken.position).toBe(0);
       expect.int(firstToken.length).toBe(1);
-    });
-    test("simple word tokens", ({expect, _}) => {
-      let (tokens, _) = Grammar.tokenize(~grammar, " def");
-      expect.int(List.length(tokens)).toBe(1);
-
-      let firstToken = List.hd(tokens);
-      expect.bool(firstToken.scopes == ["keyword.word", "source.abc"]).toBe(
-        true,
-      );
-      expect.int(firstToken.position).toBe(1);
-      expect.int(firstToken.length).toBe(3);
-    });
-    test("different tokens", ({expect, _}) => {
-      let (tokens, _) = Grammar.tokenize(~grammar, " adef b");
-      expect.int(List.length(tokens)).toBe(3);
-
-      let firstToken = List.hd(tokens);
-      expect.bool(firstToken.scopes == ["keyword.letter", "source.abc"]).toBe(
-        true,
-      );
-      expect.int(firstToken.position).toBe(1);
-      expect.int(firstToken.length).toBe(1);
-
-      let secondToken = List.nth(tokens, 1);
-      expect.bool(secondToken.scopes == ["keyword.word", "source.abc"]).toBe(
-        true,
-      );
-      expect.int(secondToken.position).toBe(2);
-      expect.int(secondToken.length).toBe(3);
-
-      let thirdToken = List.nth(tokens, 2);
-      expect.bool(thirdToken.scopes == ["keyword.letter", "source.abc"]).toBe(
-        true,
-      );
-      expect.int(thirdToken.position).toBe(6);
-      expect.int(thirdToken.length).toBe(1);
     });
   });
 });

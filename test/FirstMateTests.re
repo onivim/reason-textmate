@@ -69,6 +69,20 @@ module FirstMateTest = {
       allGrammars,
     );
   };
+  let rec _validateTokens = (et, at) => {
+    switch (et, at) {
+    | ([eh, ..._], []) => failwith("Expected scope not in token: " ++ eh)
+    | ([], [ah, ..._]) => failwith("Extra scope present: " ++ ah)
+    | ([eh, ...etail], [ah, ...atail]) =>
+      if (String.equal(eh, ah)) {
+        prerr_endline("Matching scopes: " ++ eh ++ " | " ++ ah);
+      } else {
+        failwith("Scopes do NOT match: " ++ eh ++ " | " ++ ah);
+      };
+      _validateTokens(etail, atail);
+    | ([], []) => prerr_endline("Tokens validated!")
+    };
+  };
 
   let run = (pass, fail, v: t) => {
     ignore(fail);
@@ -101,8 +115,51 @@ module FirstMateTest = {
       let scopes = scopeStack^;
       let (tokens, newScopeStack) =
         Grammar.tokenize(~scopes=Some(scopes), ~grammar, l.line);
-
       List.iter(t => prerr_endline(Token.show(t)), tokens);
+
+      let expectedTokens = l.tokens;
+      let actualTokens =
+        List.map(
+          (token: Token.t) => {
+            let tokenValue = String.sub(l.line, token.position, token.length);
+            let tokenScopes = token.scopes;
+            (tokenValue, tokenScopes);
+          },
+          tokens,
+        );
+
+      let validateToken = (idx, actualToken, expectedToken) => {
+        let (actualTokenValue, actualTokenScopes) = actualToken;
+        let expectedValue = expectedToken.value;
+        let expectedScopes = expectedToken.scopes;
+
+        prerr_endline("- Validating token: " ++ string_of_int(idx));
+        if (String.equal(expectedValue, actualTokenValue)) {
+          prerr_endline("PASS");
+        } else {
+          failwith(
+            "Strings do not match - actual: "
+            ++ actualTokenValue
+            ++ " expected: "
+            ++ expectedValue,
+          );
+        };
+
+        _validateTokens(expectedScopes |> List.rev, actualTokenScopes);
+      };
+
+      let rec validateTokens = (idx, expectedTokens, actualTokens) => {
+        switch (expectedTokens, actualTokens) {
+        | ([ehd, ...etail], [ah, ...atail]) =>
+          validateToken(idx, ah, ehd);
+          validateTokens(idx + 1, etail, atail);
+        | ([], []) => pass("Tokens validated!")
+        | _ => failwith("Token mismatch")
+        };
+      };
+
+      validateTokens(0, expectedTokens, actualTokens);
+
       scopeStack := newScopeStack;
 
       incr(idx);
@@ -127,7 +184,14 @@ module FirstMateTestSuite = {
 
     List.iter(
       (t: FirstMateTest.t) => {
-        runTest(t.desc, (pass, fail) => {FirstMateTest.run(pass, fail, t)})
+        runTest(
+          t.desc,
+          (pass, fail) => {
+            prerr_endline(" === RUNNING TEST: " ++ t.desc);
+            FirstMateTest.run(pass, fail, t);
+            prerr_endline(" === DONE WITH TEST: " ++ t.desc);
+          },
+        )
       },
       v,
     );
