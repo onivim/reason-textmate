@@ -11,10 +11,23 @@ type t = {
 };
 
 let create =
-    (~position, ~length, ~scope: string, ~scopeStack: ScopeStack.t, ()) => {
+    (
+      ~position,
+      ~length,
+      ~scope: string,
+      ~outerScope=None,
+      ~scopeStack: ScopeStack.t,
+      (),
+    ) => {
   let scopeNames = ScopeStack.getScopes(scopeStack);
 
-  let ret: t = {length, position, scopes: [scope, ...scopeNames]};
+  let scopes =
+    switch (outerScope) {
+    | None => [scope, ...scopeNames]
+    | Some(v) => [scope, v, ...scopeNames]
+    };
+
+  let ret: t = {length, position, scopes};
   ret;
 };
 
@@ -50,20 +63,82 @@ let ofMatch =
       ),
     ];
   | v =>
-    List.map(
-      cap => {
-        let (idx, scope) = cap;
-        let match = matches[idx];
-        create(
-          ~position=match.startPos,
-          ~length=match.length,
-          ~scope,
-          ~scopeStack,
-          (),
-        );
-      },
-      v,
-    )
-    |> List.filter(v => v.length > 0)
+    let initialMatch = matches[0];
+    let (_, tokens) =
+      List.fold_left(
+        (prev, curr) => {
+          let (pos, tokens) = prev;
+
+          let (idx, scope) = curr;
+          let match = matches[idx];
+
+          // Was there any space between the last position and the capture?
+          // If so - create a token to fill in that space
+          let firstToken =
+            if (match.startPos > pos) {
+              Some(
+                create(
+                  ~position=pos,
+                  ~length=match.startPos - pos,
+                  ~scope=rule.name,
+                  ~scopeStack,
+                  (),
+                ),
+              );
+            } else {
+              None;
+            };
+
+          /*
+               If the rule is a 'push stack', the outer rule has already been applied
+               because the scope stack has been updated.
+               If there rule is not a 'push stack', then we need to apply the rule here
+               locally, for patterns like this:
+
+           {
+           	"match": "world(!?)",
+           	"captures": {
+           		"1": {
+           			"name": "emphasis.hello"
+           		}
+           	},
+           	"name": "suffix.hello"
+           }
+
+                 For a string like "world!", we'd expect two tokens:
+                 - "hello" - ["suffix.hello"]
+                 - "!" - ["emphasis.hello", "suffix.hello"]
+               */
+
+          let outerScope =
+            switch (rule.pushStack, rule.popStack) {
+            | (None, false) => Some(rule.name)
+            | _ => None
+            };
+
+          let captureToken =
+            create(
+              ~position=match.startPos,
+              ~length=match.length,
+              ~scope,
+              ~outerScope,
+              ~scopeStack,
+              (),
+            );
+
+          let tokens =
+            switch (firstToken) {
+            | Some(v) => [captureToken, v, ...tokens]
+            | None => [captureToken, ...tokens]
+            };
+
+          let newPos = match.startPos + match.length;
+          (newPos, tokens);
+        },
+        (initialMatch.startPos, []),
+        v,
+      );
+
+    tokens |> List.filter(t => t.length > 0) |> List.rev;
   };
 };
