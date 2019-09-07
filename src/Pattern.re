@@ -62,7 +62,7 @@ module Json = {
       };
 
       switch (json) {
-      | `Assoc(list) => List.fold_left(fold, [], list) |> List.rev;
+      | `Assoc(list) => List.fold_left(fold, [], list) |> List.rev
       | _ => []
       };
     };
