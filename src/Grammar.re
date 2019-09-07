@@ -236,13 +236,22 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
   // There might be some leftover whitespace or tokens
   // that weren't processed through our loop iteration.
-  let tokens = if(lastTokenPosition^ < len) {
-    [[Token.create(~position=lastTokenPosition^, 
-            ~length=len-lastTokenPosition^,
-            ~scopeStack=scopeStack^, ())], ...tokens^]
-  } else {
-    tokens^
-  }
+  let tokens =
+    if (lastTokenPosition^ < len) {
+      [
+        [
+          Token.create(
+            ~position=lastTokenPosition^,
+            ~length=len - lastTokenPosition^,
+            ~scopeStack=scopeStack^,
+            (),
+          ),
+        ],
+        ...tokens^,
+      ];
+    } else {
+      tokens^;
+    };
 
   let retTokens = tokens |> List.rev |> List.flatten;
 
