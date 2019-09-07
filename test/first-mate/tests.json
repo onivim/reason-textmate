@@ -39,5 +39,26 @@
 		"grammars": [
 		],
 		"desc": "TEST #3"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "return",
+				"tokens": [
+					{
+						"value": "return",
+						"scopes": [
+							"source.coffee",
+							"keyword.control.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/coffee-script.json"
+		],
+		"desc": "TEST #4"
 	}
 ]
