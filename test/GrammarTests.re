@@ -267,7 +267,8 @@ describe("Grammar", ({describe, _}) => {
       expect.int(List.length(tokens)).toBe(5);
 
       let secondToken = List.nth(tokens, 1);
-      expect.bool(secondToken.scopes == ["keyword.letter", "source.abc"]).toBe(
+      expect.bool(secondToken.scopes == ["keyword.letter", "source.abc"]).
+        toBe(
         true,
       );
       expect.int(secondToken.position).toBe(1);
