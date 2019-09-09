@@ -210,7 +210,12 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         | None => ()
         | Some(matchRange) =>
           scopeStack :=
-            ScopeStack.push(~matches, ~matchRange, ~line=lineNumber, scopeStack^)
+            ScopeStack.push(
+              ~matches,
+              ~matchRange,
+              ~line=lineNumber,
+              scopeStack^,
+            )
         };
 
         tokens :=
