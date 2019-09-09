@@ -2,8 +2,6 @@
  TextMateGrammar.re
  */
 
-open Oniguruma;
-
 type t = {
   initialScopeStack: ScopeStack.t,
   scopeName: string,
@@ -132,7 +130,7 @@ module Json = {
 let _getBestRule = (rules: list(Rule.t), str, position) => {
   List.fold_left(
     (prev, curr: Rule.t) => {
-      let matches = OnigRegExp.search(str, position, curr.regex);
+      let matches = RegExp.search(str, position, curr.regex);
       let matchPos = Array.length(matches) > 0 ? matches[0].startPos : (-1);
 
       switch (prev) {

@@ -1,12 +1,11 @@
 open TestFramework;
 
-open Oniguruma;
-
 module Grammar = Textmate.Grammar;
+module RegExp = Textmate.RegExp;
 module Token = Textmate.Token;
 
 let createRegex = str => {
-  switch (OnigRegExp.create(str)) {
+  switch (RegExp.create(str)) {
   | Ok(v) => v
   | Error(msg) =>
     failwith("Unable to parse regex: " ++ str ++ " message: " ++ msg)
