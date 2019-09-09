@@ -7,7 +7,7 @@
     "format": "esy dune build @fmt --auto-promote"
   },
   "esy": {
-    "build": ["refmterr dune build -p textmate"],
+    "build": ["dune build -p textmate"],
     "buildsInSource": "_build",
     "install": [
         "esy-installer textmate.install"
