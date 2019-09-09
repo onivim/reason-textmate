@@ -69,21 +69,25 @@ describe("GrammarCaptureTests", ({test, _}) => {
     expect.int(secondToken.length).toBe(1);
   });
 
-  test(
-    "capture with back-reference", ({expect, _}) => {
+  test("capture with back-reference", ({expect, _}) => {
     let (tokens, _) = Grammar.tokenize(~grammar, "<HERE> abc </HERE>");
 
     expect.int(List.length(tokens)).toBe(3);
     List.iter(t => prerr_endline(Token.show(t)), tokens);
 
     let firstToken = List.hd(tokens);
-    expect.bool(firstToken.scopes == ["html.tag.open", "html.tag.contents", "source.hello"]).toBe(
+    expect.bool(
+      firstToken.scopes
+      == ["html.tag.open", "html.tag.contents", "source.hello"],
+    ).
+      toBe(
       true,
     );
 
     let thirdToken = List.nth(tokens, 2);
     expect.bool(
-      thirdToken.scopes == ["html.tag.close", "html.tag.contents", "source.hello"],
+      thirdToken.scopes
+      == ["html.tag.close", "html.tag.contents", "source.hello"],
     ).
       toBe(
       true,
