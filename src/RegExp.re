@@ -18,7 +18,6 @@ type t = {
   regexp: option(OnigRegExp.t),
 };
 
-// let hasBackRefRegExp = Str.regexp("\\\\\\\\\\(\\d+\\)");
 let hasBackRefRegExp = Str.regexp("\\\\\\([0-9]+\\)");
 
 let hasBackReferences = (v: t) => v.hasBackReferences;
@@ -31,10 +30,6 @@ let create = (regExString: string) => {
     | exception _ => false
     | _ => true
     };
-
-  prerr_endline(
-    "CREATE: " ++ regExString ++ " | " ++ string_of_bool(hasBackReferences),
-  );
 
   switch (hasBackReferences) {
   | false =>
