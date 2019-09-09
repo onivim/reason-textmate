@@ -23,6 +23,8 @@ type t = {
 
 let hasBackReferences = (v: t) => v.hasBackReferences;
 
+let toString = (v: t) => v.raw;
+
 let create = (regExString: string) => {
   let hasBackReferences = 
     switch(Str.search_forward(hasBackRefRegExp, regExString, 0)) {
@@ -48,6 +50,37 @@ let create = (regExString: string) => {
     regexp: None
   });
   }
+};
+
+let supplyReferences = (references: list(captureGroup), v: t) => {
+  let newRawStr = List.fold_left((prev, curr) => {
+    let (cg, text) = curr;
+    let str = prev;
+
+    let newStr = if (cg > 0) {
+      let regexp = Str.regexp("\\\\" ++ string_of_int(cg));
+      Str.global_replace(regexp, text, str)
+    } else {
+      prev
+    }
+
+    newStr
+  }, v.raw, references);
+
+  prerr_endline ("New raw str: " ++ newRawStr);
+
+  let regexp = 
+  switch (OnigRegExp.create(newRawStr)) {
+  | Ok(v) => v
+  | Error(msg) => failwith("Error creating regex: " ++ newRawStr ++ " - " ++ msg);
+  };
+
+  {
+    ...v,
+    hasBackReferences: false,
+    raw: newRawStr,
+    regexp: Some(regexp)
+  };
 };
 
 let emptyMatches = [||];
