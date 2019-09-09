@@ -71,8 +71,6 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
       references,
     );
 
-  prerr_endline("New raw str: " ++ newRawStr);
-
   let regexp =
     switch (OnigRegExp.create(newRawStr)) {
     | Ok(v) => v
