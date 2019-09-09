@@ -2,8 +2,6 @@
  TextMateGrammar.re
  */
 
-open Oniguruma;
-
 module Capture = {
   type t = (int, string);
 };
@@ -13,13 +11,13 @@ type t =
   | Match(match_)
   | MatchRange(matchRange)
 and match = {
-  matchRegex: OnigRegExp.t,
+  matchRegex: RegExp.t,
   matchName: string,
   captures: list(Capture.t),
 }
 and matchRange = {
-  beginRegex: OnigRegExp.t,
-  endRegex: OnigRegExp.t,
+  beginRegex: RegExp.t,
+  endRegex: RegExp.t,
   beginCaptures: list(Capture.t),
   endCaptures: list(Capture.t),
   // The scope to append to the tokens
@@ -67,10 +65,10 @@ module Json = {
       };
     };
 
-  let regex_of_yojson: Yojson.Safe.t => result(OnigRegExp.t, string) =
+  let regex_of_yojson: Yojson.Safe.t => result(RegExp.t, string) =
     json => {
       switch (json) {
-      | `String(v) => OnigRegExp.create(v)
+      | `String(v) => RegExp.create(v)
       | _ => Error("Regular expression not specified")
       };
     };

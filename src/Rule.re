@@ -2,10 +2,8 @@
  Rule.re
  */
 
-open Oniguruma;
-
 type t = {
-  regex: OnigRegExp.t,
+  regex: RegExp.t,
   name: string,
   captures: list(Pattern.Capture.t),
   popStack: bool,

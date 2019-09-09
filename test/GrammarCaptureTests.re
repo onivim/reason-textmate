@@ -5,11 +5,12 @@
 */
 open TestFramework;
 
-open Oniguruma;
 module Grammar = Textmate.Grammar;
+module RegExp = Textmate.RegExp;
+module Token = Textmate.Token;
 
 let createRegex = str => {
-  switch (OnigRegExp.create(str)) {
+  switch (RegExp.create(str)) {
   | Ok(v) => v
   | Error(msg) =>
     failwith("Unable to parse regex: " ++ str ++ " message: " ++ msg)
@@ -30,6 +31,14 @@ describe("GrammarCaptureTests", ({test, _}) => {
           matchRegex: createRegex("world(!?)"),
           matchName: "suffix.hello",
           captures: [(1, "emphasis.hello")],
+        }),
+        MatchRange({
+          beginRegex: createRegex("<(\\w+)>"),
+          endRegex: createRegex("</\\1>"),
+          beginCaptures: [(0, "html.tag.open")],
+          endCaptures: [(0, "html.tag.close")],
+          matchScopeName: "html.tag.contents",
+          patterns: [],
         }),
       ],
       ~repository=[],
@@ -58,5 +67,30 @@ describe("GrammarCaptureTests", ({test, _}) => {
     );
     expect.int(secondToken.position).toBe(5);
     expect.int(secondToken.length).toBe(1);
+  });
+
+  test("capture with back-reference", ({expect, _}) => {
+    let (tokens, _) = Grammar.tokenize(~grammar, "<HERE> abc </HERE>");
+
+    expect.int(List.length(tokens)).toBe(3);
+    List.iter(t => prerr_endline(Token.show(t)), tokens);
+
+    let firstToken = List.hd(tokens);
+    expect.bool(
+      firstToken.scopes
+      == ["html.tag.open", "html.tag.contents", "source.hello"],
+    ).
+      toBe(
+      true,
+    );
+
+    let thirdToken = List.nth(tokens, 2);
+    expect.bool(
+      thirdToken.scopes
+      == ["html.tag.close", "html.tag.contents", "source.hello"],
+    ).
+      toBe(
+      true,
+    );
   });
 });
