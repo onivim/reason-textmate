@@ -12,7 +12,7 @@ type t =
   | MatchRange(matchRange)
 and match = {
   matchRegex: RegExp.t,
-  matchName: string,
+  matchName: option(string),
   captures: list(Capture.t),
 }
 and matchRange = {
@@ -21,16 +21,16 @@ and matchRange = {
   beginCaptures: list(Capture.t),
   endCaptures: list(Capture.t),
   // The scope to append to the tokens
-  matchScopeName: string,
+  matchScopeName: option(string),
   patterns: list(t),
 };
 
 module Json = {
-  let string_of_yojson: Yojson.Safe.t => result(string, string) =
-    json => {
-      switch (json) {
+  let string_of_yojson: (string, Yojson.Safe.t) => result(string, string) =
+    (memberName, json) => {
+      switch (Yojson.Safe.Util.member(memberName, json)) {
       | `String(v) => Ok(v)
-      | _ => Error("Missing expected property")
+      | _ => Error("Missing expected property: " ++ memberName)
       };
     };
 
@@ -77,7 +77,18 @@ module Json = {
     json => {
       open Yojson.Safe.Util;
       let%bind regex = regex_of_yojson(member("match", json));
-      let%bind name = string_of_yojson(member("name", json));
+
+      let nameField =
+        switch (member("name", json), member("contentName", json)) {
+        | (`String(_), _) => "name"
+        | _ => "contentName"
+        };
+
+      let name =
+        switch (string_of_yojson(nameField, json)) {
+        | Ok(v) => Some(v)
+        | Error(_) => None
+        };
 
       Ok(
         Match({
@@ -107,7 +118,18 @@ module Json = {
       open Yojson.Safe.Util;
       let%bind beginRegex = regex_of_yojson(member("begin", json));
       let%bind endRegex = regex_of_yojson(member("end", json));
-      let%bind name = string_of_yojson(member("name", json));
+
+      let nameField =
+        switch (member("name", json), member("contentName", json)) {
+        | (`String(_), _) => "name"
+        | _ => "contentName"
+        };
+
+      let name =
+        switch (string_of_yojson(nameField, json)) {
+        | Ok(v) => Some(v)
+        | _ => None
+        };
 
       let%bind nestedPatterns =
         switch (member("patterns", json)) {

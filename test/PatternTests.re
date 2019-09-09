@@ -16,7 +16,7 @@ describe("Pattern", ({describe, _}) => {
 
       switch (match1) {
       | Ok(Match(v)) =>
-        expect.string(v.matchName).toEqual("match1");
+        expect.bool(v.matchName == Some("match1")).toBe(true);
         expect.int(List.length(v.captures)).toBe(0);
       | _ => failwith("Parse failed for match")
       };
@@ -28,7 +28,7 @@ describe("Pattern", ({describe, _}) => {
 
       switch (matchWithCapture) {
       | Ok(Match(v)) =>
-        expect.string(v.matchName).toEqual("match2");
+        expect.bool(v.matchName == Some("match2")).toBe(true);
         expect.int(List.length(v.captures)).toBe(1);
       | _ => failwith("Parse failed for match")
       };
@@ -52,7 +52,7 @@ describe("Pattern", ({describe, _}) => {
 
       switch (matchRange1) {
       | Ok(MatchRange(v)) =>
-        expect.string(v.matchScopeName).toEqual("array-json");
+        expect.bool(v.matchScopeName == Some("array-json")).toBe(true);
         expect.int(List.length(v.beginCaptures)).toBe(1);
         expect.int(List.length(v.endCaptures)).toBe(1);
       | _ => failwith("Parse failed for match")

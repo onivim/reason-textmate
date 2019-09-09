@@ -30,7 +30,12 @@ let activePatterns = (v: t) => {
 
 let getScopes = (v: t) => {
   List.fold_left(
-    (prev, curr: Pattern.matchRange) => {[curr.matchScopeName, ...prev]},
+    (prev, curr: Pattern.matchRange) => {
+      switch (curr.matchScopeName) {
+      | None => prev
+      | Some(v) => [v, ...prev]
+      }
+    },
     [v.initialScopeName],
     v.scopes,
   );

@@ -4,14 +4,17 @@
 
 type t = {
   regex: RegExp.t,
-  name: string,
+  name: option(string),
   captures: list(Pattern.Capture.t),
   popStack: bool,
   pushStack: option(Pattern.matchRange),
 };
 
 let show = (v: t) => {
-  "Rule " ++ v.name;
+  switch (v.name) {
+  | Some(rule) => "Rule " ++ rule
+  | None => "Rule (anonymous)"
+  };
 };
 
 let ofMatch = (match: Pattern.match_) => {

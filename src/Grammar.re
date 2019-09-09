@@ -229,7 +229,8 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
           scopeStack := ScopeStack.pop(scopeStack^);
         };
 
-        idx := matches[0].endPos;
+        let prevIndex = idx^;
+        idx := max(matches[0].endPos, prevIndex + 1);
         lastTokenPosition := matches[0].endPos;
       } else {
         incr(idx);

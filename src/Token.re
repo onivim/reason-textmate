@@ -59,7 +59,7 @@ let ofMatch =
       create(
         ~position=match.startPos,
         ~length=match.length,
-        ~scope=Some(rule.name),
+        ~scope=rule.name,
         ~scopeStack,
         (),
       ),
@@ -82,7 +82,7 @@ let ofMatch =
                 create(
                   ~position=pos,
                   ~length=match.startPos - pos,
-                  ~scope=Some(rule.name),
+                  ~scope=rule.name,
                   ~scopeStack,
                   (),
                 ),
@@ -114,7 +114,7 @@ let ofMatch =
 
           let outerScope =
             switch (rule.pushStack, rule.popStack) {
-            | (None, false) => Some(rule.name)
+            | (None, false) => rule.name
             | _ => None
             };
 

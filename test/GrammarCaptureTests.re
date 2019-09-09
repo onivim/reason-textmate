@@ -24,12 +24,12 @@ describe("GrammarCaptureTests", ({test, _}) => {
       ~patterns=[
         Match({
           matchRegex: createRegex("hello"),
-          matchName: "prefix.hello",
+          matchName: Some("prefix.hello"),
           captures: [],
         }),
         Match({
           matchRegex: createRegex("world(!?)"),
-          matchName: "suffix.hello",
+          matchName: Some("suffix.hello"),
           captures: [(1, "emphasis.hello")],
         }),
         MatchRange({
@@ -37,7 +37,7 @@ describe("GrammarCaptureTests", ({test, _}) => {
           endRegex: createRegex("</\\1>"),
           beginCaptures: [(0, "html.tag.open")],
           endCaptures: [(0, "html.tag.close")],
-          matchScopeName: "html.tag.contents",
+          matchScopeName: Some("html.tag.contents"),
           patterns: [],
         }),
       ],
