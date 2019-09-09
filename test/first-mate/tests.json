@@ -115,7 +115,17 @@
 			}
 		],
 		"grammars": [
-			"fixtures/coffee-script.json"
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/hello.json"
 		],
 		"desc": "TEST #5"
 	},
@@ -177,7 +187,17 @@
 			}
 		],
 		"grammars": [
-			"fixtures/coffee-script.json"
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/hello.json"
 		],
 		"desc": "TEST #7"
 	},
@@ -214,7 +234,17 @@
 			}
 		],
 		"grammars": [
-			"fixtures/coffee-script.json"
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/hello.json"
 		],
 		"desc": "TEST #8"
 	}
