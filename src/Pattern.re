@@ -75,7 +75,6 @@ module Json = {
 
   let match_of_yojson: Yojson.Safe.t => result(t, string) =
     json => {
-      prerr_endline("match_of_yojson");
       open Yojson.Safe.Util;
       let%bind regex = regex_of_yojson(member("match", json));
 
@@ -117,7 +116,6 @@ module Json = {
   and matchRange_of_yojson: Yojson.Safe.t => result(t, string) =
     json => {
       open Yojson.Safe.Util;
-      prerr_endline("matchRange_of_yojson");
       let%bind beginRegex = regex_of_yojson(member("begin", json));
       let%bind endRegex = regex_of_yojson(member("end", json));
 
