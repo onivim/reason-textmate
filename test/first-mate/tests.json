@@ -60,5 +60,141 @@
 			"fixtures/coffee-script.json"
 		],
 		"desc": "TEST #4"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "new foo.bar.Baz",
+				"tokens": [
+					{
+						"value": "new",
+						"scopes": [
+							"source.coffee",
+							"meta.class.instance.constructor",
+							"keyword.operator.new.coffee"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.coffee",
+							"meta.class.instance.constructor"
+						]
+					},
+					{
+						"value": "foo.bar.Baz",
+						"scopes": [
+							"source.coffee",
+							"meta.class.instance.constructor",
+							"entity.name.type.instance.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/coffee-script.json"
+		],
+		"desc": "TEST #5"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": " return new foo.bar.Baz ",
+				"tokens": [
+					{
+						"value": " ",
+						"scopes": [
+							"source.coffee"
+						]
+					},
+					{
+						"value": "return",
+						"scopes": [
+							"source.coffee",
+							"keyword.control.coffee"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.coffee"
+						]
+					},
+					{
+						"value": "new",
+						"scopes": [
+							"source.coffee",
+							"meta.class.instance.constructor",
+							"keyword.operator.new.coffee"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.coffee",
+							"meta.class.instance.constructor"
+						]
+					},
+					{
+						"value": "foo.bar.Baz",
+						"scopes": [
+							"source.coffee",
+							"meta.class.instance.constructor",
+							"entity.name.type.instance.coffee"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/coffee-script.json"
+		],
+		"desc": "TEST #7"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "class Quicksort",
+				"tokens": [
+					{
+						"value": "class",
+						"scopes": [
+							"source.coffee",
+							"meta.class.coffee",
+							"storage.type.class.coffee"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.coffee",
+							"meta.class.coffee"
+						]
+					},
+					{
+						"value": "Quicksort",
+						"scopes": [
+							"source.coffee",
+							"meta.class.coffee",
+							"entity.name.type.class.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/coffee-script.json"
+		],
+		"desc": "TEST #8"
 	}
 ]
