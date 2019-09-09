@@ -16,78 +16,83 @@ type t = {
   captureGroups: option(list(captureGroup)),
   raw: string,
   regexp: option(OnigRegExp.t),
-}
+};
 
 // let hasBackRefRegExp = Str.regexp("\\\\\\\\\\(\\d+\\)");
- let hasBackRefRegExp = Str.regexp("\\\\\\([0-9]+\\)");
+let hasBackRefRegExp = Str.regexp("\\\\\\([0-9]+\\)");
 
 let hasBackReferences = (v: t) => v.hasBackReferences;
 
 let toString = (v: t) => v.raw;
 
 let create = (regExString: string) => {
-  let hasBackReferences = 
-    switch(Str.search_forward(hasBackRefRegExp, regExString, 0)) {
+  let hasBackReferences =
+    switch (Str.search_forward(hasBackRefRegExp, regExString, 0)) {
     | exception _ => false
     | _ => true
     };
 
-  prerr_endline ("CREATE: " ++ regExString ++ " | " ++ string_of_bool(hasBackReferences));
+  prerr_endline(
+    "CREATE: " ++ regExString ++ " | " ++ string_of_bool(hasBackReferences),
+  );
 
   switch (hasBackReferences) {
-  | false => 
+  | false =>
     let%bind regexp = OnigRegExp.create(regExString);
     Ok({
       hasBackReferences: false,
       captureGroups: None,
       raw: regExString,
-      regexp: Some(regexp)
+      regexp: Some(regexp),
+    });
+  | true =>
+    Ok({
+      hasBackReferences: true,
+      captureGroups: None,
+      raw: regExString,
+      regexp: None,
     })
-  | true => Ok({
-    hasBackReferences: true,
-    captureGroups: None,
-    raw: regExString,
-    regexp: None
-  });
-  }
+  };
 };
 
 let supplyReferences = (references: list(captureGroup), v: t) => {
-  let newRawStr = List.fold_left((prev, curr) => {
-    let (cg, text) = curr;
-    let str = prev;
+  let newRawStr =
+    List.fold_left(
+      (prev, curr) => {
+        let (cg, text) = curr;
+        let str = prev;
 
-    let newStr = if (cg > 0) {
-      let regexp = Str.regexp("\\\\" ++ string_of_int(cg));
-      Str.global_replace(regexp, text, str)
-    } else {
-      prev
-    }
+        let newStr =
+          if (cg > 0) {
+            let regexp = Str.regexp("\\\\" ++ string_of_int(cg));
+            Str.global_replace(regexp, text, str);
+          } else {
+            prev;
+          };
 
-    newStr
-  }, v.raw, references);
+        newStr;
+      },
+      v.raw,
+      references,
+    );
 
-  prerr_endline ("New raw str: " ++ newRawStr);
+  prerr_endline("New raw str: " ++ newRawStr);
 
-  let regexp = 
-  switch (OnigRegExp.create(newRawStr)) {
-  | Ok(v) => v
-  | Error(msg) => failwith("Error creating regex: " ++ newRawStr ++ " - " ++ msg);
-  };
+  let regexp =
+    switch (OnigRegExp.create(newRawStr)) {
+    | Ok(v) => v
+    | Error(msg) =>
+      failwith("Error creating regex: " ++ newRawStr ++ " - " ++ msg)
+    };
 
-  {
-    ...v,
-    hasBackReferences: false,
-    raw: newRawStr,
-    regexp: Some(regexp)
-  };
+  {...v, hasBackReferences: false, raw: newRawStr, regexp: Some(regexp)};
 };
 
 let emptyMatches = [||];
 
 let search = (str: string, position: int, v: t) => {
   switch (v.regexp) {
-  | Some(re) => OnigRegExp.search(str, position, re);
-  | None => emptyMatches;
-  }
+  | Some(re) => OnigRegExp.search(str, position, re)
+  | None => emptyMatches
+  };
 };

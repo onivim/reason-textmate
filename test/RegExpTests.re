@@ -24,12 +24,11 @@ describe("RegExp", ({describe, _}) => {
 
   describe("supplyReferences", ({test, _}) => {
     test("back references get replaced", ({expect, _}) => {
-    
       let re = createRegex("\\1");
-      
+
       let newRe = RegExp.supplyReferences([(1, "abc")], re);
       expect.bool(RegExp.hasBackReferences(newRe)).toBe(false);
       expect.string(RegExp.toString(newRe)).toEqual("abc");
-    });
+    })
   });
 });
