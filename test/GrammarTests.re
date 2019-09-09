@@ -59,7 +59,7 @@ describe("Grammar", ({describe, _}) => {
           [
             Match({
               matchRegex: createRegex("a|b|c"),
-              matchName: "keyword.letter",
+              matchName: Some("keyword.letter"),
               captures: [],
             }),
           ],
@@ -69,7 +69,7 @@ describe("Grammar", ({describe, _}) => {
           [
             Match({
               matchRegex: createRegex("def"),
-              matchName: "keyword.word",
+              matchName: Some("keyword.word"),
               captures: [],
             }),
           ],
@@ -79,7 +79,7 @@ describe("Grammar", ({describe, _}) => {
           [
             Match({
               matchRegex: createRegex("(@selector\\()(.*?)(\\))"),
-              matchName: "capture-group",
+              matchName: Some("capture-group"),
               captures: [
                 (1, "storage.type.objc"),
                 (3, "storage.type.objc"),
@@ -95,7 +95,7 @@ describe("Grammar", ({describe, _}) => {
               endRegex: createRegex("\\)"),
               beginCaptures: [(0, "punctuation.paren.open")],
               endCaptures: [(0, "punctuation.paren.close")],
-              matchScopeName: "expression.group",
+              matchScopeName: Some("expression.group"),
               patterns: [Include("#expression")],
             }),
           ],
