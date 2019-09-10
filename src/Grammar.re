@@ -178,12 +178,12 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     let currentScopeStack = scopeStack^;
     let patterns = ScopeStack.activePatterns(currentScopeStack);
 
-    prerr_endline(
+    /*prerr_endline(
       "Index: "
       ++ string_of_int(i)
       ++ " - scopes: "
       ++ ScopeStack.show(currentScopeStack),
-    );
+    );*/
 
     let rules =
       Rule.ofPatterns(
