@@ -218,12 +218,16 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
             )
         };
 
-        tokens :=
-          [
-            Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
-            prevToken,
-            ...tokens^,
-          ];
+        // Only add token if there was actually a match!
+        if (matches[0].endPos > matches[0].startPos) {
+          tokens :=
+            [
+              Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
+              prevToken,
+              ...tokens^,
+            ];
+          lastTokenPosition := matches[0].endPos;
+        };
 
         if (rule.popStack) {
           scopeStack := ScopeStack.pop(scopeStack^);
@@ -231,7 +235,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
         let prevIndex = idx^;
         idx := max(matches[0].endPos, prevIndex + 1);
-        lastTokenPosition := matches[0].endPos;
       } else {
         incr(idx);
       };
