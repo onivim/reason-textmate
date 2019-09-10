@@ -14,6 +14,19 @@ let ofTopLevelScope = (patterns, scopeName) => {
   {initialScopeName: scopeName, initialPatterns: patterns, scopes: []};
 };
 
+let show = (v: t) => {
+  List.fold_left(
+    (prev, curr: Pattern.matchRange) => {
+      switch (curr.matchScopeName) {
+      | None => " .. " ++ prev
+      | Some(v) => v ++ " " ++ prev
+      }
+    },
+    "",
+    v.scopes,
+  );
+};
+
 let activeRange = (v: t) => {
   switch (v.scopes) {
   | [hd, ..._] => Some(hd)
@@ -37,7 +50,7 @@ let getScopes = (v: t) => {
       }
     },
     [v.initialScopeName],
-    v.scopes,
+    v.scopes |> List.rev,
   );
 };
 

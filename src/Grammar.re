@@ -10,7 +10,11 @@ type t = {
 };
 
 let getScope = (scope: string, v: t) =>
-  StringMap.find_opt(scope, v.repository);
+  if (scope == "$self") {
+    Some(v.patterns);
+  } else {
+    StringMap.find_opt(scope, v.repository);
+  };
 
 let getScopeName = (v: t) => v.scopeName;
 
@@ -173,6 +177,13 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
     let currentScopeStack = scopeStack^;
     let patterns = ScopeStack.activePatterns(currentScopeStack);
+
+    /*prerr_endline(
+        "Index: "
+        ++ string_of_int(i)
+        ++ " - scopes: "
+        ++ ScopeStack.show(currentScopeStack),
+      );*/
 
     let rules =
       Rule.ofPatterns(

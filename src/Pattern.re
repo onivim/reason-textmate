@@ -151,13 +151,25 @@ module Json = {
         | _ => Ok([])
         };
 
+      let beginCaptureName =
+        switch (member("beginCaptures", json), member("captures", json)) {
+        | (`Assoc(_), _) => "beginCaptures"
+        | _ => "captures"
+        };
+
+      let endCaptureName =
+        switch (member("endCaptures", json), member("captures", json)) {
+        | (`Assoc(_), _) => "endCaptures"
+        | _ => "captures"
+        };
+
       Ok(
         MatchRange({
           matchScopeName: name,
           beginRegex,
           endRegex,
-          beginCaptures: captures_of_yojson(member("beginCaptures", json)),
-          endCaptures: captures_of_yojson(member("endCaptures", json)),
+          beginCaptures: captures_of_yojson(member(beginCaptureName, json)),
+          endCaptures: captures_of_yojson(member(endCaptureName, json)),
           patterns: nestedPatterns,
         }),
       );

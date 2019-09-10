@@ -66,11 +66,15 @@ let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
     };
   };
 
-  let initialList =
+  let rules = List.fold_left(f, [], patterns);
+
+  switch (ScopeStack.activeRange(scopeStack)) {
+  | Some(v) => [ofMatchRangeEnd(v), ...rules]
+  | None => rules
+  };
+  /*let initialList =
     switch (ScopeStack.activeRange(scopeStack)) {
     | Some(v) => [ofMatchRangeEnd(v)]
     | None => []
-    };
-
-  List.fold_left(f, initialList, patterns);
+    };*/
 };
