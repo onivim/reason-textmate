@@ -170,110 +170,118 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     | None => grammar.initialScopeStack
     | Some(v) => v
     };
-  let scopeStack = ref(initialScope);
+  if (len == 0) {
+    (
+      // If there is an empty string, we'll persist the current scope stack
+      // and return an empty token
+      [Token.create(~position=0, ~length=0, ~scopeStack=initialScope, ())],
+      initialScope,
+    );
+  } else {
+    let scopeStack = ref(initialScope);
+    while (idx^ < len) {
+      let i = idx^;
 
-  while (idx^ < len) {
-    let i = idx^;
+      let currentScopeStack = scopeStack^;
+      let patterns = ScopeStack.activePatterns(currentScopeStack);
 
-    let currentScopeStack = scopeStack^;
-    let patterns = ScopeStack.activePatterns(currentScopeStack);
+      /*prerr_endline(
+          "Index: "
+          ++ string_of_int(i)
+          ++ " - scopes: "
+          ++ ScopeStack.show(currentScopeStack),
+        );*/
 
-    /*prerr_endline(
-        "Index: "
-        ++ string_of_int(i)
-        ++ " - scopes: "
-        ++ ScopeStack.show(currentScopeStack),
-      );*/
+      let rules =
+        Rule.ofPatterns(
+          ~getScope=v => getScope(v, grammar),
+          ~scopeStack=currentScopeStack,
+          patterns,
+        );
+      let bestRule = _getBestRule(rules, line, i);
 
-    let rules =
-      Rule.ofPatterns(
-        ~getScope=v => getScope(v, grammar),
-        ~scopeStack=currentScopeStack,
-        patterns,
-      );
-    let bestRule = _getBestRule(rules, line, i);
+      switch (bestRule) {
+      // No matching rule... just increment position and try again
+      | None => incr(idx)
+      // Got a matching rule!
+      | Some(v) =>
+        open Oniguruma.OnigRegExp.Match;
+        let (_, matches, rule) = v;
+        if (Array.length(matches) > 0) {
+          let ltp = lastTokenPosition^;
+          let prevToken =
+            if (ltp < matches[0].startPos) {
+              [
+                Token.create(
+                  ~position=ltp,
+                  ~length=matches[0].startPos - ltp,
+                  ~scopeStack=scopeStack^,
+                  (),
+                ),
+              ];
+            } else {
+              [];
+            };
 
-    switch (bestRule) {
-    // No matching rule... just increment position and try again
-    | None => incr(idx)
-    // Got a matching rule!
-    | Some(v) =>
-      open Oniguruma.OnigRegExp.Match;
-      let (_, matches, rule) = v;
-      if (Array.length(matches) > 0) {
-        let ltp = lastTokenPosition^;
-        let prevToken =
-          if (ltp < matches[0].startPos) {
-            [
-              Token.create(
-                ~position=ltp,
-                ~length=matches[0].startPos - ltp,
-                ~scopeStack=scopeStack^,
-                (),
-              ),
-            ];
-          } else {
-            [];
+          switch (rule.pushStack) {
+          // If there is nothing to push... nothing to worry about
+          | None => ()
+          | Some(matchRange) =>
+            scopeStack :=
+              ScopeStack.push(
+                ~matches,
+                ~matchRange,
+                ~line=lineNumber,
+                scopeStack^,
+              )
           };
 
-        switch (rule.pushStack) {
-        // If there is nothing to push... nothing to worry about
-        | None => ()
-        | Some(matchRange) =>
-          scopeStack :=
-            ScopeStack.push(
-              ~matches,
-              ~matchRange,
-              ~line=lineNumber,
-              scopeStack^,
-            )
-        };
+          // Only add token if there was actually a match!
+          if (matches[0].endPos > matches[0].startPos) {
+            tokens :=
+              [
+                Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
+                prevToken,
+                ...tokens^,
+              ];
+            lastTokenPosition := matches[0].endPos;
+          };
 
-        // Only add token if there was actually a match!
-        if (matches[0].endPos > matches[0].startPos) {
-          tokens :=
-            [
-              Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
-              prevToken,
-              ...tokens^,
-            ];
-          lastTokenPosition := matches[0].endPos;
-        };
+          if (rule.popStack) {
+            scopeStack := ScopeStack.pop(scopeStack^);
+          };
 
-        if (rule.popStack) {
-          scopeStack := ScopeStack.pop(scopeStack^);
+          let prevIndex = idx^;
+          idx := max(matches[0].endPos, prevIndex + 1);
+        } else {
+          incr(idx);
         };
-
-        let prevIndex = idx^;
-        idx := max(matches[0].endPos, prevIndex + 1);
-      } else {
-        incr(idx);
       };
     };
-  };
 
-  // There might be some leftover whitespace or tokens
-  // that weren't processed through our loop iteration.
-  let tokens =
-    if (lastTokenPosition^ < len) {
-      [
+    // There might be some leftover whitespace or tokens
+    // that weren't processed through our loop iteration.
+    let tokens =
+      if (lastTokenPosition^ < len) {
         [
-          Token.create(
-            ~position=lastTokenPosition^,
-            ~length=len - lastTokenPosition^,
-            ~scopeStack=scopeStack^,
-            (),
-          ),
-        ],
-        ...tokens^,
-      ];
-    } else {
-      tokens^;
-    };
+          [
+            Token.create(
+              ~position=lastTokenPosition^,
+              ~length=len - lastTokenPosition^,
+              ~scopeStack=scopeStack^,
+              (),
+            ),
+          ],
+          ...tokens^,
+        ];
+      } else {
+        tokens^;
+      };
 
-  let retTokens = tokens |> List.rev |> List.flatten;
+    let retTokens = tokens |> List.rev |> List.flatten;
 
-  let scopeStack = scopeStack^;
+    let scopeStack = scopeStack^;
 
-  (retTokens, scopeStack);
+    (retTokens, scopeStack);
+  };
 };
