@@ -15,12 +15,16 @@ let ofTopLevelScope = (patterns, scopeName) => {
 };
 
 let show = (v: t) => {
-  List.fold_left((prev, curr: Pattern.matchRange) => {
+  List.fold_left(
+    (prev, curr: Pattern.matchRange) => {
       switch (curr.matchScopeName) {
       | None => " .. " ++ prev
       | Some(v) => v ++ " " ++ prev
       }
-  }, "", v.scopes);
+    },
+    "",
+    v.scopes,
+  );
 };
 
 let activeRange = (v: t) => {

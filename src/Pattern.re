@@ -151,15 +151,17 @@ module Json = {
         | _ => Ok([])
         };
 
-      let beginCaptureName = switch ((member("beginCaptures", json), member("captures", json))) {
-      | (`Assoc(_), _) => "beginCaptures"
-      | _ => "captures";
-      };
-      
-      let endCaptureName = switch ((member("endCaptures", json), member("captures", json))) {
-      | (`Assoc(_), _) => "endCaptures"
-      | _ => "captures";
-      };
+      let beginCaptureName =
+        switch (member("beginCaptures", json), member("captures", json)) {
+        | (`Assoc(_), _) => "beginCaptures"
+        | _ => "captures"
+        };
+
+      let endCaptureName =
+        switch (member("endCaptures", json), member("captures", json)) {
+        | (`Assoc(_), _) => "endCaptures"
+        | _ => "captures"
+        };
 
       Ok(
         MatchRange({
