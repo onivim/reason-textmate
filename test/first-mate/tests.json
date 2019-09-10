@@ -307,5 +307,71 @@
 			"fixtures/python-regex.json"
 		],
 		"desc": "TEST #6"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "  destroy: ->",
+				"tokens": [
+					{
+						"value": "  ",
+						"scopes": [
+							"source.coffee"
+						]
+					},
+					{
+						"value": "destro",
+						"scopes": [
+							"source.coffee",
+							"meta.function.coffee",
+							"entity.name.function.coffee"
+						]
+					},
+					{
+						"value": "y",
+						"scopes": [
+							"source.coffee",
+							"meta.function.coffee",
+							"entity.name.function.coffee",
+							"entity.name.function.coffee"
+						]
+					},
+					{
+						"value": ":",
+						"scopes": [
+							"source.coffee",
+							"keyword.operator.coffee"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.coffee"
+						]
+					},
+					{
+						"value": "->",
+						"scopes": [
+							"source.coffee",
+							"storage.type.function.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #9"
 	}
 ]
