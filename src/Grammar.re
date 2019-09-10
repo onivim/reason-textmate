@@ -220,14 +220,14 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
         // Only add token if there was actually a match!
         if (matches[0].endPos > matches[0].startPos) {
-        tokens :=
-          [
-            Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
-            prevToken,
-            ...tokens^,
-          ];
-        lastTokenPosition := matches[0].endPos;
-        }
+          tokens :=
+            [
+              Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
+              prevToken,
+              ...tokens^,
+            ];
+          lastTokenPosition := matches[0].endPos;
+        };
 
         if (rule.popStack) {
           scopeStack := ScopeStack.pop(scopeStack^);
