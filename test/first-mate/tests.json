@@ -247,5 +247,65 @@
 			"fixtures/hello.json"
 		],
 		"desc": "TEST #8"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "7777777",
+				"tokens": [
+					{
+						"value": "7777777",
+						"scopes": [
+							"source.coffee",
+							"constant.numeric.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #10"
+	},
+	{
+		"grammarScopeName": "text.plain",
+		"lines": [
+			{
+				"line": "abc def",
+				"tokens": [
+					{
+						"value": "abc def",
+						"scopes": [
+							"text.plain",
+							"meta.paragraph.text"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #6"
 	}
 ]

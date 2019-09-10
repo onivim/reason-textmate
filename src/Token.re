@@ -74,6 +74,12 @@ let ofMatch =
           let (idx, scope) = curr;
           let match = matches[idx];
 
+          prerr_endline ("MATCH - |" ++ match.match ++ "|" ++ string_of_int(match.startPos) ++ "-" ++ string_of_int(match.endPos));
+          if (match.endPos - match.startPos == 0) {
+            prev
+          } else {
+
+
           // Was there any space between the last position and the capture?
           // If so - create a token to fill in that space
           let firstToken =
@@ -136,6 +142,7 @@ let ofMatch =
 
           let newPos = match.startPos + match.length;
           (newPos, tokens);
+          }
         },
         (initialMatch.startPos, []),
         v,
