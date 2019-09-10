@@ -33,6 +33,12 @@ let create =
   ret;
 };
 
+let _create2 = (~position, ~length, ~scopes, ()) => {
+  position,
+  length,
+  scopes,
+};
+
 let show = (v: t) => {
   let scopes =
     List.fold_left((prev, curr) => prev ++ ", " ++ curr, "", v.scopes);
@@ -66,83 +72,130 @@ let ofMatch =
     ];
   | v =>
     let initialMatch = matches[0];
-    let (_, tokens) =
-      List.fold_left(
-        (prev, curr) => {
-          let (pos, tokens) = prev;
 
-          let (idx, scope) = curr;
-          let match = matches[idx];
+    /*prerr_endline(
+        "INITIALMATCH - |"
+        ++ initialMatch.match
+        ++ "|"
+        ++ string_of_int(initialMatch.startPos)
+        ++ "-"
+        ++ string_of_int(initialMatch.endPos)
+        ++ " length: "
+        ++ string_of_int(initialMatch.length),
+      );*/
 
-          // prerr_endline ("MATCH - |" ++ match.match ++ "|" ++ string_of_int(match.startPos) ++ "-" ++ string_of_int(match.endPos));
+    /*If the rule is a 'push stack', the outer rule has already been applied
+          because the scope stack has been updated.
+          If there rule is not a 'push stack', then we need to apply the rule here
+          locally, for patterns like this:
 
-          // Was there any space between the last position and the capture?
-          // If so - create a token to fill in that space
-          let firstToken =
-            if (match.startPos > pos) {
-              Some(
-                create(
-                  ~position=pos,
-                  ~length=match.startPos - pos,
-                  ~scope=rule.name,
-                  ~scopeStack,
-                  (),
-                ),
-              );
-            } else {
-              None;
-            };
+      {
+       "match": "world(!?)",
+       "captures": {
+         "1": {
+           "name": "emphasis.hello"
+         }
+       },
+       "name": "suffix.hello"
+      }
 
-          /*
-               If the rule is a 'push stack', the outer rule has already been applied
-               because the scope stack has been updated.
-               If there rule is not a 'push stack', then we need to apply the rule here
-               locally, for patterns like this:
+            For a string like "world!", we'd expect two tokens:
+            - "hello" - ["suffix.hello"]
+            - "!" - ["emphasis.hello", "suffix.hello"]
+          */
+    let scopeNames = ScopeStack.getScopes(scopeStack);
+    let initialScope =
+      switch (rule.name, rule.pushStack, rule.popStack) {
+      | (Some(name), None, false) => [name, ...scopeNames]
+      | _ => scopeNames
+      };
 
-           {
-           	"match": "world(!?)",
-           	"captures": {
-           		"1": {
-           			"name": "emphasis.hello"
-           		}
-           	},
-           	"name": "suffix.hello"
-           }
+    // Create an array for each element in the match
+    let len = initialMatch.length;
+    let scopeArray = Array.make(initialMatch.length, initialScope);
 
-                 For a string like "world!", we'd expect two tokens:
-                 - "hello" - ["suffix.hello"]
-                 - "!" - ["emphasis.hello", "suffix.hello"]
-               */
+    // Apply each capture group to the array
+    List.iter(
+      cg => {
+        let (idx, scope) = cg;
+        let match = matches[idx];
+        /*prerr_endline(
+            " --MATCH - |"
+            ++ match.match
+            ++ "|"
+            ++ string_of_int(match.startPos)
+            ++ "-"
+            ++ string_of_int(match.endPos)
+            ++ " length: "
+            ++ string_of_int(match.length),
+          );*/
 
-          let outerScope =
-            switch (rule.pushStack, rule.popStack) {
-            | (None, false) => rule.name
-            | _ => None
-            };
+        if (match.length > 0 && match.startPos < initialMatch.endPos) {
+          let idx = ref(match.startPos - initialMatch.startPos);
+          let endPos = min(len, match.endPos - initialMatch.startPos);
 
-          let captureToken =
-            create(
-              ~position=match.startPos,
-              ~length=match.length,
-              ~scope=Some(scope),
-              ~outerScope,
-              ~scopeStack,
+          while (idx^ < endPos) {
+            let i = idx^;
+            scopeArray[i] = [scope, ...scopeArray[i]];
+            incr(idx);
+          };
+        };
+      },
+      v,
+    );
+
+    let rec scopesAreEqual = (scopeList1, scopeList2) => {
+      switch (scopeList1, scopeList2) {
+      | ([h1, ...t1], [h2, ...t2]) =>
+        h1 == h2 ? scopesAreEqual(t1, t2) : false
+      | ([], []) => true
+      | _ => false
+      };
+    };
+
+    // Iterate across array and make tokens
+
+    let lastTokenPosition = ref(0);
+    let idx = ref(1);
+    let len = initialMatch.length;
+    let tokens = ref([]);
+
+    while (idx^ < len) {
+      let i = idx^;
+      let prev = i - 1;
+      let curScopes = scopeArray[i];
+      let prevScopes = scopeArray[prev];
+
+      if (!scopesAreEqual(curScopes, prevScopes)) {
+        tokens :=
+          [
+            _create2(
+              ~position=lastTokenPosition^ + initialMatch.startPos,
+              ~length=i - lastTokenPosition^,
+              ~scopes=prevScopes,
               (),
-            );
+            ),
+            ...tokens^,
+          ];
+        lastTokenPosition := i;
+      };
 
-          let tokens =
-            switch (firstToken) {
-            | Some(v) => [captureToken, v, ...tokens]
-            | None => [captureToken, ...tokens]
-            };
+      incr(idx);
+    };
 
-          let newPos = match.startPos + match.length;
-          (newPos, tokens);
-        },
-        (initialMatch.startPos, []),
-        v,
-      );
+    if (lastTokenPosition^ < len) {
+      tokens :=
+        [
+          _create2(
+            ~position=lastTokenPosition^ + initialMatch.startPos,
+            ~length=len - lastTokenPosition^,
+            ~scopes=scopeArray[len - 1],
+            (),
+          ),
+          ...tokens^,
+        ];
+    };
 
-    tokens |> List.filter(t => t.length > 0) |> List.rev;
+    tokens^ |> List.filter(t => t.length > 0) |> List.rev;
   };
 };
