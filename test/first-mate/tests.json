@@ -563,5 +563,94 @@
 			"fixtures/python-regex.json"
 		],
 		"desc": "TEST #12"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "",
+				"tokens": [
+					{
+						"value": "",
+						"scopes": [
+							"source.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #13"
+	},
+	{
+		"grammarScopeName": "text.plain",
+		"lines": [
+			{
+				"line": "hoo",
+				"tokens": [
+					{
+						"value": "hoo",
+						"scopes": [
+							"text.plain",
+							"meta.paragraph.text"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #14"
+	},
+	{
+		"grammarScopeName": "text.plain",
+		"lines": [
+			{
+				"line": "ok, cool",
+				"tokens": [
+					{
+						"value": "ok, cool",
+						"scopes": [
+							"text.plain",
+							"meta.paragraph.text"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #15"
 	}
 ]
