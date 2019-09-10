@@ -9,8 +9,13 @@ type t = {
   repository: StringMap.t(list(Pattern.t)),
 };
 
-let getScope = (scope: string, v: t) =>
-  StringMap.find_opt(scope, v.repository);
+let getScope = (scope: string, v: t) => {
+  if (scope == "$self") {
+    Some(v.patterns)
+  } else {
+    StringMap.find_opt(scope, v.repository);
+  }
+};
 
 let getScopeName = (v: t) => v.scopeName;
 
