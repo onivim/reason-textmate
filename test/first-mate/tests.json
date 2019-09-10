@@ -453,5 +453,115 @@
 			"fixtures/python-regex.json"
 		],
 		"desc": "TEST #11"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "\"#{\"#{@x}\"}\"",
+				"tokens": [
+					{
+						"value": "\"",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"punctuation.definition.string.begin.coffee"
+						]
+					},
+					{
+						"value": "#{",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"punctuation.section.embedded.coffee"
+						]
+					},
+					{
+						"value": "\"",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"string.quoted.double.coffee",
+							"punctuation.definition.string.begin.coffee"
+						]
+					},
+					{
+						"value": "#{",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"punctuation.section.embedded.coffee"
+						]
+					},
+					{
+						"value": "@x",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"variable.other.readwrite.instance.coffee"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"punctuation.section.embedded.coffee"
+						]
+					},
+					{
+						"value": "\"",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"string.quoted.double.coffee",
+							"punctuation.definition.string.end.coffee"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"source.coffee.embedded.source",
+							"punctuation.section.embedded.coffee"
+						]
+					},
+					{
+						"value": "\"",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.coffee",
+							"punctuation.definition.string.end.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #12"
 	}
 ]
