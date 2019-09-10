@@ -35,8 +35,8 @@ let create =
 
 let _create2 = (~position, ~length, ~scopes, ()) => {
   position,
-  length, 
-  scopes
+  length,
+  scopes,
 };
 
 let show = (v: t) => {
@@ -72,106 +72,128 @@ let ofMatch =
     ];
   | v =>
     let initialMatch = matches[0];
-    prerr_endline ("INITIALMATCH - |" ++ initialMatch.match ++ 
-      "|" ++ string_of_int(initialMatch.startPos) ++ "-" ++ string_of_int(initialMatch.endPos) ++ " length: " ++ string_of_int(initialMatch.length));
-          
-         /*If the rule is a 'push stack', the outer rule has already been applied
-         because the scope stack has been updated.
-         If there rule is not a 'push stack', then we need to apply the rule here
-         locally, for patterns like this:
+    prerr_endline(
+      "INITIALMATCH - |"
+      ++ initialMatch.match
+      ++ "|"
+      ++ string_of_int(initialMatch.startPos)
+      ++ "-"
+      ++ string_of_int(initialMatch.endPos)
+      ++ " length: "
+      ++ string_of_int(initialMatch.length),
+    );
 
-     {
-      "match": "world(!?)",
-      "captures": {
-        "1": {
-          "name": "emphasis.hello"
-        }
+    /*If the rule is a 'push stack', the outer rule has already been applied
+          because the scope stack has been updated.
+          If there rule is not a 'push stack', then we need to apply the rule here
+          locally, for patterns like this:
+
+      {
+       "match": "world(!?)",
+       "captures": {
+         "1": {
+           "name": "emphasis.hello"
+         }
+       },
+       "name": "suffix.hello"
+      }
+
+            For a string like "world!", we'd expect two tokens:
+            - "hello" - ["suffix.hello"]
+            - "!" - ["emphasis.hello", "suffix.hello"]
+          */
+    let scopeNames = ScopeStack.getScopes(scopeStack);
+    let initialScope =
+      switch (rule.name, rule.pushStack, rule.popStack) {
+      | (Some(name), None, false) => [name, ...scopeNames]
+      | _ => scopeNames
+      };
+
+    // Create an array for each element in the match
+    let len = initialMatch.length;
+    let scopeArray = Array.make(initialMatch.length, initialScope);
+
+    // Apply each capture group to the array
+    List.iter(
+      cg => {
+        let (idx, scope) = cg;
+        let match = matches[idx];
+        prerr_endline(
+          " --MATCH - |"
+          ++ match.match
+          ++ "|"
+          ++ string_of_int(match.startPos)
+          ++ "-"
+          ++ string_of_int(match.endPos)
+          ++ " length: "
+          ++ string_of_int(match.length),
+        );
+
+        if (match.length > 0 && match.startPos < initialMatch.endPos) {
+          let idx = ref(match.startPos - initialMatch.startPos);
+          let endPos = min(len, match.endPos - initialMatch.startPos);
+
+          while (idx^ < endPos) {
+            let i = idx^;
+            scopeArray[i] = [scope, ...scopeArray[i]];
+            incr(idx);
+          };
+        };
       },
-      "name": "suffix.hello"
-     }
+      v,
+    );
 
-           For a string like "world!", we'd expect two tokens:
-           - "hello" - ["suffix.hello"]
-           - "!" - ["emphasis.hello", "suffix.hello"]
-         */
-          let scopeNames = ScopeStack.getScopes(scopeStack);
-          let initialScope =
-            switch (rule.name, rule.pushStack, rule.popStack) {
-            | (Some(name), None, false) => [name, ...scopeNames]
-            | _ => scopeNames
-            };
+    let rec scopesAreEqual = (scopeList1, scopeList2) => {
+      switch (scopeList1, scopeList2) {
+      | ([h1, ...t1], [h2, ...t2]) =>
+        h1 == h2 ? scopesAreEqual(t1, t2) : false
+      | ([], []) => true
+      | _ => false
+      };
+    };
 
-        // Create an array for each element in the match
-        let len = initialMatch.length;
-        let scopeArray = Array.make(initialMatch.length, initialScope);
-        
-        // Apply each capture group to the array
-        List.iter((cg) => {
-          let (idx, scope) = cg;
-          let match = matches[idx];
-    prerr_endline (" --MATCH - |" ++ match.match ++ 
-      "|" ++ string_of_int(match.startPos) ++ "-" 
-      ++ string_of_int(match.endPos) ++ " length: " 
-      ++ string_of_int(match.length));
-          
-          if (match.length > 0 && match.startPos < initialMatch.endPos) {
-            
-            let idx = ref(match.startPos - initialMatch.startPos);
-            let endPos = min(len, match.endPos - initialMatch.startPos);
+    // Iterate across array and make tokens
 
-            while (idx^ < endPos) {
-              let i = idx^;
-              scopeArray[i] = [scope, ...scopeArray[i]];
-              incr(idx);
-            };
-          }
-        }, v);
+    let lastTokenPosition = ref(0);
+    let idx = ref(1);
+    let len = initialMatch.length;
+    let tokens = ref([]);
 
-        let rec scopesAreEqual = (scopeList1, scopeList2) => {
-          switch ((scopeList1, scopeList2)) {
-          | ([h1, ...t1], [h2, ...t2]) => h1 == h2 ? scopesAreEqual(t1, t2) : false
-          | ([], []) => true
-          | _ => false
-          }
-        };
+    while (idx^ < len) {
+      let i = idx^;
+      let prev = i - 1;
+      let curScopes = scopeArray[i];
+      let prevScopes = scopeArray[prev];
 
-        // Iterate across array and make tokens
+      if (!scopesAreEqual(curScopes, prevScopes)) {
+        tokens :=
+          [
+            _create2(
+              ~position=lastTokenPosition^ + initialMatch.startPos,
+              ~length=i - lastTokenPosition^,
+              ~scopes=prevScopes,
+              (),
+            ),
+            ...tokens^,
+          ];
+        lastTokenPosition := i;
+      };
 
-        let lastTokenPosition = ref(0);
-        let idx = ref(1);
-        let len = initialMatch.length;
-        let tokens = ref([]);
+      incr(idx);
+    };
 
-        while (idx^ < len) {
-           
-          let i = idx^;
-          let prev = i - 1;
-          let curScopes = scopeArray[i];
-          let prevScopes = scopeArray[prev];
-
-          if (!scopesAreEqual(curScopes, prevScopes)) {
-            tokens := [_create2(
-                ~position=lastTokenPosition^ + initialMatch.startPos,
-                ~length=i - lastTokenPosition^,
-                ~scopes=prevScopes,
-                ()),
-                ...tokens^];
-            lastTokenPosition := i;
-          }
-          
-          incr(idx);
-        }
-
-        if (lastTokenPosition^ < len) {
-
-            tokens := [_create2(
-                ~position=lastTokenPosition^ + initialMatch.startPos,
-                ~length=len - lastTokenPosition^,
-                ~scopes=scopeArray[len - 1],
-                ()),
-                ...tokens^];
-        };
-
+    if (lastTokenPosition^ < len) {
+      tokens :=
+        [
+          _create2(
+            ~position=lastTokenPosition^ + initialMatch.startPos,
+            ~length=len - lastTokenPosition^,
+            ~scopes=scopeArray[len - 1],
+            (),
+          ),
+          ...tokens^,
+        ];
+    };
 
     tokens^ |> List.filter(t => t.length > 0) |> List.rev;
   };

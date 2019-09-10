@@ -139,9 +139,13 @@ module FirstMateTest = {
         } else {
           failwith(
             "Strings do not match - actual: "
-            ++ "|" ++ actualTokenValue ++ "|"
+            ++ "|"
+            ++ actualTokenValue
+            ++ "|"
             ++ " expected: "
-            ++ "|" ++ expectedValue ++ "|",
+            ++ "|"
+            ++ expectedValue
+            ++ "|",
           );
         };
 
