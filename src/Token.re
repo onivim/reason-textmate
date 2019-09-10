@@ -72,7 +72,8 @@ let ofMatch =
     ];
   | v =>
     let initialMatch = matches[0];
-    prerr_endline(
+    
+    /*prerr_endline(
       "INITIALMATCH - |"
       ++ initialMatch.match
       ++ "|"
@@ -81,7 +82,7 @@ let ofMatch =
       ++ string_of_int(initialMatch.endPos)
       ++ " length: "
       ++ string_of_int(initialMatch.length),
-    );
+    );*/
 
     /*If the rule is a 'push stack', the outer rule has already been applied
           because the scope stack has been updated.
@@ -118,7 +119,7 @@ let ofMatch =
       cg => {
         let (idx, scope) = cg;
         let match = matches[idx];
-        prerr_endline(
+        /*prerr_endline(
           " --MATCH - |"
           ++ match.match
           ++ "|"
@@ -127,7 +128,7 @@ let ofMatch =
           ++ string_of_int(match.endPos)
           ++ " length: "
           ++ string_of_int(match.length),
-        );
+        );*/
 
         if (match.length > 0 && match.startPos < initialMatch.endPos) {
           let idx = ref(match.startPos - initialMatch.startPos);
