@@ -1169,5 +1169,183 @@
 			"fixtures/apply-end-pattern-last.json"
 		],
 		"desc": "TEST #24"
+	},
+	{
+		"grammarScopeName": "source.ruby",
+		"lines": [
+			{
+				"line": "%w|oh|,",
+				"tokens": [
+					{
+						"value": "%w|",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.lower.ruby",
+							"punctuation.definition.string.begin.ruby"
+						]
+					},
+					{
+						"value": "oh",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.lower.ruby"
+						]
+					},
+					{
+						"value": "|",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.lower.ruby",
+							"punctuation.definition.string.end.ruby"
+						]
+					},
+					{
+						"value": ",",
+						"scopes": [
+							"source.ruby",
+							"punctuation.separator.object.ruby"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #25"
+	},
+	{
+		"grammarScopeName": "source.ruby",
+		"lines": [
+			{
+				"line": "%Q+matz had some #{%Q-crazy ideas-} for ruby syntax+ # damn.",
+				"tokens": [
+					{
+						"value": "%Q+",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"punctuation.definition.string.begin.ruby"
+						]
+					},
+					{
+						"value": "matz had some ",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby"
+						]
+					},
+					{
+						"value": "#{",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"meta.embedded.line.ruby",
+							"punctuation.section.embedded.begin.ruby"
+						]
+					},
+					{
+						"value": "%Q-",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"meta.embedded.line.ruby",
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"punctuation.definition.string.begin.ruby"
+						]
+					},
+					{
+						"value": "crazy ideas",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"meta.embedded.line.ruby",
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby"
+						]
+					},
+					{
+						"value": "-",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"meta.embedded.line.ruby",
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"punctuation.definition.string.end.ruby"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"meta.embedded.line.ruby",
+							"punctuation.section.embedded.end.ruby",
+							"source.ruby"
+						]
+					},
+					{
+						"value": " for ruby syntax",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby"
+						]
+					},
+					{
+						"value": "+",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.upper.ruby",
+							"punctuation.definition.string.end.ruby"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.ruby"
+						]
+					},
+					{
+						"value": "#",
+						"scopes": [
+							"source.ruby",
+							"comment.line.number-sign.ruby",
+							"punctuation.definition.comment.ruby"
+						]
+					},
+					{
+						"value": " damn.",
+						"scopes": [
+							"source.ruby",
+							"comment.line.number-sign.ruby"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #26"
 	}
 ]
