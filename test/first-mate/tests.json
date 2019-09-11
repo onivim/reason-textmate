@@ -688,5 +688,132 @@
 			"fixtures/python-regex.json"
 		],
 		"desc": "TEST #16"
-	}
+	},
+	{
+		"grammarScopeName": "source.test",
+		"lines": [
+			{
+				"line": "#if",
+				"tokens": [
+					{
+						"value": "#if",
+						"scopes": [
+							"source.test",
+							"pre"
+						]
+					}
+				]
+			},
+			{
+				"line": "test",
+				"tokens": [
+					{
+						"value": "test",
+						"scopes": [
+							"source.test",
+							"pre",
+							"nested"
+						]
+					}
+				]
+			},
+			{
+				"line": "#endif",
+				"tokens": [
+					{
+						"value": "#endif",
+						"scopes": [
+							"source.test",
+							"pre"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/content-name.json"
+		],
+		"desc": "TEST #17"
+	},
+	{
+		"grammarScopeName": "source.test",
+		"lines": [
+			{
+				"line": "test",
+				"tokens": [
+					{
+						"value": "test",
+						"scopes": [
+							"source.test",
+							"all",
+							"middle"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/content-name.json"
+		],
+		"desc": "TEST #18"
+	},
+	{
+		"grammarScopeName": "source.test",
+		"lines": [
+			{
+				"line": " test",
+				"tokens": [
+					{
+						"value": " ",
+						"scopes": [
+							"source.test",
+							"all"
+						]
+					},
+					{
+						"value": "test",
+						"scopes": [
+							"source.test",
+							"all",
+							"middle"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/content-name.json"
+		],
+		"desc": "TEST #19"
+	},
 ]

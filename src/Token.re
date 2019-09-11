@@ -60,12 +60,17 @@ let ofMatch =
     ) => {
   switch (rule.captures) {
   | [] =>
+    let name =
+      switch (rule.name, rule.pushStack, rule.popStack) {
+      | (Some(name), None, None) => Some(name)
+      | _ => None
+      };
     let match = matches[0];
     [
       create(
         ~position=match.startPos,
         ~length=match.length,
-        ~scope=rule.name,
+        ~scope=name,
         ~scopeStack,
         (),
       ),
