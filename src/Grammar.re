@@ -7,24 +7,24 @@ type t = {
   scopeName: string,
   patterns: list(Pattern.t),
   repository: StringMap.t(list(Pattern.t)),
-  grammarRepository: grammarRepository,
-} and grammarRepository = (string) => option(t);
+  grammarRepository,
+}
+and grammarRepository = string => option(t);
 
-let noopGrammarRepository: grammarRepository = (_) => None;
+let noopGrammarRepository: grammarRepository = _ => None;
 
 let getScope = (scope: string, v: t) => {
-  let len = String.length(scope)
+  let len = String.length(scope);
   if (scope == "$self") {
     Some(v.patterns);
-  } else if (len > 0 && String.get(scope, 0) == '#') {
+  } else if (len > 0 && scope.[0] == '#') {
     StringMap.find_opt(scope, v.repository);
   } else {
-    // Raw include names without a '#' or '$' in front reference other garmmars 
-
-    switch(v.grammarRepository(scope)) {
+    // Raw include names without a '#' or '$' in front reference other garmmars
+    switch (v.grammarRepository(scope)) {
     | Some(g) => Some(g.patterns)
     | None => None
-        }
+    };
   };
 };
 
@@ -51,7 +51,7 @@ let create =
       ~scopeName: string,
       ~patterns: list(Pattern.t),
       ~repository: list((string, list(Pattern.t))),
-      ~grammarRepository: grammarRepository = noopGrammarRepository,
+      ~grammarRepository: grammarRepository=noopGrammarRepository,
       (),
     ) => {
   let repositoryMap =

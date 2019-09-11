@@ -84,7 +84,6 @@ module FirstMateTest = {
     };
   };
 
-
   let run = (pass, fail, v: t) => {
     ignore(fail);
 
