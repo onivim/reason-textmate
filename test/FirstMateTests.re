@@ -84,10 +84,14 @@ module FirstMateTest = {
     };
   };
 
+
   let run = (pass, fail, v: t) => {
     ignore(fail);
 
     let grammarMap = _loadGrammars(v);
+    let grammarRepository = (scopeName: string) => {
+      StringMap.find_opt(scopeName, grammarMap);
+    };
     prerr_endline("Loaded grammars!");
     pass("Grammars loaded");
 
@@ -100,6 +104,7 @@ module FirstMateTest = {
         | None => failwith("Unable to locate grammar")
         }
       };
+    let grammar = Grammar.setGrammarRepository(grammarRepository, grammar);
 
     let idx = ref(0);
     let linesArray = Array.of_list(v.lines);
@@ -135,7 +140,7 @@ module FirstMateTest = {
 
         prerr_endline("- Validating token: " ++ string_of_int(idx));
         if (String.equal(expectedValue, actualTokenValue)) {
-          prerr_endline("PASS");
+          prerr_endline("Token Text is correct: " ++ expectedValue);
         } else {
           failwith(
             "Strings do not match - actual: "
