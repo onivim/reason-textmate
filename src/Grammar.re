@@ -201,13 +201,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     // Get active set of patterns...
     let patterns = ScopeStack.activePatterns(currentScopeStack);
 
-    prerr_endline(
-      "Index: "
-      ++ string_of_int(i)
-      ++ " - scopes: "
-      ++ ScopeStack.show(currentScopeStack),
-    );
-
     // ...and then get rules from the patterns.
     let rules =
       Rule.ofPatterns(
@@ -226,11 +219,10 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     | Some(v) =>
       open Oniguruma.OnigRegExp.Match;
       let (_, matches, rule) = v;
-      prerr_endline("Winning rule: " ++ Rule.show(rule));
       let ltp = lastTokenPosition^;
       let prevToken =
         if (ltp < matches[0].startPos) {
-          print_endline("Creating token at: " ++ string_of_int(ltp));
+          //print_endline("Creating token at: " ++ string_of_int(ltp));
           [
             Token.create(
               ~position=ltp,
@@ -247,7 +239,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       // If there is nothing to push... nothing to worry about
       | None => ()
       | Some(matchRange) =>
-        print_endline("Adding scope...");
         scopeStack :=
           ScopeStack.pushPattern(
             ~matches,
@@ -271,12 +262,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         }
       };
 
-      print_endline(
-        " -- match: "
-        ++ string_of_int(matches[0].startPos)
-        ++ "-"
-        ++ string_of_int(matches[0].endPos),
-      );
       // Only add token if there was actually a match!
       if (matches[0].endPos > matches[0].startPos) {
         tokens :=
