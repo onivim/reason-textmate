@@ -190,159 +190,153 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     | Some(v) => v
     };
 
-  // Empty string - just return a single, zero-length token, and persist the scope stack.
-  if (len == 0) {
-    (
-      [Token.create(~position=0, ~length=0, ~scopeStack=initialScope, ())],
-      initialScope,
+  let scopeStack = ref(initialScope);
+
+  // Iterate across the string and tokenize
+  while (idx^ <= len) {
+    let i = idx^;
+
+    let currentScopeStack = scopeStack^;
+
+    // Get active set of patterns...
+    let patterns = ScopeStack.activePatterns(currentScopeStack);
+
+    prerr_endline(
+      "Index: "
+      ++ string_of_int(i)
+      ++ " - scopes: "
+      ++ ScopeStack.show(currentScopeStack),
     );
-  } else {
-    let scopeStack = ref(initialScope);
 
-    // Iterate across the string and tokenize
-    while (idx^ < len) {
-      let i = idx^;
-
-      let currentScopeStack = scopeStack^;
-
-      // Get active set of patterns...
-      let patterns = ScopeStack.activePatterns(currentScopeStack);
-
-      prerr_endline(
-        "Index: "
-        ++ string_of_int(i)
-        ++ " - scopes: "
-        ++ ScopeStack.show(currentScopeStack),
+    // ...and then get rules from the patterns.
+    let rules =
+      Rule.ofPatterns(
+        ~getScope=v => getScope(v, grammar),
+        ~scopeStack=currentScopeStack,
+        patterns,
       );
 
-      // ...and then get rules from the patterns.
-      let rules =
-        Rule.ofPatterns(
-          ~getScope=v => getScope(v, grammar),
-          ~scopeStack=currentScopeStack,
-          patterns,
-        );
+    // And figure out if any of the rules applies.
+    let bestRule = _getBestRule(rules, line, i);
 
-      // And figure out if any of the rules applies.
-      let bestRule = _getBestRule(rules, line, i);
-
-      switch (bestRule) {
-      // No matching rule... just increment position and try again
-      | None => incr(idx)
-      // Got a matching rule!
-      | Some(v) =>
-        open Oniguruma.OnigRegExp.Match;
-        let (_, matches, rule) = v;
-        prerr_endline("Winning rule: " ++ Rule.show(rule));
-        let ltp = lastTokenPosition^;
-        let prevToken =
-          if (ltp < matches[0].startPos) {
-            print_endline("Creating token at: " ++ string_of_int(ltp));
-            [
-              Token.create(
-                ~position=ltp,
-                ~length=matches[0].startPos - ltp,
-                ~scopeStack=scopeStack^,
-                (),
-              ),
-            ];
-          } else {
-            [];
-          };
-
-        switch (rule.pushStack) {
-        // If there is nothing to push... nothing to worry about
-        | None => ()
-        | Some(matchRange) =>
-          print_endline("Adding scope...");
-          scopeStack :=
-            ScopeStack.pushPattern(
-              ~matches,
-              ~matchRange,
-              ~line=lineNumber,
-              scopeStack^,
-            );
-
-          switch (matchRange.name) {
-          | None => ()
-          | Some(n) => scopeStack := ScopeStack.pushScope(n, scopeStack^)
-          };
-        };
-
-        switch (rule.popStack) {
-        | None => ()
-        | Some(mr) =>
-          switch (mr.contentName) {
-          | None => ()
-          | Some(_) => scopeStack := ScopeStack.popScope(scopeStack^)
-          }
-        };
-
-        print_endline(
-          " -- match: "
-          ++ string_of_int(matches[0].startPos)
-          ++ "-"
-          ++ string_of_int(matches[0].endPos),
-        );
-        // Only add token if there was actually a match!
-        if (matches[0].endPos > matches[0].startPos) {
-          tokens :=
-            [
-              Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
-              prevToken,
-              ...tokens^,
-            ];
-          lastTokenPosition := matches[0].endPos;
-        };
-
-        switch (rule.pushStack) {
-        // If there is nothing to push... nothing to worry about
-        | None => ()
-        | Some(matchRange) =>
-          switch (matchRange.contentName) {
-          | None => ()
-          | Some(n) => scopeStack := ScopeStack.pushScope(n, scopeStack^)
-          }
-        };
-
-        switch (rule.popStack) {
-        | None => ()
-        | Some(mr) =>
-          scopeStack := ScopeStack.popPattern(scopeStack^);
-          switch (mr.name) {
-          | None => ()
-          | Some(_) => scopeStack := ScopeStack.popScope(scopeStack^)
-          };
-        };
-
-        let prevIndex = idx^;
-        idx := max(matches[0].endPos, prevIndex);
-      };
-    };
-
-    // There might be some leftover whitespace or tokens
-    // that weren't processed through our loop iteration.
-    let tokens =
-      if (lastTokenPosition^ < len) {
-        [
+    switch (bestRule) {
+    // No matching rule... just increment position and try again
+    | None => incr(idx)
+    // Got a matching rule!
+    | Some(v) =>
+      open Oniguruma.OnigRegExp.Match;
+      let (_, matches, rule) = v;
+      prerr_endline("Winning rule: " ++ Rule.show(rule));
+      let ltp = lastTokenPosition^;
+      let prevToken =
+        if (ltp < matches[0].startPos) {
+          print_endline("Creating token at: " ++ string_of_int(ltp));
           [
             Token.create(
-              ~position=lastTokenPosition^,
-              ~length=len - lastTokenPosition^,
+              ~position=ltp,
+              ~length=matches[0].startPos - ltp,
               ~scopeStack=scopeStack^,
               (),
             ),
-          ],
-          ...tokens^,
-        ];
-      } else {
-        tokens^;
+          ];
+        } else {
+          [];
+        };
+
+      switch (rule.pushStack) {
+      // If there is nothing to push... nothing to worry about
+      | None => ()
+      | Some(matchRange) =>
+        print_endline("Adding scope...");
+        scopeStack :=
+          ScopeStack.pushPattern(
+            ~matches,
+            ~matchRange,
+            ~line=lineNumber,
+            scopeStack^,
+          );
+
+        switch (matchRange.name) {
+        | None => ()
+        | Some(n) => scopeStack := ScopeStack.pushScope(n, scopeStack^)
+        };
       };
 
-    let retTokens = tokens |> List.rev |> List.flatten;
+      switch (rule.popStack) {
+      | None => ()
+      | Some(mr) =>
+        switch (mr.contentName) {
+        | None => ()
+        | Some(_) => scopeStack := ScopeStack.popScope(scopeStack^)
+        }
+      };
 
-    let scopeStack = scopeStack^;
+      print_endline(
+        " -- match: "
+        ++ string_of_int(matches[0].startPos)
+        ++ "-"
+        ++ string_of_int(matches[0].endPos),
+      );
+      // Only add token if there was actually a match!
+      if (matches[0].endPos > matches[0].startPos) {
+        tokens :=
+          [
+            Token.ofMatch(~matches, ~rule, ~scopeStack=scopeStack^, ()),
+            prevToken,
+            ...tokens^,
+          ];
+        lastTokenPosition := matches[0].endPos;
+      };
 
-    (retTokens, scopeStack);
+      switch (rule.pushStack) {
+      // If there is nothing to push... nothing to worry about
+      | None => ()
+      | Some(matchRange) =>
+        switch (matchRange.contentName) {
+        | None => ()
+        | Some(n) => scopeStack := ScopeStack.pushScope(n, scopeStack^)
+        }
+      };
+
+      switch (rule.popStack) {
+      | None => ()
+      | Some(mr) =>
+        scopeStack := ScopeStack.popPattern(scopeStack^);
+        switch (mr.name) {
+        | None => ()
+        | Some(_) => scopeStack := ScopeStack.popScope(scopeStack^)
+        };
+      };
+
+      let prevIndex = idx^;
+      idx := max(matches[0].endPos, prevIndex);
+    };
   };
+
+  // There might be some leftover whitespace or tokens
+  // that weren't processed through our loop iteration.
+  let tokens =
+    if (len == 0) {
+      [[Token.create(~position=0, ~length=0, ~scopeStack=scopeStack^, ())]];
+    } else if (lastTokenPosition^ < len) {
+      [
+        [
+          Token.create(
+            ~position=lastTokenPosition^,
+            ~length=len - lastTokenPosition^,
+            ~scopeStack=scopeStack^,
+            (),
+          ),
+        ],
+        ...tokens^,
+      ];
+    } else {
+      tokens^;
+    };
+
+  let retTokens = tokens |> List.rev |> List.flatten;
+
+  let scopeStack = scopeStack^;
+
+  (retTokens, scopeStack);
 };

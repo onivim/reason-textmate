@@ -26,6 +26,7 @@ and matchRange = {
   // impacts matches _between_ the tokens.
   contentName: option(string),
   patterns: list(t),
+  applyEndPatternLast: bool,
 };
 
 let show = (v: t) =>
@@ -65,6 +66,14 @@ module Json = {
       switch (Yojson.Safe.Util.member(memberName, json)) {
       | `String(v) => Ok(v)
       | _ => Error("Missing expected property: " ++ memberName)
+      };
+    };
+
+  let bool_of_yojson: Yojson.Safe.t => bool =
+    json => {
+      switch (json) {
+      | `Bool(v) => v
+      | _ => false
       };
     };
 
@@ -152,6 +161,8 @@ module Json = {
       open Yojson.Safe.Util;
       let%bind beginRegex = regex_of_yojson(member("begin", json));
       let%bind endRegex = regex_of_yojson(member("end", json));
+      let applyEndPatternLast =
+        bool_of_yojson(member("applyEndPatternLast", json));
 
       let name =
         switch (string_of_yojson("name", json)) {
@@ -199,6 +210,7 @@ module Json = {
 
       Ok(
         MatchRange({
+          applyEndPatternLast,
           name,
           beginRegex,
           endRegex,

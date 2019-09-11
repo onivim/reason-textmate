@@ -40,6 +40,7 @@ describe("GrammarCaptureTests", ({test, _}) => {
           name: Some("html.tag.contents"),
           contentName: None,
           patterns: [],
+          applyEndPatternLast: false,
         }),
       ],
       ~repository=[],
