@@ -162,10 +162,11 @@ module Json = {
       let%bind beginRegex = regex_of_yojson(member("begin", json));
       let er = regex_of_yojson(member("end", json));
 
-      let%bind endRegex = switch (er) {
-      | Ok(v) => Ok(v)
-      | Error(_) => RegExp.create("\\uFFFF");
-            };
+      let%bind endRegex =
+        switch (er) {
+        | Ok(v) => Ok(v)
+        | Error(_) => RegExp.create("\\uFFFF")
+        };
 
       let applyEndPatternLast =
         bool_of_yojson(member("applyEndPatternLast", json));
