@@ -316,7 +316,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         };
 
         let prevIndex = idx^;
-        idx := max(matches[0].endPos, prevIndex + 1);
+        idx := max(matches[0].endPos, prevIndex);
       };
     };
 
