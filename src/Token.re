@@ -10,6 +10,12 @@ type t = {
   scopes: list(string),
 };
 
+let _sanitizeScopes = scopes => {
+  scopes
+  |> List.map(s => List.rev(String.split_on_char(' ', s)))
+  |> List.flatten;
+};
+
 let create =
     (
       ~position,
@@ -29,14 +35,14 @@ let create =
     | _ => scopeNames
     };
 
-  let ret: t = {length, position, scopes};
+  let ret: t = {length, position, scopes: _sanitizeScopes(scopes)};
   ret;
 };
 
 let _create2 = (~position, ~length, ~scopes, ()) => {
   position,
   length,
-  scopes,
+  scopes: _sanitizeScopes(scopes),
 };
 
 let show = (v: t) => {
@@ -78,17 +84,6 @@ let ofMatch =
   | v =>
     let initialMatch = matches[0];
 
-    prerr_endline(
-      "INITIALMATCH - |"
-      ++ initialMatch.match
-      ++ "|"
-      ++ string_of_int(initialMatch.startPos)
-      ++ "-"
-      ++ string_of_int(initialMatch.endPos)
-      ++ " length: "
-      ++ string_of_int(initialMatch.length),
-    );
-
     /*If the rule is a 'push stack', the outer rule has already been applied
           because the scope stack has been updated.
           If there rule is not a 'push stack', then we need to apply the rule here
@@ -124,16 +119,6 @@ let ofMatch =
       cg => {
         let (idx, scope) = cg;
         let match = matches[idx];
-        prerr_endline(
-          " --MATCH - |"
-          ++ match.match
-          ++ "|"
-          ++ string_of_int(match.startPos)
-          ++ "-"
-          ++ string_of_int(match.endPos)
-          ++ " length: "
-          ++ string_of_int(match.length),
-        );
 
         if (match.length > 0 && match.startPos < initialMatch.endPos) {
           let idx = ref(match.startPos - initialMatch.startPos);

@@ -20,5 +20,175 @@
 			"fixtures/hello.json"
 		],
 		"desc": "ONIVIM TEST #1 - non-consuming matches"
+	},
+	{
+		"grammarPath": "fixtures/reason.json",
+		"lines": [
+			{
+				"line": "let abc = 100",
+				"tokens": [
+					{
+						"value": "let",
+						"scopes": [
+							"source.reason",
+							"storage.type"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "abc",
+						"scopes": [
+							"source.reason",
+							"entity.name.function"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "=",
+						"scopes": [
+							"source.reason",
+							"keyword.control.less"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "100",
+						"scopes": [
+							"source.reason",
+							"constant.numeric"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/reason.json"
+		],
+		"desc": "ONIVIM TEST #2 - basic reason statement"
+	},
+	{
+		"grammarPath": "fixtures/reason.json",
+		"lines": [
+			{
+				"line": "module M = { type t; }",
+				"tokens": [
+					{
+						"value": "module",
+						"scopes": [
+							"source.reason",
+							"storage.type",
+							"message.error"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "M",
+						"scopes": [
+							"source.reason",
+							"support.class",
+							"entity.name.class"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "=",
+						"scopes": [
+							"source.reason",
+							"keyword.control.less"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "{",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "type",
+						"scopes": [
+							"source.reason",
+							"keyword.other"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "t",
+						"scopes": [
+							"source.reason",
+							"entity.name.function"
+						]
+					},
+					{
+						"value": ";",
+						"scopes": [
+							"source.reason",
+							"variable.other.class.js",
+							"variable.interpolation",
+							"keyword.operator",
+							"keyword.control",
+							"message.error"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.reason"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/reason.json"
+		],
+		"desc": "ONIVIM TEST #3 - ReasonML module"
 	}
 ]

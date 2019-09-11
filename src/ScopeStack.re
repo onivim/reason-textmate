@@ -35,7 +35,12 @@ let activePatterns = (v: t) => {
 };
 
 let getScopes = (v: t) => {
-  let scopes = List.rev(v.scopes);
+  let scopes =
+    v.scopes
+    |> List.map(String.split_on_char(' '))
+    |> List.flatten
+    |> List.rev;
+
   [v.initialScopeName, ...scopes] |> List.rev;
 };
 
@@ -79,13 +84,11 @@ let show = (v: t) => {
 };
 
 let pushScope = (scope: string, v: t) => {
-  prerr_endline("puschScope: " ++ scope);
   let scopes = [scope, ...v.scopes];
   {...v, scopes};
 };
 
 let popScope = (v: t) => {
-  prerr_endline("popScope");
   let scopes =
     switch (v.scopes) {
     | [] => []
