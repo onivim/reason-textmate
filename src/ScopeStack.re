@@ -60,7 +60,7 @@ let pushScope = (scope: string, v: t) => {
 };
 
 let popScope = (v: t) => {
-  prerr_endline ("popScope");
+  prerr_endline("popScope");
   let scopes =
     switch (v.scopes) {
     | [] => []
