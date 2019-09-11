@@ -1,0 +1,24 @@
+[
+	{
+		"grammarPath": "fixtures/hello.json",
+		"lines": [
+			{
+				"line": "hello",
+				"tokens": [
+					{
+						"value": "hello",
+						"scopes": [
+							"source.hello",
+							"hello.outer",
+							"hello.inner"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/hello.json"
+		],
+		"desc": "ONIVIM TEST #1 - non-consuming matches"
+	}
+]

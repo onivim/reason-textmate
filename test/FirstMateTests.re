@@ -40,8 +40,8 @@ module FirstMateTest = {
     desc: string,
   };
 
-  let _loadGrammar = (grammarPath: string) => {
-    let json = Yojson.Safe.from_file("test/first-mate/" ++ grammarPath);
+  let _loadGrammar = (rootPath: string, grammarPath: string) => {
+    let json = Yojson.Safe.from_file("test/" ++ rootPath ++ "/" ++ grammarPath);
     switch (Grammar.Json.of_yojson(json)) {
     | Ok(v) => v
     | Error(msg) =>
@@ -49,7 +49,7 @@ module FirstMateTest = {
     };
   };
 
-  let _loadGrammars = (v: t) => {
+  let _loadGrammars = (rootPath, v: t) => {
     open Grammar;
 
     let allGrammars =
@@ -60,7 +60,7 @@ module FirstMateTest = {
 
     List.fold_left(
       (prev, curr) => {
-        let grammar = _loadGrammar(curr);
+        let grammar = _loadGrammar(rootPath, curr);
         let scopeName = grammar.scopeName;
 
         StringMap.add(scopeName, grammar, prev);
@@ -84,10 +84,10 @@ module FirstMateTest = {
     };
   };
 
-  let run = (pass, fail, v: t) => {
+  let run = (rootPath, pass, fail, v: t) => {
     ignore(fail);
 
-    let grammarMap = _loadGrammars(v);
+    let grammarMap = _loadGrammars(rootPath, v);
     let grammarRepository = (scopeName: string) => {
       StringMap.find_opt(scopeName, grammarMap);
     };
@@ -96,7 +96,7 @@ module FirstMateTest = {
 
     let grammar =
       switch (v.grammarPath) {
-      | Some(p) => _loadGrammar(p)
+      | Some(p) => _loadGrammar(rootPath, p)
       | None =>
         switch (v.grammarScopeName) {
         | Some(s) => StringMap.find(s, grammarMap)
@@ -177,31 +177,40 @@ module FirstMateTest = {
 
 module FirstMateTestSuite = {
   [@deriving yojson({strict: false})]
-  type t = list(FirstMateTest.t);
+  type tests = list(FirstMateTest.t);
 
-  let ofFile = (filePath: string) => {
-    let json = Yojson.Safe.from_file(filePath);
-    switch (of_yojson(json)) {
+  type t = {
+      rootPath: string,
+      tests: tests,
+  };
+
+  let ofDirectory = (rootPath: string) => {
+    
+    let json = Yojson.Safe.from_file("test/" ++ rootPath ++ "/tests.json");
+    let tests = switch (tests_of_yojson(json)) {
     | Ok(v) => v
-    | Error(msg) => failwith("Unable to load " ++ filePath ++ ": " ++ msg)
+    | Error(msg) => failwith("Unable to load tests from rootPath: " ++ rootPath ++ ": " ++ msg)
+    };
+    
+    {
+      rootPath,
+      tests,
     };
   };
 
   let run = (runTest, v: t) => {
-    prerr_endline("Found " ++ string_of_int(List.length(v)) ++ " cases");
-
     List.iter(
       (t: FirstMateTest.t) => {
         runTest(
           t.desc,
           (pass, fail) => {
             prerr_endline(" === RUNNING TEST: " ++ t.desc);
-            FirstMateTest.run(pass, fail, t);
+            FirstMateTest.run(v.rootPath, pass, fail, t);
             prerr_endline(" === DONE WITH TEST: " ++ t.desc);
           },
         )
       },
-      v,
+      v.tests,
     );
   };
 };
@@ -212,7 +221,8 @@ let getExecutingDirectory = () => {
 
 describe("FirstMate", ({test, _}) => {
   // We'll load and parse the JSON
-  let testSuite = FirstMateTestSuite.ofFile("test/first-mate/tests.json");
+  let firstMateTestSuite = FirstMateTestSuite.ofDirectory("first-mate");
+  let onivimTestSuite = FirstMateTestSuite.ofDirectory("onivim");
 
   let runTest = (name, f) => {
     test(
@@ -228,5 +238,6 @@ describe("FirstMate", ({test, _}) => {
 
   /*let _ = runTest;
     let _ = testSuite;*/
-  FirstMateTestSuite.run(runTest, testSuite);
+  FirstMateTestSuite.run(runTest, firstMateTestSuite);
+  FirstMateTestSuite.run(runTest, onivimTestSuite);
 });
