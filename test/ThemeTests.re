@@ -38,20 +38,14 @@ describe("Theme", ({describe, _}) => {
           TokenStyle.create(~foreground=Some("#990000"), ()),
         ),
         ("constant.numeric.hex", TokenStyle.create(~bold=Some(true), ())),
-        (
-          "foo, bar",
-          TokenStyle.create(~foreground=Some("lavender"), ()),
-        ),
+        ("foo, bar", TokenStyle.create(~foreground=Some("lavender"), ())),
         ("entity", TokenStyle.create(~bold=Some(true), ())),
         (
           "entity.other.attribute-name.foo,entity.other.attribute-name.bar",
           TokenStyle.create(~foreground=Some("salmon"), ()),
         ),
         ("html", TokenStyle.create(~foreground=Some("slateGray"), ())),
-        (
-          "meta html",
-          TokenStyle.create(~foreground=Some("smoke"), ()),
-        ),
+        ("meta html", TokenStyle.create(~foreground=Some("smoke"), ())),
         (
           "source.php string",
           TokenStyle.create(~foreground=Some("peachPuff"), ()),
@@ -76,7 +70,7 @@ describe("Theme", ({describe, _}) => {
       let style: ResolvedStyle.t =
         Theme.match(simpleTheme, "text.html.basic source.js");
 
-      expect.string(style.foreground).toEqual("navy"); 
+      expect.string(style.foreground).toEqual("navy");
       expect.string(style.background).toEqual("cornflowerBlue");
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(false);
@@ -96,8 +90,7 @@ describe("Theme", ({describe, _}) => {
       expect.bool(style.italic).toBe(false);
     });
     test("parent rule (meta html) gets applied", ({expect, _}) => {
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "meta html");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "meta html");
 
       expect.string(style.foreground).toEqual("smoke");
       expect.string(style.background).toEqual("#000");
@@ -112,8 +105,7 @@ describe("Theme", ({describe, _}) => {
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(false);
 
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "html");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "html");
 
       expect.string(style.foreground).toEqual("slateGray");
       expect.string(style.background).toEqual("#000");
@@ -121,8 +113,7 @@ describe("Theme", ({describe, _}) => {
       expect.bool(style.italic).toBe(false);
     });
     test("parent rule gets ignored", ({expect, _}) => {
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "meta foo");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "meta foo");
 
       expect.string(style.foreground).toEqual("lavender");
       expect.string(style.background).toEqual("#000");
@@ -130,15 +121,13 @@ describe("Theme", ({describe, _}) => {
       expect.bool(style.italic).toBe(false);
     });
     test("foo & bar gets correctly style (compound rule)", ({expect, _}) => {
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "foo");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "foo");
       expect.bool(style.foreground == "lavender").toBe(true);
       expect.bool(style.background == "#000").toBe(true);
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(false);
 
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "bar");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "bar");
       expect.bool(style.foreground == "lavender").toBe(true);
       expect.bool(style.background == "#000").toBe(true);
       expect.bool(style.bold).toBe(false);
@@ -148,21 +137,15 @@ describe("Theme", ({describe, _}) => {
       "entity.other.attribute-name.foo & bar gets correctly style (more interesting compound rule)",
       ({expect, _}) => {
         let style: ResolvedStyle.t =
-          Theme.match(
-            simpleTheme,
-            "entity.other.attribute-name.foo",
-          );
+          Theme.match(simpleTheme, "entity.other.attribute-name.foo");
         expect.string(style.foreground).toEqual("salmon");
         expect.string(style.background).toEqual("#000");
-        
+
         expect.bool(style.bold).toBe(true);
         expect.bool(style.italic).toBe(false);
 
         let style: ResolvedStyle.t =
-          Theme.match(
-            simpleTheme,
-            "entity.other.attribute-name.bar",
-          );
+          Theme.match(simpleTheme, "entity.other.attribute-name.bar");
         expect.string(style.foreground).toEqual("salmon");
         expect.string(style.background).toEqual("#000");
         expect.bool(style.bold).toBe(true);
@@ -171,40 +154,35 @@ describe("Theme", ({describe, _}) => {
     );
 
     test("baz gets default style (no match)", ({expect, _}) => {
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "baz");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "baz");
       expect.string(style.foreground).toEqual("#fff");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(false);
     });
     test("var gets correct style", ({expect, _}) => {
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "var");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "var");
       expect.string(style.foreground).toEqual("#92D3CA");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(false);
     });
     test("var.baz gets correct style (should match var)", ({expect, _}) => {
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "var.baz");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "var.baz");
       expect.string(style.foreground).toEqual("#92D3CA");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(false);
     });
     test("var.identifier gets correct style", ({expect, _}) => {
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "var.identifier");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "var.identifier");
       expect.string(style.foreground).toEqual("#007fff");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(true);
       expect.bool(style.italic).toBe(false);
     });
     test("constant gets correct style", ({expect, _}) => {
-      let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "constant");
+      let style: ResolvedStyle.t = Theme.match(simpleTheme, "constant");
 
       expect.string(style.foreground).toEqual("#00FFFF");
       expect.string(style.background).toEqual("#000");
@@ -250,8 +228,7 @@ describe("Theme", ({describe, _}) => {
           json,
         );
 
-      let style: ResolvedStyle.t =
-        Theme.match(theme, "constant.numeric.hex");
+      let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.hex");
       expect.string(style.foreground).toEqual("#fff");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
@@ -288,15 +265,13 @@ describe("Theme", ({describe, _}) => {
           json,
         );
 
-      let style: ResolvedStyle.t =
-        Theme.match(theme, "constant.numeric.hex");
+      let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.hex");
       expect.string(style.foreground).toEqual("#bbbbbb");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(true);
 
-      let style: ResolvedStyle.t =
-        Theme.match(theme, "constant.numeric.oct");
+      let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.oct");
       expect.string(style.foreground).toEqual("#0f0");
       expect.string(style.background).toEqual("#f00");
       expect.bool(style.bold).toBe(true);
@@ -324,15 +299,13 @@ describe("Theme", ({describe, _}) => {
           json,
         );
 
-      let style: ResolvedStyle.t =
-        Theme.match(theme, "constant.numeric.hex");
+      let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.hex");
       expect.string(style.foreground).toEqual("#bbbbbb");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(true);
 
-      let style: ResolvedStyle.t =
-        Theme.match(theme, "constant.numeric.oct");
+      let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.oct");
       expect.string(style.foreground).toEqual("#bbbbbb");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
@@ -360,15 +333,13 @@ describe("Theme", ({describe, _}) => {
           json,
         );
 
-      let style: ResolvedStyle.t =
-        Theme.match(theme, "constant.numeric.hex");
+      let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.hex");
       expect.string(style.foreground).toEqual("#bbbbbb");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(true);
 
-      let style: ResolvedStyle.t =
-        Theme.match(theme, "constant.numeric.oct");
+      let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.oct");
       expect.string(style.foreground).toEqual("#bbbbbb");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
