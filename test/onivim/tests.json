@@ -20,5 +20,65 @@
 			"fixtures/hello.json"
 		],
 		"desc": "ONIVIM TEST #1 - non-consuming matches"
+	},
+	{
+		"grammarPath": "fixtures/reason.json",
+		"lines": [
+			{
+				"line": "let abc = 100",
+				"tokens": [
+					{
+						"value": "let",
+						"scopes": [
+							"source.reason",
+							"storage.type"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "abc",
+						"scopes": [
+							"source.reason",
+							"entity.name.function"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "=",
+						"scopes": [
+							"source.reason",
+							"keyword.control.less"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "100",
+						"scopes": [
+							"source.reason",
+							"constant.numeric"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/reason.json"
+		],
+		"desc": "ONIVIM TEST #2 - basic reason statement"
 	}
 ]
