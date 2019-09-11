@@ -24,15 +24,15 @@ let hasBackReferences = (v: t) => v.hasBackReferences;
 
 let toString = (v: t) => v.raw;
 
-let charactersToEscape = Str.regexp("[\\?\\,\\.\\$\\^\\+\\*{}\\\\\\|\\-]")
+let charactersToEscape = Str.regexp("[\\?\\,\\.\\$\\^\\+\\*{}\\\\\\|\\-]");
 let additionalCharactersToEscape = Str.regexp("[][()]");
 let escapeRegExpCharacters = (str: string) => {
-  let f = (s) => "\\" ++ s
+  let f = s => "\\" ++ s;
 
   str
   |> Str.global_substitute(charactersToEscape, f)
   |> Str.global_substitute(additionalCharactersToEscape, f);
-}
+};
 
 let create = (regExString: string) => {
   let hasBackReferences =

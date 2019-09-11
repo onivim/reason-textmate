@@ -33,14 +33,15 @@ describe("RegExp", ({describe, _}) => {
   });
 
   describe("escapeRegExpCharacters", ({test, _}) => {
-      test("escape characters get replaced", ({expect, _}) => {
-        let t = RegExp.escapeRegExpCharacters;
+    test("escape characters get replaced", ({expect, _}) => {
+      let t = RegExp.escapeRegExpCharacters;
 
-        let validate = (str, expected) => {
-         let _ = expect.string(t(str)).toEqual(expected);
-        };
+      let validate = (str, expected) => {
+        let _ = expect.string(t(str)).toEqual(expected);
+        ();
+      };
 
-        let cases = [
+      let cases = [
         ("|", "\\|"),
         ("-", "\\-"),
         ("\\", "\\\\"),
@@ -56,10 +57,10 @@ describe("RegExp", ({describe, _}) => {
         ("[", "\\["),
         ("]", "\\]"),
         ("(", "\\("),
-        (")", "\\)")
-        ];
+        (")", "\\)"),
+      ];
 
-        List.iter(((e, a)) => validate(e, a), cases);
-      });
-    });
+      List.iter(((e, a)) => validate(e, a), cases);
+    })
+  });
 });
