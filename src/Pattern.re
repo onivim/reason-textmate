@@ -20,14 +20,11 @@ and matchRange = {
   endRegex: RegExp.t,
   beginCaptures: list(Capture.t),
   endCaptures: list(Capture.t),
-  
   // The scope to append to the tokens
   name: option(string),
-
-  // []contentName] differs from [name] in that it only 
+  // []contentName] differs from [name] in that it only
   // impacts matches _between_ the tokens.
   contentName: option(string),
-  
   patterns: list(t),
 };
 
@@ -130,7 +127,7 @@ module Json = {
         | Ok(v) => Some(v)
         | _ => None
         };
-      
+
       let contentName =
         switch (string_of_yojson("contentName", json)) {
         | Ok(v) => Some(v)

@@ -7,15 +7,18 @@ open Oniguruma;
 type t = {
   initialScopeName: string,
   initialPatterns: list(Pattern.t),
-
   patterns: list(Pattern.matchRange),
   scopes: list(string),
 };
 
 let ofTopLevelScope = (patterns, scopeName) => {
-  {initialScopeName: scopeName, initialPatterns: patterns, scopes: [], patterns: []};
+  {
+    initialScopeName: scopeName,
+    initialPatterns: patterns,
+    scopes: [],
+    patterns: [],
+  };
 };
-
 
 let activeRange = (v: t) => {
   switch (v.patterns) {
@@ -37,46 +40,33 @@ let getScopes = (v: t) => {
 };
 
 let popPattern = (v: t) => {
-
-  let (patterns) =
+  let patterns =
     switch (v.patterns) {
     | [] => []
     | [_, ...tail] => tail
-  };
-  
-  {...v, patterns };
+    };
+
+  {...v, patterns};
 };
 
 let show = (v: t) => {
-  List.fold_left(
-    (prev, curr) => {
-      curr ++ ", " ++ prev;
-    },
-    "",
-    getScopes(v)
-  );
+  List.fold_left((prev, curr) => {curr ++ ", " ++ prev}, "", getScopes(v));
 };
 
 let pushScope = (scope: string, v: t) => {
   let scopes = [scope, ...v.scopes];
-  {
-    ...v,
-    scopes
-  };
-}
+  {...v, scopes};
+};
 
 let popScope = (v: t) => {
-  let scopes = switch(v.scopes) {
-  | [] => []
-  | [_, ...tail] => tail
+  let scopes =
+    switch (v.scopes) {
+    | [] => []
+    | [_, ...tail] => tail
     };
 
-  
-  {
-  ...v,
-  scopes,
-    };
-}
+  {...v, scopes};
+};
 
 let pushPattern =
     (
