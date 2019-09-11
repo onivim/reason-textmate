@@ -1,5 +1,6 @@
 module Grammar = Grammar;
 module RegExp = RegExp;
 module ScopeStack = ScopeStack;
-module Trie = Trie;
+module ThemeScopes = ThemeScopes;
 module Token = Token;
+module Trie = Trie;
