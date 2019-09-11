@@ -28,6 +28,37 @@ and matchRange = {
   patterns: list(t),
 };
 
+let show = (v: t) =>
+  switch (v) {
+  | Include(str) => "Include(" ++ str ++ ")"
+  | Match(_) => "Match(..)"
+  | MatchRange(matchRange) =>
+    let name =
+      switch (matchRange.name) {
+      | None => "Name: None"
+      | Some(v) => "Name: " ++ v
+      };
+    let contentName =
+      switch (matchRange.contentName) {
+      | None => "ContentName: None"
+      | Some(v) => "ContentName: " ++ v
+      };
+
+    "MatchRange(\n)"
+    ++ " -"
+    ++ name
+    ++ "\n"
+    ++ " -"
+    ++ contentName
+    ++ "\n"
+    ++ " -"
+    ++ RegExp.toString(matchRange.beginRegex)
+    ++ "\n"
+    ++ " -"
+    ++ RegExp.toString(matchRange.endRegex)
+    ++ "\n";
+  };
+
 module Json = {
   let string_of_yojson: (string, Yojson.Safe.t) => result(string, string) =
     (memberName, json) => {

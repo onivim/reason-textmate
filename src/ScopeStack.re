@@ -50,7 +50,32 @@ let popPattern = (v: t) => {
 };
 
 let show = (v: t) => {
-  List.fold_left((prev, curr) => {curr ++ ", " ++ prev}, "", getScopes(v));
+  let scopeStr =
+    List.fold_left(
+      (prev, curr) => {curr ++ ", " ++ prev},
+      "",
+      getScopes(v),
+    );
+  let patternsStr =
+    "["
+    ++ List.fold_left(
+         (prev, curr) =>
+           prev ++ "," ++ Pattern.show(Pattern.MatchRange(curr)),
+         "",
+         v.patterns,
+       );
+
+  " ScopeStack: "
+  ++ string_of_int(List.length(getScopes(v)))
+  ++ " / "
+  ++ string_of_int(List.length(v.patterns))
+  ++ "\n"
+  ++ " -- Scopes: "
+  ++ scopeStr
+  ++ "\n"
+  ++ " -- Patterns: "
+  ++ patternsStr
+  ++ "\n";
 };
 
 let pushScope = (scope: string, v: t) => {
