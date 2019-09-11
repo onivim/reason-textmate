@@ -71,15 +71,19 @@ let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
 
   let activeRange = ScopeStack.activeRange(scopeStack);
 
-  let initialRules = switch(activeRange) {
-  | Some(v) when v.applyEndPatternLast == true => [ofMatchRangeEnd(v)]
-  | _ => [];
-    }
+  let initialRules =
+    switch (activeRange) {
+    | Some(v) when v.applyEndPatternLast == true => [ofMatchRangeEnd(v)]
+    | _ => []
+    };
 
   let rules = List.fold_left(f, initialRules, patterns);
 
   switch (activeRange) {
-  | Some(v) when v.applyEndPatternLast == false => [ofMatchRangeEnd(v), ...rules]
+  | Some(v) when v.applyEndPatternLast == false => [
+      ofMatchRangeEnd(v),
+      ...rules,
+    ]
   | _ => rules
   };
 };

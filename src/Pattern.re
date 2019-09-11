@@ -69,11 +69,12 @@ module Json = {
       };
     };
 
-  let bool_of_yojson: Yojson.Safe.t => bool = json => {
-    switch (json) {
-    | `Bool(v) => v
-    | _ => false
-        };
+  let bool_of_yojson: Yojson.Safe.t => bool =
+    json => {
+      switch (json) {
+      | `Bool(v) => v
+      | _ => false
+      };
     };
 
   let captures_of_yojson: Yojson.Safe.t => list(Capture.t) =
@@ -160,7 +161,8 @@ module Json = {
       open Yojson.Safe.Util;
       let%bind beginRegex = regex_of_yojson(member("begin", json));
       let%bind endRegex = regex_of_yojson(member("end", json));
-      let applyEndPatternLast = bool_of_yojson(member("applyEndPatternLast", json));
+      let applyEndPatternLast =
+        bool_of_yojson(member("applyEndPatternLast", json));
 
       let name =
         switch (string_of_yojson("name", json)) {
