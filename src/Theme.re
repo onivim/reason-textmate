@@ -149,12 +149,7 @@ let of_yojson = (~defaultBackground, ~defaultForeground, json: Yojson.Safe.t) =>
   create(~defaultBackground, ~defaultForeground, selectors);
 };
 
-let empty =
-  create(
-    ~defaultBackground="#000",
-    ~defaultForeground="#fff",
-    [],
-  );
+let empty = create(~defaultBackground="#000", ~defaultForeground="#fff", []);
 
 let show = (v: t) => {
   Trie.show((i: selectorWithParents) => TokenStyle.show(i.style), v.trie);
