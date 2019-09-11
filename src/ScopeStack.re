@@ -7,64 +7,78 @@ open Oniguruma;
 type t = {
   initialScopeName: string,
   initialPatterns: list(Pattern.t),
-  scopes: list(Pattern.matchRange),
+
+  patterns: list(Pattern.matchRange),
+  scopes: list(string),
 };
 
 let ofTopLevelScope = (patterns, scopeName) => {
-  {initialScopeName: scopeName, initialPatterns: patterns, scopes: []};
+  {initialScopeName: scopeName, initialPatterns: patterns, scopes: [], patterns: []};
 };
 
-let show = (v: t) => {
-  List.fold_left(
-    (prev, curr: Pattern.matchRange) => {
-      switch (curr.matchScopeName) {
-      | None => " .. " ++ prev
-      | Some(v) => v ++ " " ++ prev
-      }
-    },
-    "",
-    v.scopes,
-  );
-};
 
 let activeRange = (v: t) => {
-  switch (v.scopes) {
+  switch (v.patterns) {
   | [hd, ..._] => Some(hd)
   | _ => None
   };
 };
 
 let activePatterns = (v: t) => {
-  switch (v.scopes) {
+  switch (v.patterns) {
   | [hd, ..._] => hd.patterns
   | [] => v.initialPatterns
   };
 };
 
 let getScopes = (v: t) => {
+  let scopes = List.rev(v.scopes);
+  [v.initialScopeName, ...scopes] |> List.rev;
+};
+
+let popPattern = (v: t) => {
+
+  let (patterns) =
+    switch (v.patterns) {
+    | [] => []
+    | [_, ...tail] => tail
+  };
+  
+  {...v, patterns };
+};
+
+let show = (v: t) => {
   List.fold_left(
-    (prev, curr: Pattern.matchRange) => {
-      switch (curr.matchScopeName) {
-      | None => prev
-      | Some(v) => [v, ...prev]
-      }
+    (prev, curr) => {
+      curr ++ ", " ++ prev;
     },
-    [v.initialScopeName],
-    v.scopes |> List.rev,
+    "",
+    getScopes(v)
   );
 };
 
-let pop = (v: t) => {
-  let scopes =
-    switch (v.scopes) {
-    | [] => []
-    | [_, ...tail] => tail
+let pushScope = (scope: string, v: t) => {
+  let scopes = [scope, ...v.scopes];
+  {
+    ...v,
+    scopes
+  };
+}
+
+let popScope = (v: t) => {
+  let scopes = switch(v.scopes) {
+  | [] => []
+  | [_, ...tail] => tail
     };
 
-  {...v, scopes};
-};
+  
+  {
+  ...v,
+  scopes,
+    };
+}
 
-let push =
+let pushPattern =
     (
       ~matches: array(OnigRegExp.Match.t),
       ~matchRange: Pattern.matchRange,
@@ -92,6 +106,6 @@ let push =
       matchRange;
     };
 
-  let scopes = [newMatchRange, ...v.scopes];
-  {...v, scopes};
+  let patterns = [newMatchRange, ...v.patterns];
+  {...v, patterns};
 };

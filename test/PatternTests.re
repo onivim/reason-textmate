@@ -52,7 +52,7 @@ describe("Pattern", ({describe, _}) => {
 
       switch (matchRange1) {
       | Ok(MatchRange(v)) =>
-        expect.bool(v.matchScopeName == Some("array-json")).toBe(true);
+        expect.bool(v.name == Some("array-json")).toBe(true);
         expect.int(List.length(v.beginCaptures)).toBe(1);
         expect.int(List.length(v.endCaptures)).toBe(1);
       | _ => failwith("Parse failed for match")

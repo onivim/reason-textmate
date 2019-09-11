@@ -20,8 +20,14 @@ and matchRange = {
   endRegex: RegExp.t,
   beginCaptures: list(Capture.t),
   endCaptures: list(Capture.t),
+  
   // The scope to append to the tokens
-  matchScopeName: option(string),
+  name: option(string),
+
+  // []contentName] differs from [name] in that it only 
+  // impacts matches _between_ the tokens.
+  contentName: option(string),
+  
   patterns: list(t),
 };
 
@@ -119,14 +125,14 @@ module Json = {
       let%bind beginRegex = regex_of_yojson(member("begin", json));
       let%bind endRegex = regex_of_yojson(member("end", json));
 
-      let nameField =
-        switch (member("name", json), member("contentName", json)) {
-        | (`String(_), _) => "name"
-        | _ => "contentName"
-        };
-
       let name =
-        switch (string_of_yojson(nameField, json)) {
+        switch (string_of_yojson("name", json)) {
+        | Ok(v) => Some(v)
+        | _ => None
+        };
+      
+      let contentName =
+        switch (string_of_yojson("contentName", json)) {
         | Ok(v) => Some(v)
         | _ => None
         };
@@ -165,11 +171,12 @@ module Json = {
 
       Ok(
         MatchRange({
-          matchScopeName: name,
+          name,
           beginRegex,
           endRegex,
           beginCaptures: captures_of_yojson(member(beginCaptureName, json)),
           endCaptures: captures_of_yojson(member(endCaptureName, json)),
+          contentName,
           patterns: nestedPatterns,
         }),
       );
