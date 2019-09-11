@@ -214,6 +214,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       | Some(v) =>
         open Oniguruma.OnigRegExp.Match;
         let (_, matches, rule) = v;
+        prerr_endline ("Winning rule: " ++ Rule.show(rule));
         let ltp = lastTokenPosition^;
         let prevToken =
           if (ltp < matches[0].startPos) {

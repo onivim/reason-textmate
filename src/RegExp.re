@@ -24,6 +24,16 @@ let hasBackReferences = (v: t) => v.hasBackReferences;
 
 let toString = (v: t) => v.raw;
 
+let charactersToEscape = Str.regexp("[\\?\\,\\.\\$\\^\\+\\*{}\\\\\\|\\-]")
+let additionalCharactersToEscape = Str.regexp("[][()]");
+let escapeRegExpCharacters = (str: string) => {
+  let f = (s) => "\\" ++ s
+
+  str
+  |> Str.global_substitute(charactersToEscape, f)
+  |> Str.global_substitute(additionalCharactersToEscape, f);
+}
+
 let create = (regExString: string) => {
   let hasBackReferences =
     switch (Str.search_forward(hasBackRefRegExp, regExString, 0)) {
@@ -60,6 +70,7 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
         let newStr =
           if (cg > 0) {
             let regexp = Str.regexp("\\\\" ++ string_of_int(cg));
+            let text = escapeRegExpCharacters(text);
             Str.global_replace(regexp, text, str);
           } else {
             prev;

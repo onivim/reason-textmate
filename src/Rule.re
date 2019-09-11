@@ -11,10 +11,12 @@ type t = {
 };
 
 let show = (v: t) => {
-  switch (v.name) {
-  | Some(rule) => "Rule " ++ rule
-  | None => "Rule (anonymous)"
+  let start = switch (v.name) {
+  | Some(rule) => "Rule " ++ rule ++ ": "
+  | None => "Rule (anonymous): "
   };
+
+  start ++ RegExp.toString(v.regex);
 };
 
 let ofMatch = (match: Pattern.match_) => {
