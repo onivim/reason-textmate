@@ -10,11 +10,11 @@ type t = {
   scopes: list(string),
 };
 
-let _sanitizeScopes = (scopes) => {
+let _sanitizeScopes = scopes => {
   scopes
-  |> List.map((s) => List.rev(String.split_on_char(' ', s)))
+  |> List.map(s => List.rev(String.split_on_char(' ', s)))
   |> List.flatten;
-}
+};
 
 let create =
     (

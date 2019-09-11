@@ -222,8 +222,8 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       let ltp = lastTokenPosition^;
       let prevToken =
         if (ltp < matches[0].startPos) {
-          //print_endline("Creating token at: " ++ string_of_int(ltp));
           [
+            //print_endline("Creating token at: " ++ string_of_int(ltp));
             Token.create(
               ~position=ltp,
               ~length=matches[0].startPos - ltp,

@@ -35,11 +35,12 @@ let activePatterns = (v: t) => {
 };
 
 let getScopes = (v: t) => {
-  let scopes = v.scopes 
-  |> List.map(String.split_on_char(' '))
-  |> List.flatten
-  |> List.rev;
-  
+  let scopes =
+    v.scopes
+    |> List.map(String.split_on_char(' '))
+    |> List.flatten
+    |> List.rev;
+
   [v.initialScopeName, ...scopes] |> List.rev;
 };
 
