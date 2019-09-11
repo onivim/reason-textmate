@@ -98,6 +98,7 @@ describe("Grammar", ({describe, _}) => {
               name: Some("expression.group"),
               contentName: None,
               patterns: [Include("#expression")],
+              applyEndPatternLast: false,
             }),
           ],
         ),

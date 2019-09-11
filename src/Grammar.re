@@ -190,17 +190,10 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     | Some(v) => v
     };
 
-  // Empty string - just return a single, zero-length token, and persist the scope stack.
-  if (len == 0) {
-    (
-      [Token.create(~position=0, ~length=0, ~scopeStack=initialScope, ())],
-      initialScope,
-    );
-  } else {
     let scopeStack = ref(initialScope);
 
     // Iterate across the string and tokenize
-    while (idx^ < len) {
+    while (idx^ <= len) {
       let i = idx^;
 
       let currentScopeStack = scopeStack^;
@@ -323,7 +316,15 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     // There might be some leftover whitespace or tokens
     // that weren't processed through our loop iteration.
     let tokens =
-      if (lastTokenPosition^ < len) {
+      if (len == 0) {
+        [[Token.create(
+        ~position=0,
+        ~length=0,
+        ~scopeStack=scopeStack^,
+        (),
+                )]]
+      }
+      else if (lastTokenPosition^ < len) {
         [
           [
             Token.create(
@@ -344,5 +345,4 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     let scopeStack = scopeStack^;
 
     (retTokens, scopeStack);
-  };
 };

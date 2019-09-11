@@ -1033,5 +1033,141 @@
 			"fixtures/python-regex.json"
 		],
 		"desc": "TEST #23"
+	},
+	{
+		"grammarPath": "fixtures/apply-end-pattern-last.json",
+		"lines": [
+			{
+				"line": "last",
+				"tokens": [
+					{
+						"value": "last",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"end-pattern-last-env"
+						]
+					}
+				]
+			},
+			{
+				"line": "{ some }excentricSyntax }",
+				"tokens": [
+					{
+						"value": "{",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"end-pattern-last-env",
+							"scope"
+						]
+					},
+					{
+						"value": " some ",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"end-pattern-last-env",
+							"scope"
+						]
+					},
+					{
+						"value": "}excentricSyntax",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"end-pattern-last-env",
+							"scope",
+							"excentric"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"end-pattern-last-env",
+							"scope"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"end-pattern-last-env",
+							"scope"
+						]
+					}
+				]
+			},
+			{
+				"line": "",
+				"tokens": [
+					{
+						"value": "",
+						"scopes": [
+							"source.apply-end-pattern-last"
+						]
+					}
+				]
+			},
+			{
+				"line": "first",
+				"tokens": [
+					{
+						"value": "first",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"normal-env"
+						]
+					}
+				]
+			},
+			{
+				"line": "{ some }excentricSyntax }",
+				"tokens": [
+					{
+						"value": "{",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"normal-env",
+							"scope"
+						]
+					},
+					{
+						"value": " some ",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"normal-env",
+							"scope"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"normal-env",
+							"scope"
+						]
+					},
+					{
+						"value": "excentricSyntax }",
+						"scopes": [
+							"source.apply-end-pattern-last",
+							"normal-env"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/apply-end-pattern-last.json"
+		],
+		"desc": "TEST #24"
 	}
 ]
