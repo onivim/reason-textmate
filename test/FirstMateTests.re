@@ -222,5 +222,7 @@ describe("FirstMate", ({test, _}) => {
     );
   };
 
+  /*let _ = runTest;
+    let _ = testSuite;*/
   FirstMateTestSuite.run(runTest, testSuite);
 });

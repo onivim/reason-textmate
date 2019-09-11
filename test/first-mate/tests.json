@@ -652,5 +652,386 @@
 			"fixtures/python-regex.json"
 		],
 		"desc": "TEST #15"
+	},
+	{
+		"grammarScopeName": "text.plain",
+		"lines": [
+			{
+				"line": " ok, cool",
+				"tokens": [
+					{
+						"value": " ",
+						"scopes": [
+							"text.plain"
+						]
+					},
+					{
+						"value": "ok, cool",
+						"scopes": [
+							"text.plain",
+							"meta.paragraph.text"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #16"
+	},
+	{
+		"grammarScopeName": "source.test",
+		"lines": [
+			{
+				"line": "#if",
+				"tokens": [
+					{
+						"value": "#if",
+						"scopes": [
+							"source.test",
+							"pre"
+						]
+					}
+				]
+			},
+			{
+				"line": "test",
+				"tokens": [
+					{
+						"value": "test",
+						"scopes": [
+							"source.test",
+							"pre",
+							"nested"
+						]
+					}
+				]
+			},
+			{
+				"line": "#endif",
+				"tokens": [
+					{
+						"value": "#endif",
+						"scopes": [
+							"source.test",
+							"pre"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/content-name.json"
+		],
+		"desc": "TEST #17"
+	},
+	{
+		"grammarScopeName": "source.test",
+		"lines": [
+			{
+				"line": "test",
+				"tokens": [
+					{
+						"value": "test",
+						"scopes": [
+							"source.test",
+							"all",
+							"middle"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/content-name.json"
+		],
+		"desc": "TEST #18"
+	},
+	{
+		"grammarScopeName": "source.test",
+		"lines": [
+			{
+				"line": " test",
+				"tokens": [
+					{
+						"value": " ",
+						"scopes": [
+							"source.test",
+							"all"
+						]
+					},
+					{
+						"value": "test",
+						"scopes": [
+							"source.test",
+							"all",
+							"middle"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/content-name.json"
+		],
+		"desc": "TEST #19"
+	},
+	{
+		"grammarScopeName": "source.ruby",
+		"lines": [
+			{
+				"line": "%w|oh \\look|",
+				"tokens": [
+					{
+						"value": "%w|",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.lower.ruby",
+							"punctuation.definition.string.begin.ruby"
+						]
+					},
+					{
+						"value": "oh ",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.lower.ruby"
+						]
+					},
+					{
+						"value": "\\l",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.lower.ruby"
+						]
+					},
+					{
+						"value": "ook",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.lower.ruby"
+						]
+					},
+					{
+						"value": "|",
+						"scopes": [
+							"source.ruby",
+							"string.quoted.other.literal.lower.ruby",
+							"punctuation.definition.string.end.ruby"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #20"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "'''single-quoted heredoc'''",
+				"tokens": [
+					{
+						"value": "'''",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.heredoc.coffee",
+							"punctuation.definition.string.begin.coffee"
+						]
+					},
+					{
+						"value": "single-quoted heredoc",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.heredoc.coffee"
+						]
+					},
+					{
+						"value": "'''",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.heredoc.coffee",
+							"punctuation.definition.string.end.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #21"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "'''single-quoted",
+				"tokens": [
+					{
+						"value": "'''",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.heredoc.coffee",
+							"punctuation.definition.string.begin.coffee"
+						]
+					},
+					{
+						"value": "single-quoted",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.heredoc.coffee"
+						]
+					}
+				]
+			},
+			{
+				"line": "heredoc'''",
+				"tokens": [
+					{
+						"value": "heredoc",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.heredoc.coffee"
+						]
+					},
+					{
+						"value": "'''",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.heredoc.coffee",
+							"punctuation.definition.string.end.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #22"
+	},
+	{
+		"grammarScopeName": "source.coffee",
+		"lines": [
+			{
+				"line": "\"\"\"heredoc with character escape \\t\"\"\"",
+				"tokens": [
+					{
+						"value": "\"\"\"",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.heredoc.coffee",
+							"punctuation.definition.string.begin.coffee"
+						]
+					},
+					{
+						"value": "heredoc with character escape ",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.heredoc.coffee"
+						]
+					},
+					{
+						"value": "\\t",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.heredoc.coffee",
+							"constant.character.escape.coffee"
+						]
+					},
+					{
+						"value": "\"\"\"",
+						"scopes": [
+							"source.coffee",
+							"string.quoted.double.heredoc.coffee",
+							"punctuation.definition.string.end.coffee"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #23"
 	}
 ]

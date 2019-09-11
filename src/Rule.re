@@ -6,15 +6,18 @@ type t = {
   regex: RegExp.t,
   name: option(string),
   captures: list(Pattern.Capture.t),
-  popStack: bool,
+  popStack: option(Pattern.matchRange),
   pushStack: option(Pattern.matchRange),
 };
 
 let show = (v: t) => {
-  switch (v.name) {
-  | Some(rule) => "Rule " ++ rule
-  | None => "Rule (anonymous)"
-  };
+  let start =
+    switch (v.name) {
+    | Some(rule) => "Rule " ++ rule ++ ": "
+    | None => "Rule (anonymous): "
+    };
+
+  start ++ RegExp.toString(v.regex);
 };
 
 let ofMatch = (match: Pattern.match_) => {
@@ -22,7 +25,7 @@ let ofMatch = (match: Pattern.match_) => {
     regex: match.matchRegex,
     name: match.matchName,
     captures: match.captures,
-    popStack: false,
+    popStack: None,
     pushStack: None,
   });
 };
@@ -30,18 +33,18 @@ let ofMatch = (match: Pattern.match_) => {
 let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
   Some({
     regex: matchRange.beginRegex,
-    name: matchRange.matchScopeName,
+    name: matchRange.name,
     captures: matchRange.beginCaptures,
-    popStack: false,
+    popStack: None,
     pushStack: Some(matchRange),
   });
 };
 
 let ofMatchRangeEnd = (matchRange: Pattern.matchRange) => {
   regex: matchRange.endRegex,
-  name: matchRange.matchScopeName,
+  name: matchRange.name,
   captures: matchRange.endCaptures,
-  popStack: true,
+  popStack: Some(matchRange),
   pushStack: None,
 };
 
@@ -72,9 +75,4 @@ let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
   | Some(v) => [ofMatchRangeEnd(v), ...rules]
   | None => rules
   };
-  /*let initialList =
-    switch (ScopeStack.activeRange(scopeStack)) {
-    | Some(v) => [ofMatchRangeEnd(v)]
-    | None => []
-    };*/
 };

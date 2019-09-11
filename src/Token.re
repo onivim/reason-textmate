@@ -60,12 +60,17 @@ let ofMatch =
     ) => {
   switch (rule.captures) {
   | [] =>
+    let name =
+      switch (rule.name, rule.pushStack, rule.popStack) {
+      | (Some(name), None, None) => Some(name)
+      | _ => None
+      };
     let match = matches[0];
     [
       create(
         ~position=match.startPos,
         ~length=match.length,
-        ~scope=rule.name,
+        ~scope=name,
         ~scopeStack,
         (),
       ),
@@ -73,16 +78,16 @@ let ofMatch =
   | v =>
     let initialMatch = matches[0];
 
-    /*prerr_endline(
-        "INITIALMATCH - |"
-        ++ initialMatch.match
-        ++ "|"
-        ++ string_of_int(initialMatch.startPos)
-        ++ "-"
-        ++ string_of_int(initialMatch.endPos)
-        ++ " length: "
-        ++ string_of_int(initialMatch.length),
-      );*/
+    prerr_endline(
+      "INITIALMATCH - |"
+      ++ initialMatch.match
+      ++ "|"
+      ++ string_of_int(initialMatch.startPos)
+      ++ "-"
+      ++ string_of_int(initialMatch.endPos)
+      ++ " length: "
+      ++ string_of_int(initialMatch.length),
+    );
 
     /*If the rule is a 'push stack', the outer rule has already been applied
           because the scope stack has been updated.
@@ -106,7 +111,7 @@ let ofMatch =
     let scopeNames = ScopeStack.getScopes(scopeStack);
     let initialScope =
       switch (rule.name, rule.pushStack, rule.popStack) {
-      | (Some(name), None, false) => [name, ...scopeNames]
+      | (Some(name), None, None) => [name, ...scopeNames]
       | _ => scopeNames
       };
 
@@ -119,16 +124,16 @@ let ofMatch =
       cg => {
         let (idx, scope) = cg;
         let match = matches[idx];
-        /*prerr_endline(
-            " --MATCH - |"
-            ++ match.match
-            ++ "|"
-            ++ string_of_int(match.startPos)
-            ++ "-"
-            ++ string_of_int(match.endPos)
-            ++ " length: "
-            ++ string_of_int(match.length),
-          );*/
+        prerr_endline(
+          " --MATCH - |"
+          ++ match.match
+          ++ "|"
+          ++ string_of_int(match.startPos)
+          ++ "-"
+          ++ string_of_int(match.endPos)
+          ++ " length: "
+          ++ string_of_int(match.length),
+        );
 
         if (match.length > 0 && match.startPos < initialMatch.endPos) {
           let idx = ref(match.startPos - initialMatch.startPos);
