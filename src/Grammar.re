@@ -295,6 +295,16 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
       let prevIndex = idx^;
       idx := max(matches[0].endPos, prevIndex);
+
+      // If the rule isn't a push or pop rule, and we're at the same index, we're stuck
+      // in a loop - we'll push forward a character in that case.
+      prerr_endline ("IDX: " ++ string_of_int(idx^));
+      switch ((rule.popStack, rule.pushStack)) {
+      | (None, None) when idx^ <= prevIndex => incr(idx)
+      | (Some(_), None) => prerr_endline ("ispush");
+      | (None, Some(_)) => prerr_endline ("ispush");
+      | _ => ()
+            };
     };
   };
 
