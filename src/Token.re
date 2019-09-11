@@ -10,6 +10,12 @@ type t = {
   scopes: list(string),
 };
 
+let _sanitizeScopes = (scopes) => {
+  scopes
+  |> List.map((s) => List.rev(String.split_on_char(' ', s)))
+  |> List.flatten;
+}
+
 let create =
     (
       ~position,
@@ -29,14 +35,14 @@ let create =
     | _ => scopeNames
     };
 
-  let ret: t = {length, position, scopes};
+  let ret: t = {length, position, scopes: _sanitizeScopes(scopes)};
   ret;
 };
 
 let _create2 = (~position, ~length, ~scopes, ()) => {
   position,
   length,
-  scopes,
+  scopes: _sanitizeScopes(scopes),
 };
 
 let show = (v: t) => {

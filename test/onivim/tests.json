@@ -85,13 +85,14 @@
 		"grammarPath": "fixtures/reason.json",
 		"lines": [
 			{
-				"line": "let abc = 100",
+				"line": "module M = { type t; }",
 				"tokens": [
 					{
-						"value": "let",
+						"value": "module",
 						"scopes": [
 							"source.reason",
-							"storage.type"
+							"storage.type",
+							"message.error"
 						]
 					},
 					{
@@ -101,10 +102,11 @@
 						]
 					},
 					{
-						"value": "abc",
+						"value": "M",
 						"scopes": [
 							"source.reason",
-							"entity.name.function"
+							"support.class",
+							"entity.name.class"
 						]
 					},
 					{
@@ -127,10 +129,58 @@
 						]
 					},
 					{
-						"value": "100",
+						"value": "{",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "type",
 						"scopes": [
 							"source.reason",
-							"constant.numeric"
+							"keyword.other"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "t",
+						"scopes": [
+							"source.reason",
+							"entity.name.function"
+						]
+					},
+					{
+						"value": ";",
+						"scopes": [
+							"source.reason",
+							"variable.other.class.js",
+							"variable.interpolation",
+							"keyword.operator",
+							"keyword.control",
+							"message.error"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.reason"
 						]
 					}
 				]
@@ -139,6 +189,6 @@
 		"grammars": [
 			"fixtures/reason.json"
 		],
-		"desc": "ONIVIM TEST #2 - basic reason function"
+		"desc": "ONIVIM TEST #3 - ReasonML module"
 	}
 ]
