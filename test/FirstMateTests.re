@@ -41,7 +41,8 @@ module FirstMateTest = {
   };
 
   let _loadGrammar = (rootPath: string, grammarPath: string) => {
-    let json = Yojson.Safe.from_file("test/" ++ rootPath ++ "/" ++ grammarPath);
+    let json =
+      Yojson.Safe.from_file("test/" ++ rootPath ++ "/" ++ grammarPath);
     switch (Grammar.Json.of_yojson(json)) {
     | Ok(v) => v
     | Error(msg) =>
@@ -180,22 +181,22 @@ module FirstMateTestSuite = {
   type tests = list(FirstMateTest.t);
 
   type t = {
-      rootPath: string,
-      tests: tests,
+    rootPath: string,
+    tests,
   };
 
   let ofDirectory = (rootPath: string) => {
-    
     let json = Yojson.Safe.from_file("test/" ++ rootPath ++ "/tests.json");
-    let tests = switch (tests_of_yojson(json)) {
-    | Ok(v) => v
-    | Error(msg) => failwith("Unable to load tests from rootPath: " ++ rootPath ++ ": " ++ msg)
-    };
-    
-    {
-      rootPath,
-      tests,
-    };
+    let tests =
+      switch (tests_of_yojson(json)) {
+      | Ok(v) => v
+      | Error(msg) =>
+        failwith(
+          "Unable to load tests from rootPath: " ++ rootPath ++ ": " ++ msg,
+        )
+      };
+
+    {rootPath, tests};
   };
 
   let run = (runTest, v: t) => {
