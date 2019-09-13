@@ -1404,59 +1404,5 @@
 			"fixtures/loops.json"
 		],
 		"desc": "TEST #74"
-	},
-	{
-		"grammarPath": "fixtures/git-commit.json",
-		"lines": [
-			{
-				"line": "longggggggggggggggggggggggggggggggggggggggggggggggg",
-				"tokens": [
-					{
-						"value": "longggggggggggggggggggggggggggggggggggggggggggggggg",
-						"scopes": [
-							"text.git-commit",
-							"meta.scope.message.git-commit",
-							"invalid.deprecated.line-too-long.git-commit"
-						]
-					}
-				]
-			},
-			{
-				"line": "# Please enter the commit message for your changes. Lines starting",
-				"tokens": [
-					{
-						"value": "#",
-						"scopes": [
-							"text.git-commit",
-							"meta.scope.metadata.git-commit",
-							"comment.line.number-sign.git-commit",
-							"punctuation.definition.comment.git-commit"
-						]
-					},
-					{
-						"value": " Please enter the commit message for your changes. Lines starting",
-						"scopes": [
-							"text.git-commit",
-							"meta.scope.metadata.git-commit",
-							"comment.line.number-sign.git-commit"
-						]
-					}
-				]
-			}
-		],
-		"grammars": [
-			"fixtures/text.json",
-			"fixtures/javascript.json",
-			"fixtures/javascript-regex.json",
-			"fixtures/coffee-script.json",
-			"fixtures/ruby.json",
-			"fixtures/html-erb.json",
-			"fixtures/html.json",
-			"fixtures/php.json",
-			"fixtures/python.json",
-			"fixtures/python-regex.json",
-			"fixtures/git-commit.json"
-		],
-		"desc": "TEST #54"
 	}
 ]
