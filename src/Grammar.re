@@ -194,7 +194,6 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
 };
 
 let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
-
   let idx = ref(0);
   let lastTokenPosition = ref(0);
   let lastAnchorPosition = ref(-1);
