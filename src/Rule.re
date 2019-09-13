@@ -49,7 +49,13 @@ let ofMatchRangeEnd = (allowA, allowG, matchRange: Pattern.matchRange) => {
 };
 
 let rec ofPatterns =
-        (~isFirstLine, ~isAnchorPos, ~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
+        (
+          ~isFirstLine,
+          ~isAnchorPos,
+          ~getScope,
+          ~scopeStack,
+          patterns: list(Pattern.t),
+        ) => {
   let f = (prev, pattern) => {
     switch (pattern) {
     | Pattern.Include(inc) =>

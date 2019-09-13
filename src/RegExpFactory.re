@@ -45,10 +45,11 @@ let escapeRegExpCharacters = (str: string) => {
 let _createAnchorCache = (str: string) => {
   let f = _ => "\\uFFFF";
 
-  let raw_A0_G0 = str
+  let raw_A0_G0 =
+    str
     |> Str.global_substitute(hasAnchorA, f)
     |> Str.global_substitute(hasAnchorG, f);
-    
+
   let raw_A0_G1 = Str.global_substitute(hasAnchorA, f, str);
 
   let raw_A1_G0 = Str.global_substitute(hasAnchorG, f, str);
@@ -70,7 +71,7 @@ let create = str => {
     | exception _ => false
     | _ => true
     };
-  
+
   let anchorG =
     switch (Str.search_forward(hasAnchorG, str, 0)) {
     | exception _ => false
@@ -131,7 +132,8 @@ let compile = (allowA, allowG, v: t) => {
   let rawStr =
     switch (v.anchorCache, allowA, allowG) {
     | (None, _, _) => v.raw
-    | (Some({raw_A1_G1, _}), allowA, allowG) when allowA == true && allowG == true => raw_A1_G1
+    | (Some({raw_A1_G1, _}), allowA, allowG)
+        when allowA == true && allowG == true => raw_A1_G1
     | (Some({raw_A1_G0, _}), allowA, _) when allowA == true => raw_A1_G0
     | (Some({raw_A0_G1, _}), _, allowG) when allowG == true => raw_A0_G1
     | (Some({raw_A0_G0, _}), _, _) => raw_A0_G0
