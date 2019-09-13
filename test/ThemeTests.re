@@ -66,6 +66,27 @@ describe("Theme", ({describe, _}) => {
     );
 
   describe("match", ({test, _}) => {
+    test("superfluous styles should still match", ({expect, _}) => {
+      let style: ResolvedStyle.t =
+        Theme.match(simpleTheme, "source.js constant.numeric.meta.js");
+
+      expect.string(style.foreground).toEqual("#990000");
+      expect.string(style.background).toEqual("#000");
+      expect.bool(style.bold).toBe(false);
+      expect.bool(style.italic).toBe(true);
+    });
+    test("unmatched style should pass-through", ({expect, _}) => {
+      let style: ResolvedStyle.t =
+        Theme.match(
+          simpleTheme,
+          "source.js constant.numeric.meta.js some-unmatched-style",
+        );
+
+      expect.string(style.foreground).toEqual("#990000");
+      expect.string(style.background).toEqual("#000");
+      expect.bool(style.bold).toBe(false);
+      expect.bool(style.italic).toBe(true);
+    });
     test("background color should be picked up", ({expect, _}) => {
       let style: ResolvedStyle.t =
         Theme.match(simpleTheme, "text.html.basic source.js");
