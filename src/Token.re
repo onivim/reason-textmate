@@ -133,7 +133,7 @@ let ofMatch =
               incr(idx);
             };
           };
-        }
+        };
       },
       v,
     );
