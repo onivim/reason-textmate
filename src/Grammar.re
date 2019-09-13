@@ -153,20 +153,21 @@ module Json = {
 type lastMatchedRange = option((int, Pattern.matchRange));
 
 let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
-  let rules = switch (lastMatchedRange) {
-  // Filter out any rule that 'pushes' or 'pops' with the same pattern we
-  // had before, if we're at the same position. This prevents infinite loops,
-  // where a pattern might have a non-consuming match.
-  | Some((pos, matchRange)) when pos == position => 
-    let filter = (rule: Rule.t) => switch((rule.popStack, rule.pushStack)) {
-    | (Some(mr), _) when mr === matchRange => false 
-    | (_, Some(mr)) when mr === matchRange => false
-    | _ => true;
+  let rules =
+    switch (lastMatchedRange) {
+    // Filter out any rule that 'pushes' or 'pops' with the same pattern we
+    // had before, if we're at the same position. This prevents infinite loops,
+    // where a pattern might have a non-consuming match.
+    | Some((pos, matchRange)) when pos == position =>
+      let filter = (rule: Rule.t) =>
+        switch (rule.popStack, rule.pushStack) {
+        | (Some(mr), _) when mr === matchRange => false
+        | (_, Some(mr)) when mr === matchRange => false
+        | _ => true
+        };
+      List.filter(filter, rules);
+    | _ => rules
     };
-    List.filter(filter, rules);
-  | _ => rules;
-  };
-  
 
   List.fold_left(
     (prev, curr: Rule.t) => {
@@ -316,13 +317,13 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
       // If the rule isn't a push or pop rule, and we're at the same index, we're stuck
       // in a loop - we'll push forward a character in that case.
-      prerr_endline ("IDX: " ++ string_of_int(idx^));
-      switch ((rule.popStack, rule.pushStack)) {
+      prerr_endline("IDX: " ++ string_of_int(idx^));
+      switch (rule.popStack, rule.pushStack) {
       | (None, None) when idx^ <= prevIndex => incr(idx)
       | (Some(mr), None) => lastMatchedRange := Some((prevIndex, mr))
       | (None, Some(mr)) => lastMatchedRange := Some((prevIndex, mr))
       | _ => ()
-            };
+      };
     };
   };
 
