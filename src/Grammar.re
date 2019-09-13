@@ -150,7 +150,25 @@ module Json = {
   };
 };
 
-let _getBestRule = (rules: list(Rule.t), str, position) => {
+type lastMatchedRange = option((int, Pattern.matchRange));
+
+let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
+  let rules =
+    switch (lastMatchedRange) {
+    // Filter out any rule that 'pushes' or 'pops' with the same pattern we
+    // had before, if we're at the same position. This prevents infinite loops,
+    // where a pattern might have a non-consuming match.
+    | Some((pos, matchRange)) when pos == position =>
+      let filter = (rule: Rule.t) =>
+        switch (rule.popStack, rule.pushStack) {
+        | (Some(mr), _) when mr === matchRange => false
+        | (_, Some(mr)) when mr === matchRange => false
+        | _ => true
+        };
+      List.filter(filter, rules);
+    | _ => rules
+    };
+
   List.fold_left(
     (prev, curr: Rule.t) => {
       let matches = RegExp.search(str, position, curr.regex);
@@ -181,6 +199,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
   let idx = ref(0);
   let lastTokenPosition = ref(0);
   let len = String.length(line);
+  let lastMatchedRange = ref(None);
 
   let tokens = ref([]);
 
@@ -210,7 +229,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       );
 
     // And figure out if any of the rules applies.
-    let bestRule = _getBestRule(rules, line, i);
+    let bestRule = _getBestRule(lastMatchedRange^, rules, line, i);
 
     switch (bestRule) {
     // No matching rule... just increment position and try again
@@ -295,6 +314,16 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
       let prevIndex = idx^;
       idx := max(matches[0].endPos, prevIndex);
+
+      let pos = idx^;
+      switch (rule.popStack, rule.pushStack) {
+      // If the rule isn't a push or pop rule, and we're at the same index, we're stuck
+      // in a loop - we'll push forward a character in that case.
+      | (None, None) when pos <= prevIndex => incr(idx)
+      // Otherwise, if it's a push rule, record that we pushed so that we can break an infinite loop
+      | (None, Some(mr)) => lastMatchedRange := Some((prevIndex, mr))
+      | _ => ()
+      };
     };
   };
 
