@@ -48,24 +48,20 @@ let ofMatchRangeEnd = (allowA, allowG, matchRange: Pattern.matchRange) => {
   pushStack: None,
 };
 
-let rec ofPatterns =
-        (
-          ~isFirstLine,
-          ~isAnchorPos,
-          ~getScope,
-          ~scopeStack,
-          patterns: list(Pattern.t),
-        ) => {
-  let f = (prev, pattern) => {
+let ofPatterns =
+    (
+      ~isFirstLine,
+      ~isAnchorPos,
+      ~getScope,
+      ~scopeStack,
+      patterns: list(Pattern.t),
+    ) => {
+  let rec f = (prev, pattern) => {
     switch (pattern) {
     | Pattern.Include(scope, inc) =>
       switch (getScope(scope, inc)) {
       | None => prev
-      | Some(v) =>
-        List.concat([
-          ofPatterns(~isFirstLine, ~isAnchorPos, ~getScope, ~scopeStack, v),
-          prev,
-        ])
+      | Some(v) => List.fold_left(f, prev, v)
       }
     | Pattern.Match(match) =>
       switch (ofMatch(isFirstLine, isAnchorPos, match)) {
