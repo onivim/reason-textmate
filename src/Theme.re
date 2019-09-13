@@ -197,70 +197,81 @@ let match = (theme: t, scopes: string) => {
       (),
     );
 
-  switch (scopes) {
-  | [] => default
-  | [scope, ...scopeParents] =>
-    let p = Trie.matches(theme.trie, scope);
+  let rec f = (scopes) => {
 
-    let result =
-      List.fold_left(
-        (prev: TokenStyle.t, curr) => {
-          let (_, selector: option(selectorWithParents)) = curr;
+    switch (scopes) {
+    | [] => default
+    | [scope, ...scopeParents] =>
+      let p = Trie.matches(theme.trie, scope);
 
-          switch (selector) {
-          | None => prev
-          | Some({style, parents}) =>
-            let newStyle = _applyStyle(prev, style);
+      // If there were no matches... try the next scope up.
+      switch (p) {
+      | [] => f(scopeParents)  
+      | _ =>
 
-            let parentsScopesToApply =
-              parents
-              |> List.filter(selector =>
-                   Selector.matches(selector, scopeParents)
-                 );
+      let result =
+        List.fold_left(
+          (prev: TokenStyle.t, curr) => {
+            let (_, selector: option(selectorWithParents)) = curr;
 
-            // Apply any parent selectors that match...
-            // we should be sorting this by score!
-            List.fold_left(
-              (prev, curr: Selector.t) => {
-                open Selector;
-                let {style, _} = curr;
-                // Reversing the order because the parent style
-                // should take precedence over previous style
-                _applyStyle(style, prev);
-              },
-              newStyle,
-              parentsScopesToApply,
-            );
-          };
-        },
-        TokenStyle.default,
-        p,
-      );
+            switch (selector) {
+            | None => prev
+            | Some({style, parents}) =>
+              let newStyle = _applyStyle(prev, style);
 
-    let foreground =
-      switch (result.foreground) {
-      | Some(v) => v
-      | None => default.foreground
-      };
+              let parentsScopesToApply =
+                parents
+                |> List.filter(selector =>
+                     Selector.matches(selector, scopeParents)
+                   );
 
-    let bold =
-      switch (result.bold) {
-      | Some(v) => v
-      | None => default.bold
-      };
+              // Apply any parent selectors that match...
+              // we should be sorting this by score!
+              List.fold_left(
+                (prev, curr: Selector.t) => {
+                  open Selector;
+                  let {style, _} = curr;
+                  // Reversing the order because the parent style
+                  // should take precedence over previous style
+                  _applyStyle(style, prev);
+                },
+                newStyle,
+                parentsScopesToApply,
+              );
+            };
+          },
+          TokenStyle.default,
+          p,
+        );
 
-    let italic =
-      switch (result.italic) {
-      | Some(v) => v
-      | None => default.italic
-      };
+      let foreground =
+        switch (result.foreground) {
+        | Some(v) => v
+        | None => default.foreground
+        };
 
-    let background =
-      switch (result.background) {
-      | Some(v) => v
-      | None => default.background
-      };
+      let bold =
+        switch (result.bold) {
+        | Some(v) => v
+        | None => default.bold
+        };
 
-    {background, foreground, bold, italic};
+      let italic =
+        switch (result.italic) {
+        | Some(v) => v
+        | None => default.italic
+        };
+
+      let background =
+        switch (result.background) {
+        | Some(v) => v
+        | None => default.background
+        };
+
+      {background, foreground, bold, italic};
+    };
   };
+
+};
+  f(scopes);
 };
