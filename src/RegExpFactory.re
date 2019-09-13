@@ -11,7 +11,6 @@ type t = {
   hasBackReferences: bool,
   captureGroups: option(list(captureGroup)),
   raw: string,
-
   // If the regex doesn't have anchors,
   // we can just keep a ready-to-go version around.
   regex: option(RegExp.t),
@@ -33,21 +32,21 @@ let escapeRegExpCharacters = (str: string) => {
   |> Str.global_substitute(additionalCharactersToEscape, f);
 };
 
-let create = (str) => {
+let create = str => {
   let hasBackReferences =
     switch (Str.search_forward(hasBackRefRegExp, str, 0)) {
     | exception _ => false
     | _ => true
     };
-    
-    {
-      captureGroups: None,
-      raw: str,
-      regex: None,
-      hasAnchorA: false,
-      hasBackReferences,
-    };
-}
+
+  {
+    captureGroups: None,
+    raw: str,
+    regex: None,
+    hasAnchorA: false,
+    hasBackReferences,
+  };
+};
 
 let supplyReferences = (references: list(captureGroup), v: t) => {
   let newRawStr =
@@ -81,9 +80,10 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
   {...v, hasBackReferences: false, raw: newRawStr};
 };
 
-let compile = (v: t) => switch (v.regex) {
-| None => RegExp.create(v.raw)
-| _ => RegExp.create(v.raw)
-};
+let compile = (v: t) =>
+  switch (v.regex) {
+  | None => RegExp.create(v.raw)
+  | _ => RegExp.create(v.raw)
+  };
 
 let show = (v: t) => v.raw;

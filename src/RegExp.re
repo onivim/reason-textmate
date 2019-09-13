@@ -19,16 +19,14 @@ let toString = (v: t) => v.raw;
 let emptyMatches = [||];
 
 let create = (str: string) => {
-  let regexp = switch (OnigRegExp.create(str)) {
-  | Ok(v) => Some(v)
-  | Error(msg) => failwith(msg);
+  let regexp =
+    switch (OnigRegExp.create(str)) {
+    | Ok(v) => Some(v)
+    | Error(msg) => failwith(msg)
     };
 
-  {
-    raw: str,
-    regexp
-    }
-}
+  {raw: str, regexp};
+};
 
 let search = (str: string, position: int, v: t) => {
   switch (v.regexp) {

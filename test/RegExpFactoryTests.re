@@ -3,7 +3,7 @@ open TestFramework;
 module RegExpFactory = Textmate.RegExpFactory;
 
 let createRegex = str => {
-  RegExpFactory.create(str)
+  RegExpFactory.create(str);
 };
 
 describe("RegExpFactory", ({describe, _}) => {
