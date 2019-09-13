@@ -6,6 +6,8 @@
   which was generated from another set of tests from Atom - https://github.com/atom/first-mate
  */
 
+Printexc.record_backtrace(true);
+
 open TestFramework;
 
 module Grammar = Textmate.Grammar;
@@ -117,13 +119,14 @@ module FirstMateTest = {
       prerr_endline(
         "Tokenizing line: " ++ string_of_int(idx^) ++ "|" ++ l.line ++ "|",
       );
+      let line = l.line ++ "\n";
       let scopes = scopeStack^;
       let (tokens, newScopeStack) =
         Grammar.tokenize(
           ~lineNumber=idx^,
           ~scopes=Some(scopes),
           ~grammar,
-          l.line,
+          line,
         );
       List.iter(t => prerr_endline(Token.show(t)), tokens);
 
@@ -131,12 +134,24 @@ module FirstMateTest = {
       let actualTokens =
         List.map(
           (token: Token.t) => {
-            let tokenValue = String.sub(l.line, token.position, token.length);
+            let pos = if (line.[token.position + token.length - 1] == '\n') {
+              token.length - 1
+                        } else {
+              token.length;
+                                                }
+            let tokenValue = String.sub(line, token.position, pos);
             let tokenScopes = token.scopes;
             (tokenValue, tokenScopes);
           },
           tokens,
         );
+
+        
+        let actualTokens = if (String.length(l.line) > 0) {
+          List.filter(((v, _)) => !String.equal(v, ""), actualTokens);
+        } else {
+          actualTokens
+                }
 
       let validateToken = (idx, actualToken, expectedToken) => {
         let (actualTokenValue, actualTokenScopes) = actualToken;
