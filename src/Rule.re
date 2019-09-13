@@ -20,9 +20,9 @@ let show = (v: t) => {
   start ++ RegExp.toString(v.regex);
 };
 
-let ofMatch = (match: Pattern.match_) => {
+let ofMatch = (allowA, allowG, match: Pattern.match_) => {
   Some({
-    regex: match.matchRegex,
+    regex: RegExpFactory.compile(allowA, allowG, match.matchRegex),
     name: match.matchName,
     captures: match.captures,
     popStack: None,
@@ -30,9 +30,9 @@ let ofMatch = (match: Pattern.match_) => {
   });
 };
 
-let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
+let ofMatchRangeBegin = (allowA, allowG, matchRange: Pattern.matchRange) => {
   Some({
-    regex: matchRange.beginRegex,
+    regex: RegExpFactory.compile(allowA, allowG, matchRange.beginRegex),
     name: matchRange.name,
     captures: matchRange.beginCaptures,
     popStack: None,
@@ -40,29 +40,40 @@ let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
   });
 };
 
-let ofMatchRangeEnd = (matchRange: Pattern.matchRange) => {
-  regex: matchRange.endRegex,
+let ofMatchRangeEnd = (allowA, allowG, matchRange: Pattern.matchRange) => {
+  regex: RegExpFactory.compile(allowA, allowG, matchRange.endRegex),
   name: matchRange.name,
   captures: matchRange.endCaptures,
   popStack: Some(matchRange),
   pushStack: None,
 };
 
-let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
+let rec ofPatterns =
+        (
+          ~isFirstLine,
+          ~isAnchorPos,
+          ~getScope,
+          ~scopeStack,
+          patterns: list(Pattern.t),
+        ) => {
   let f = (prev, pattern) => {
     switch (pattern) {
-    | Pattern.Include(inc) =>
-      switch (getScope(inc)) {
+    | Pattern.Include(scope, inc) =>
+      switch (getScope(scope, inc)) {
       | None => prev
-      | Some(v) => List.concat([ofPatterns(~getScope, ~scopeStack, v), prev])
+      | Some(v) =>
+        List.concat([
+          ofPatterns(~isFirstLine, ~isAnchorPos, ~getScope, ~scopeStack, v),
+          prev,
+        ])
       }
     | Pattern.Match(match) =>
-      switch (ofMatch(match)) {
+      switch (ofMatch(isFirstLine, isAnchorPos, match)) {
       | None => prev
       | Some(v) => [v, ...prev]
       }
     | Pattern.MatchRange(matchRange) =>
-      switch (ofMatchRangeBegin(matchRange)) {
+      switch (ofMatchRangeBegin(isFirstLine, isAnchorPos, matchRange)) {
       | None => prev
       | Some(v) => [v, ...prev]
       }
@@ -73,7 +84,9 @@ let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
 
   let initialRules =
     switch (activeRange) {
-    | Some(v) when v.applyEndPatternLast == true => [ofMatchRangeEnd(v)]
+    | Some(v) when v.applyEndPatternLast == true => [
+        ofMatchRangeEnd(isFirstLine, isAnchorPos, v),
+      ]
     | _ => []
     };
 
@@ -81,7 +94,7 @@ let rec ofPatterns = (~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
 
   switch (activeRange) {
   | Some(v) when v.applyEndPatternLast == false => [
-      ofMatchRangeEnd(v),
+      ofMatchRangeEnd(isFirstLine, isAnchorPos, v),
       ...rules,
     ]
   | _ => rules

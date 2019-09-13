@@ -114,20 +114,24 @@ let ofMatch =
     let len = initialMatch.length;
     let scopeArray = Array.make(initialMatch.length, initialScope);
 
+    let matchesLen = Array.length(matches);
     // Apply each capture group to the array
     List.iter(
       cg => {
         let (idx, scope) = cg;
-        let match = matches[idx];
 
-        if (match.length > 0 && match.startPos < initialMatch.endPos) {
-          let idx = ref(match.startPos - initialMatch.startPos);
-          let endPos = min(len, match.endPos - initialMatch.startPos);
+        if (idx < matchesLen) {
+          let match = matches[idx];
 
-          while (idx^ < endPos) {
-            let i = idx^;
-            scopeArray[i] = [scope, ...scopeArray[i]];
-            incr(idx);
+          if (match.length > 0 && match.startPos < initialMatch.endPos) {
+            let idx = ref(match.startPos - initialMatch.startPos);
+            let endPos = min(len, match.endPos - initialMatch.startPos);
+
+            while (idx^ < endPos) {
+              let i = idx^;
+              scopeArray[i] = [scope, ...scopeArray[i]];
+              incr(idx);
+            };
           };
         };
       },

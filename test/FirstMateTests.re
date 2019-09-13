@@ -117,21 +117,40 @@ module FirstMateTest = {
       prerr_endline(
         "Tokenizing line: " ++ string_of_int(idx^) ++ "|" ++ l.line ++ "|",
       );
+      let line = l.line ++ "\n";
       let scopes = scopeStack^;
       let (tokens, newScopeStack) =
-        Grammar.tokenize(~scopes=Some(scopes), ~grammar, l.line);
+        Grammar.tokenize(
+          ~lineNumber=idx^,
+          ~scopes=Some(scopes),
+          ~grammar,
+          line,
+        );
       List.iter(t => prerr_endline(Token.show(t)), tokens);
 
       let expectedTokens = l.tokens;
       let actualTokens =
         List.map(
           (token: Token.t) => {
-            let tokenValue = String.sub(l.line, token.position, token.length);
+            let pos =
+              if (line.[token.position + token.length - 1] == '\n') {
+                token.length - 1;
+              } else {
+                token.length;
+              };
+            let tokenValue = String.sub(line, token.position, pos);
             let tokenScopes = token.scopes;
             (tokenValue, tokenScopes);
           },
           tokens,
         );
+
+      let actualTokens =
+        if (String.length(l.line) > 0) {
+          List.filter(((v, _)) => !String.equal(v, ""), actualTokens);
+        } else {
+          actualTokens;
+        };
 
       let validateToken = (idx, actualToken, expectedToken) => {
         let (actualTokenValue, actualTokenScopes) = actualToken;
@@ -237,8 +256,9 @@ describe("FirstMate", ({test, _}) => {
     );
   };
 
-  /*let _ = runTest;
-    let _ = testSuite;*/
-  FirstMateTestSuite.run(runTest, firstMateTestSuite);
+  let _ = runTest;
+  let _ = firstMateTestSuite;
+  let _ = onivimTestSuite;
   FirstMateTestSuite.run(runTest, onivimTestSuite);
+  FirstMateTestSuite.run(runTest, firstMateTestSuite);
 });

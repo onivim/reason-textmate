@@ -1,15 +1,12 @@
 open TestFramework;
 
 module Grammar = Textmate.Grammar;
+module RegExpFactory = Textmate.RegExpFactory;
 module RegExp = Textmate.RegExp;
 module Token = Textmate.Token;
 
 let createRegex = str => {
-  switch (RegExp.create(str)) {
-  | Ok(v) => v
-  | Error(msg) =>
-    failwith("Unable to parse regex: " ++ str ++ " message: " ++ msg)
-  };
+  RegExpFactory.create(str);
 };
 
 let getExecutingDirectory = () => {
@@ -43,15 +40,15 @@ describe("Grammar", ({describe, _}) => {
   let grammar =
     Grammar.create(
       ~scopeName="source.abc",
-      ~patterns=[Include("#expression")],
+      ~patterns=[Include("source.abc", "#expression")],
       ~repository=[
         (
           "expression",
           [
-            Include("#letter"),
-            Include("#word"),
-            Include("#capture-groups"),
-            Include("#paren-expression"),
+            Include("source.abc", "#letter"),
+            Include("source.abc", "#word"),
+            Include("source.abc", "#capture-groups"),
+            Include("source.abc", "#paren-expression"),
           ],
         ),
         (
@@ -97,7 +94,7 @@ describe("Grammar", ({describe, _}) => {
               endCaptures: [(0, "punctuation.paren.close")],
               name: Some("expression.group"),
               contentName: None,
-              patterns: [Include("#expression")],
+              patterns: [Include("source.abc", "#expression")],
               applyEndPatternLast: false,
             }),
           ],
@@ -105,6 +102,8 @@ describe("Grammar", ({describe, _}) => {
       ],
       (),
     );
+
+  let grammar = Grammar.setGrammarRepository(_ => Some(grammar), grammar);
 
   describe("tokenize", ({test, describe, _}) => {
     describe("begin / end rules", ({test, _}) => {

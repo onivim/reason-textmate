@@ -1,45 +1,5 @@
 [
 	{
-		"grammarPath": "fixtures/markdown.json",
-		"lines": [
-			{
-				"line": "# Hello",
-				"tokens": [
-					{
-						"value": "#",
-						"scopes": [
-							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown",
-							"punctuation.definition.heading.markdown"
-						]
-					},
-					{
-						"value": " ",
-						"scopes": [
-							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown"
-						]
-					},
-					{
-						"value": "Hello",
-						"scopes": [
-							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown",
-							"entity.name.section.markdown"
-						]
-					}
-				]
-			}
-		],
-		"grammars": [
-			"fixtures/markdown.json"
-		],
-		"desc": "ONIVIM TEST #4 - markdown header"
-	},
-	{
 		"grammarPath": "fixtures/hello.json",
 		"lines": [
 			{
@@ -231,4 +191,77 @@
 		],
 		"desc": "ONIVIM TEST #3 - ReasonML module"
 	},
+	{
+		"grammarPath": "fixtures/anchor-a.json",
+		"lines": [
+			{
+				"line": "hello",
+				"tokens": [
+					{
+						"value": "hello",
+						"scopes": [
+							"source.anchor-a",
+							"hello.first-line"
+						]
+					}
+				]
+			},
+			{
+				"line": "hello",
+				"tokens": [
+					{
+						"value": "hello",
+						"scopes": [
+							"source.anchor-a",
+							"hello.after-first-line"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/anchor-a.json"
+		],
+		"desc": "ONIVIM TEST #4 - anchor A"
+	},
+	{
+		"grammarPath": "fixtures/markdown.json",
+		"lines": [
+			{
+				"line": "# Hello",
+				"tokens": [
+					{
+						"value": "#",
+						"scopes": [
+							"text.html.markdown",
+							"markup.heading.markdown",
+							"heading.1.markdown",
+							"punctuation.definition.heading.markdown"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"text.html.markdown",
+							"markup.heading.markdown",
+							"heading.1.markdown"
+						]
+					},
+					{
+						"value": "Hello",
+						"scopes": [
+							"text.html.markdown",
+							"markup.heading.markdown",
+							"heading.1.markdown",
+							"entity.name.section.markdown"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/markdown.json"
+		],
+		"desc": "ONIVIM TEST #5 - markdown header"
+	}
 ]

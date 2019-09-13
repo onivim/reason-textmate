@@ -7,17 +7,17 @@ module Capture = {
 };
 
 type t =
-  | Include(string)
+  | Include(string, string)
   | Match(match_)
   | MatchRange(matchRange)
 and match = {
-  matchRegex: RegExp.t,
+  matchRegex: RegExpFactory.t,
   matchName: option(string),
   captures: list(Capture.t),
 }
 and matchRange = {
-  beginRegex: RegExp.t,
-  endRegex: RegExp.t,
+  beginRegex: RegExpFactory.t,
+  endRegex: RegExpFactory.t,
   beginCaptures: list(Capture.t),
   endCaptures: list(Capture.t),
   // The scope to append to the tokens
@@ -31,7 +31,7 @@ and matchRange = {
 
 let show = (v: t) =>
   switch (v) {
-  | Include(str) => "Include(" ++ str ++ ")"
+  | Include(scope, str) => "Include(" ++ scope ++ "," ++ str ++ ")"
   | Match(_) => "Match(..)"
   | MatchRange(matchRange) =>
     let name =
@@ -53,10 +53,10 @@ let show = (v: t) =>
     ++ contentName
     ++ "\n"
     ++ " -"
-    ++ RegExp.toString(matchRange.beginRegex)
+    ++ RegExpFactory.show(matchRange.beginRegex)
     ++ "\n"
     ++ " -"
-    ++ RegExp.toString(matchRange.endRegex)
+    ++ RegExpFactory.show(matchRange.endRegex)
     ++ "\n";
   };
 
@@ -108,10 +108,10 @@ module Json = {
       };
     };
 
-  let regex_of_yojson: Yojson.Safe.t => result(RegExp.t, string) =
+  let regex_of_yojson: Yojson.Safe.t => result(RegExpFactory.t, string) =
     json => {
       switch (json) {
-      | `String(v) => RegExp.create(v)
+      | `String(v) => Ok(RegExpFactory.create(v))
       | _ => Error("Regular expression not specified")
       };
     };
@@ -142,22 +142,34 @@ module Json = {
       );
     };
 
-  let rec of_yojson: Yojson.Safe.t => result(t, string) =
-    json => {
+  let rec of_yojson: (string, Yojson.Safe.t) => result(t, string) =
+    (scope, json) => {
       open Yojson.Safe.Util;
       let incl = member("include", json);
       let mat = member("match", json);
       let beg = member("begin", json);
 
       switch (incl, mat, beg) {
-      | (`String(inc), _, _) => Ok(Include(inc))
+      | (`String(inc), _, _) =>
+        let len = String.length(inc);
+        if (len > 0 && (inc.[0] == '#' || inc.[0] == '$')) {
+          Ok(Include(scope, inc));
+        } else {
+          switch (String.index_opt(inc, '#')) {
+          | None => Ok(Include(inc, "$self"))
+          | Some(idx) =>
+            let scope = String.sub(inc, 0, idx);
+            let id = String.sub(inc, idx, len - idx);
+            Ok(Include(scope, id));
+          };
+        };
       | (_, `String(_), _) => match_of_yojson(json)
-      | (_, _, `String(_)) => matchRange_of_yojson(json)
-      | _ => Ok(Include("#no-op"))
+      | (_, _, `String(_)) => matchRange_of_yojson(scope, json)
+      | _ => Ok(Include("noop", "#no-op"))
       };
     }
-  and matchRange_of_yojson: Yojson.Safe.t => result(t, string) =
-    json => {
+  and matchRange_of_yojson: (string, Yojson.Safe.t) => result(t, string) =
+    (scope, json) => {
       open Yojson.Safe.Util;
       let%bind beginRegex = regex_of_yojson(member("begin", json));
       let er = regex_of_yojson(member("end", json));
@@ -191,7 +203,7 @@ module Json = {
               switch (prev) {
               | Error(e) => Error(e)
               | Ok(currItems) =>
-                switch (of_yojson(curr)) {
+                switch (of_yojson(scope, curr)) {
                 | Ok(p) => Ok([p, ...currItems])
                 | Error(e) => Error(e)
                 }
@@ -229,8 +241,8 @@ module Json = {
       );
     };
 
-  let of_string: string => result(t, string) =
-    jsonString => {
-      Yojson.Safe.from_string(jsonString) |> of_yojson;
+  let of_string: (string, string) => result(t, string) =
+    (scope, jsonString) => {
+      Yojson.Safe.from_string(jsonString) |> of_yojson(scope);
     };
 };
