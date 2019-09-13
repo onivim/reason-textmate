@@ -40,15 +40,15 @@ describe("Grammar", ({describe, _}) => {
   let grammar =
     Grammar.create(
       ~scopeName="source.abc",
-      ~patterns=[Include("#expression")],
+      ~patterns=[Include("source.abc", "#expression")],
       ~repository=[
         (
           "expression",
           [
-            Include("#letter"),
-            Include("#word"),
-            Include("#capture-groups"),
-            Include("#paren-expression"),
+            Include("source.abc", "#letter"),
+            Include("source.abc", "#word"),
+            Include("source.abc", "#capture-groups"),
+            Include("source.abc", "#paren-expression"),
           ],
         ),
         (
@@ -94,7 +94,7 @@ describe("Grammar", ({describe, _}) => {
               endCaptures: [(0, "punctuation.paren.close")],
               name: Some("expression.group"),
               contentName: None,
-              patterns: [Include("#expression")],
+              patterns: [Include("source.abc", "#expression")],
               applyEndPatternLast: false,
             }),
           ],
@@ -102,6 +102,8 @@ describe("Grammar", ({describe, _}) => {
       ],
       (),
     );
+
+  let grammar = Grammar.setGrammarRepository((_) => Some(grammar), grammar);
 
   describe("tokenize", ({test, describe, _}) => {
     describe("begin / end rules", ({test, _}) => {

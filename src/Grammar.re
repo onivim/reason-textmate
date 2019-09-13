@@ -13,19 +13,21 @@ and grammarRepository = string => option(t);
 
 let noopGrammarRepository: grammarRepository = _ => None;
 
-let getScope = (scope: string, v: t) => {
+let getScope = (grammarScope, scope: string, v: t) => {
   let len = String.length(scope);
-  if (scope == "$self") {
-    Some(v.patterns);
-  } else if (len > 0 && scope.[0] == '#') {
-    StringMap.find_opt(scope, v.repository);
-  } else {
-    // Raw include names without a '#' or '$' in front reference other garmmars
-    switch (v.grammarRepository(scope)) {
-    | Some(g) => Some(g.patterns)
-    | None => None
-    };
-  };
+
+  prerr_endline ("Getting scope: " ++ grammarScope ++ " - " ++ scope);
+
+  switch (v.grammarRepository(grammarScope)) {
+  | Some(g) =>
+    if (len > 0 && scope.[0] == '#') {
+      StringMap.find_opt(scope, g.repository);
+    } else {
+      // This is implicity '$self'
+      Some(g.patterns);
+        }
+  | None => None;
+  }
 };
 
 let setGrammarRepository = (grammarRepository: grammarRepository, v: t) => {
@@ -34,13 +36,6 @@ let setGrammarRepository = (grammarRepository: grammarRepository, v: t) => {
 };
 
 let getScopeName = (v: t) => v.scopeName;
-
-let getFirstRangeScope = (scope: string, v: t) => {
-  switch (getScope(scope, v)) {
-  | Some([MatchRange(matchRange), ..._]) => Some(matchRange)
-  | _ => None
-  };
-};
 
 let getScopeStack = (v: t) => {
   ScopeStack.ofTopLevelScope(v.patterns, v.scopeName);
@@ -77,7 +72,7 @@ let create =
 module Json = {
   open Yojson.Safe.Util;
 
-  let patterns_of_yojson = (json: Yojson.Safe.t) => {
+  let patterns_of_yojson = (scopeName, json: Yojson.Safe.t) => {
     switch (json) {
     | `List(v) =>
       List.fold_left(
@@ -85,7 +80,7 @@ module Json = {
           switch (prev) {
           | Error(e) => Error(e)
           | Ok(currItems) =>
-            switch (Pattern.Json.of_yojson(curr)) {
+            switch (Pattern.Json.of_yojson(scopeName, curr)) {
             | Error(e) => Error(e)
             | Ok(v) => Ok([v, ...currItems])
             }
@@ -98,7 +93,7 @@ module Json = {
     };
   };
 
-  let repository_of_yojson = (json: Yojson.Safe.t) => {
+  let repository_of_yojson = (scope, json: Yojson.Safe.t) => {
     switch (json) {
     | `Assoc(v) =>
       List.fold_left(
@@ -112,14 +107,14 @@ module Json = {
             switch (member("begin", json), member("patterns", json)) {
             // Yes...
             | (`Null, `List(_) as patternList) =>
-              let patterns = patterns_of_yojson(patternList);
+              let patterns = patterns_of_yojson(scope, patternList);
               switch (patterns) {
               | Error(e) => Error(e)
               | Ok(v) => Ok([(key, v), ...currItems])
               };
             // Nope... just a single pattern
             | _ =>
-              switch (Pattern.Json.of_yojson(json)) {
+              switch (Pattern.Json.of_yojson(scope, json)) {
               | Error(e) => Error(e)
               | Ok(v) => Ok([(key, [v]), ...currItems])
               }
@@ -143,8 +138,8 @@ module Json = {
 
   let of_yojson = (json: Yojson.Safe.t) => {
     let%bind scopeName = string_of_yojson(member("scopeName", json));
-    let%bind patterns = patterns_of_yojson(member("patterns", json));
-    let%bind repository = repository_of_yojson(member("repository", json));
+    let%bind patterns = patterns_of_yojson(scopeName, member("patterns", json));
+    let%bind repository = repository_of_yojson(scopeName, member("repository", json));
 
     Ok(create(~scopeName, ~patterns, ~repository, ()));
   };
@@ -226,7 +221,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       Rule.ofPatterns(
         ~isFirstLine=lineNumber == 0,
         ~isAnchorPos=lastAnchorPosition^ == i,
-        ~getScope=v => getScope(v, grammar),
+        ~getScope=(scope,inc) => getScope(scope, inc, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
       );

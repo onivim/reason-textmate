@@ -7,7 +7,7 @@ module Capture = {
 };
 
 type t =
-  | Include(string)
+  | Include(string, string)
   | Match(match_)
   | MatchRange(matchRange)
 and match = {
@@ -31,7 +31,7 @@ and matchRange = {
 
 let show = (v: t) =>
   switch (v) {
-  | Include(str) => "Include(" ++ str ++ ")"
+  | Include(scope, str) => "Include(" ++ scope ++ "," ++ str ++ ")"
   | Match(_) => "Match(..)"
   | MatchRange(matchRange) =>
     let name =
@@ -142,22 +142,28 @@ module Json = {
       );
     };
 
-  let rec of_yojson: Yojson.Safe.t => result(t, string) =
-    json => {
+  let rec of_yojson: (string, Yojson.Safe.t) => result(t, string) =
+    (scope, json) => {
       open Yojson.Safe.Util;
       let incl = member("include", json);
       let mat = member("match", json);
       let beg = member("begin", json);
 
       switch (incl, mat, beg) {
-      | (`String(inc), _, _) => Ok(Include(inc))
+      | (`String(inc), _, _) => 
+          let len = String.length(inc);
+          if (len > 0 
+            && (inc.[0] == '#' || inc.[0] == '$'))
+          Ok(Include(scope, inc))
+          else 
+          Ok(Include(inc, "$self"));
       | (_, `String(_), _) => match_of_yojson(json)
-      | (_, _, `String(_)) => matchRange_of_yojson(json)
-      | _ => Ok(Include("#no-op"))
+      | (_, _, `String(_)) => matchRange_of_yojson(scope, json)
+      | _ => Ok(Include("noop", "#no-op"))
       };
     }
-  and matchRange_of_yojson: Yojson.Safe.t => result(t, string) =
-    json => {
+  and matchRange_of_yojson: (string, Yojson.Safe.t) => result(t, string) =
+    (scope, json) => {
       open Yojson.Safe.Util;
       let%bind beginRegex = regex_of_yojson(member("begin", json));
       let%bind endRegex = regex_of_yojson(member("end", json));
@@ -184,7 +190,7 @@ module Json = {
               switch (prev) {
               | Error(e) => Error(e)
               | Ok(currItems) =>
-                switch (of_yojson(curr)) {
+                switch (of_yojson(scope, curr)) {
                 | Ok(p) => Ok([p, ...currItems])
                 | Error(e) => Error(e)
                 }
@@ -222,8 +228,8 @@ module Json = {
       );
     };
 
-  let of_string: string => result(t, string) =
-    jsonString => {
-      Yojson.Safe.from_string(jsonString) |> of_yojson;
+  let of_string: (string, string) => result(t, string) =
+    (scope, jsonString) => {
+      Yojson.Safe.from_string(jsonString) |> of_yojson(scope);
     };
 };

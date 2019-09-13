@@ -58,8 +58,8 @@ let rec ofPatterns =
         ) => {
   let f = (prev, pattern) => {
     switch (pattern) {
-    | Pattern.Include(inc) =>
-      switch (getScope(inc)) {
+    | Pattern.Include(scope, inc) =>
+      switch (getScope(scope, inc)) {
       | None => prev
       | Some(v) =>
         List.concat([
