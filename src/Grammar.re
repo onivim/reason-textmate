@@ -162,6 +162,7 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
       let filter = (rule: Rule.t) =>
         switch (rule.popStack, rule.pushStack) {
         | (Some(mr), _) when mr === matchRange => false
+        | (_, Some(mr)) when mr === matchRange => false
         | _ => true
         };
       List.filter(filter, rules);
