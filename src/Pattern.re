@@ -11,13 +11,13 @@ type t =
   | Match(match_)
   | MatchRange(matchRange)
 and match = {
-  matchRegex: RegExp.t,
+  matchRegex: RegExpFactory.t,
   matchName: option(string),
   captures: list(Capture.t),
 }
 and matchRange = {
-  beginRegex: RegExp.t,
-  endRegex: RegExp.t,
+  beginRegex: RegExpFactory.t,
+  endRegex: RegExpFactory.t,
   beginCaptures: list(Capture.t),
   endCaptures: list(Capture.t),
   // The scope to append to the tokens
@@ -53,10 +53,10 @@ let show = (v: t) =>
     ++ contentName
     ++ "\n"
     ++ " -"
-    ++ RegExp.toString(matchRange.beginRegex)
+    ++ RegExpFactory.show(matchRange.beginRegex)
     ++ "\n"
     ++ " -"
-    ++ RegExp.toString(matchRange.endRegex)
+    ++ RegExpFactory.show(matchRange.endRegex)
     ++ "\n";
   };
 
@@ -108,10 +108,10 @@ module Json = {
       };
     };
 
-  let regex_of_yojson: Yojson.Safe.t => result(RegExp.t, string) =
+  let regex_of_yojson: Yojson.Safe.t => result(RegExpFactory.t, string) =
     json => {
       switch (json) {
-      | `String(v) => RegExp.create(v)
+      | `String(v) => Ok(RegExpFactory.create(v))
       | _ => Error("Regular expression not specified")
       };
     };

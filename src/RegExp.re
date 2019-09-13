@@ -9,90 +9,26 @@
 
 open Oniguruma;
 
-type captureGroup = (int, string);
-
 type t = {
-  hasBackReferences: bool,
-  captureGroups: option(list(captureGroup)),
   raw: string,
   regexp: option(OnigRegExp.t),
 };
 
-let hasBackRefRegExp = Str.regexp("\\\\\\([0-9]+\\)");
-
-let hasBackReferences = (v: t) => v.hasBackReferences;
-
 let toString = (v: t) => v.raw;
 
-let charactersToEscape = Str.regexp("[\\?\\,\\.\\$\\^\\+\\*{}\\\\\\|\\-]");
-let additionalCharactersToEscape = Str.regexp("[][()]");
-let escapeRegExpCharacters = (str: string) => {
-  let f = s => "\\" ++ s;
-
-  str
-  |> Str.global_substitute(charactersToEscape, f)
-  |> Str.global_substitute(additionalCharactersToEscape, f);
-};
-
-let create = (regExString: string) => {
-  let hasBackReferences =
-    switch (Str.search_forward(hasBackRefRegExp, regExString, 0)) {
-    | exception _ => false
-    | _ => true
-    };
-
-  switch (hasBackReferences) {
-  | false =>
-    let%bind regexp = OnigRegExp.create(regExString);
-    Ok({
-      hasBackReferences: false,
-      captureGroups: None,
-      raw: regExString,
-      regexp: Some(regexp),
-    });
-  | true =>
-    Ok({
-      hasBackReferences: true,
-      captureGroups: None,
-      raw: regExString,
-      regexp: None,
-    })
-  };
-};
-
-let supplyReferences = (references: list(captureGroup), v: t) => {
-  let newRawStr =
-    List.fold_left(
-      (prev, curr) => {
-        let (cg, text) = curr;
-        let str = prev;
-
-        let newStr =
-          if (cg > 0) {
-            let regexp = Str.regexp("\\\\" ++ string_of_int(cg));
-            let text = escapeRegExpCharacters(text);
-            Str.global_replace(regexp, text, str);
-          } else {
-            prev;
-          };
-
-        newStr;
-      },
-      v.raw,
-      references,
-    );
-
-  let regexp =
-    switch (OnigRegExp.create(newRawStr)) {
-    | Ok(v) => v
-    | Error(msg) =>
-      failwith("Error creating regex: " ++ newRawStr ++ " - " ++ msg)
-    };
-
-  {...v, hasBackReferences: false, raw: newRawStr, regexp: Some(regexp)};
-};
-
 let emptyMatches = [||];
+
+let create = (str: string) => {
+  let regexp = switch (OnigRegExp.create(str)) {
+  | Ok(v) => Some(v)
+  | Error(msg) => failwith(msg);
+    };
+
+  {
+    raw: str,
+    regexp
+    }
+}
 
 let search = (str: string, position: int, v: t) => {
   switch (v.regexp) {

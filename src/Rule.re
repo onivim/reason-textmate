@@ -22,7 +22,7 @@ let show = (v: t) => {
 
 let ofMatch = (match: Pattern.match_) => {
   Some({
-    regex: match.matchRegex,
+    regex: RegExpFactory.getRegEx(match.matchRegex),
     name: match.matchName,
     captures: match.captures,
     popStack: None,
@@ -32,7 +32,7 @@ let ofMatch = (match: Pattern.match_) => {
 
 let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
   Some({
-    regex: matchRange.beginRegex,
+    regex: RegExpFactory.getRegEx(matchRange.beginRegex),
     name: matchRange.name,
     captures: matchRange.beginCaptures,
     popStack: None,
@@ -41,7 +41,7 @@ let ofMatchRangeBegin = (matchRange: Pattern.matchRange) => {
 };
 
 let ofMatchRangeEnd = (matchRange: Pattern.matchRange) => {
-  regex: matchRange.endRegex,
+  regex: RegExpFactory.getRegEx(matchRange.endRegex),
   name: matchRange.name,
   captures: matchRange.endCaptures,
   popStack: Some(matchRange),
