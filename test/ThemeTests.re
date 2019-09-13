@@ -77,7 +77,10 @@ describe("Theme", ({describe, _}) => {
     });
     test("unmatched style should pass-through", ({expect, _}) => {
       let style: ResolvedStyle.t =
-        Theme.match(simpleTheme, "source.js constant.numeric.meta.js some-unmatched-style");
+        Theme.match(
+          simpleTheme,
+          "source.js constant.numeric.meta.js some-unmatched-style",
+        );
 
       expect.string(style.foreground).toEqual("#990000");
       expect.string(style.background).toEqual("#000");
