@@ -2390,5 +2390,437 @@
 			"fixtures/imaginary.json"
 		],
 		"desc": "TEST #33"
+	},
+	{
+		"grammarPath": "fixtures/multiline.json",
+		"lines": [
+			{
+				"line": "Xy\\",
+				"tokens": [
+					{
+						"value": "X",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x",
+							"start"
+						]
+					},
+					{
+						"value": "y",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x"
+						]
+					},
+					{
+						"value": "\\",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x",
+							"inside-x"
+						]
+					}
+				]
+			},
+			{
+				"line": "zX",
+				"tokens": [
+					{
+						"value": "z",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x"
+						]
+					},
+					{
+						"value": "X",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x",
+							"end"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/multiline.json"
+		],
+		"desc": "TEST #34"
+	},
+	{
+		"grammarPath": "fixtures/multiline.json",
+		"lines": [
+			{
+				"line": "Xy\\",
+				"tokens": [
+					{
+						"value": "X",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x",
+							"start"
+						]
+					},
+					{
+						"value": "y",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x"
+						]
+					},
+					{
+						"value": "\\",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x",
+							"inside-x"
+						]
+					}
+				]
+			},
+			{
+				"line": "zX",
+				"tokens": [
+					{
+						"value": "z",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x"
+						]
+					},
+					{
+						"value": "X",
+						"scopes": [
+							"source.multilineLanguage",
+							"outside-x",
+							"end"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/multiline.json"
+		],
+		"desc": "TEST #34"
+	},
+	{
+		"grammarScopeName": "source.js",
+		"lines": [
+			{
+				"line": "// line comment",
+				"tokens": [
+					{
+						"value": "//",
+						"scopes": [
+							"source.js",
+							"comment.line.double-slash.js",
+							"punctuation.definition.comment.js"
+						]
+					},
+					{
+						"value": " line comment",
+						"scopes": [
+							"source.js",
+							"comment.line.double-slash.js"
+						]
+					}
+				]
+			},
+			{
+				"line": " // second line comment with a single leading space",
+				"tokens": [
+					{
+						"value": " ",
+						"scopes": [
+							"source.js",
+							"punctuation.whitespace.comment.leading.js"
+						]
+					},
+					{
+						"value": "//",
+						"scopes": [
+							"source.js",
+							"comment.line.double-slash.js",
+							"punctuation.definition.comment.js"
+						]
+					},
+					{
+						"value": " second line comment with a single leading space",
+						"scopes": [
+							"source.js",
+							"comment.line.double-slash.js"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json"
+		],
+		"desc": "TEST #35"
+	},
+	{
+		"grammarScopeName": "source.c",
+		"lines": [
+			{
+				"line": "if(1){m()}",
+				"tokens": [
+					{
+						"value": "if",
+						"scopes": [
+							"source.c",
+							"keyword.control.c"
+						]
+					},
+					{
+						"value": "(",
+						"scopes": [
+							"source.c"
+						]
+					},
+					{
+						"value": "1",
+						"scopes": [
+							"source.c",
+							"constant.numeric.c"
+						]
+					},
+					{
+						"value": ")",
+						"scopes": [
+							"source.c"
+						]
+					},
+					{
+						"value": "{",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"punctuation.section.block.begin.c"
+						]
+					},
+					{
+						"value": "m",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"meta.function-call.c",
+							"support.function.any-method.c"
+						]
+					},
+					{
+						"value": "(",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"meta.function-call.c"
+						]
+					},
+					{
+						"value": ")",
+						"scopes": [
+							"source.c",
+							"meta.block.c"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"punctuation.section.block.end.c"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/c.json",
+			"fixtures/c-plus-plus.json"
+		],
+		"desc": "TEST #36"
+	},
+	{
+		"grammarScopeName": "source.c",
+		"lines": [
+			{
+				"line": "if(1){if(1){m()}}",
+				"tokens": [
+					{
+						"value": "if",
+						"scopes": [
+							"source.c",
+							"keyword.control.c"
+						]
+					},
+					{
+						"value": "(",
+						"scopes": [
+							"source.c"
+						]
+					},
+					{
+						"value": "1",
+						"scopes": [
+							"source.c",
+							"constant.numeric.c"
+						]
+					},
+					{
+						"value": ")",
+						"scopes": [
+							"source.c"
+						]
+					},
+					{
+						"value": "{",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"punctuation.section.block.begin.c"
+						]
+					},
+					{
+						"value": "if",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"keyword.control.c"
+						]
+					},
+					{
+						"value": "(",
+						"scopes": [
+							"source.c",
+							"meta.block.c"
+						]
+					},
+					{
+						"value": "1",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"constant.numeric.c"
+						]
+					},
+					{
+						"value": ")",
+						"scopes": [
+							"source.c",
+							"meta.block.c"
+						]
+					},
+					{
+						"value": "{",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"meta.block.c",
+							"punctuation.section.block.begin.c"
+						]
+					},
+					{
+						"value": "m",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"meta.block.c",
+							"meta.function-call.c",
+							"support.function.any-method.c"
+						]
+					},
+					{
+						"value": "(",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"meta.block.c",
+							"meta.function-call.c"
+						]
+					},
+					{
+						"value": ")",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"meta.block.c"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"meta.block.c",
+							"punctuation.section.block.end.c"
+						]
+					},
+					{
+						"value": "}",
+						"scopes": [
+							"source.c",
+							"meta.block.c",
+							"punctuation.section.block.end.c"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/c.json",
+			"fixtures/c-plus-plus.json"
+		],
+		"desc": "TEST #37"
 	}
 ]

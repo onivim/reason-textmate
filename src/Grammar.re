@@ -194,10 +194,6 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
 };
 
 let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
-  ignore(lineNumber);
-  ignore(scopes);
-  ignore(line);
-
   let idx = ref(0);
   let lastTokenPosition = ref(0);
   let lastAnchorPosition = ref(-1);
@@ -254,10 +250,12 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
             (),
           );
         lastTokenPosition := matches[0].startPos;
-        /*print_endline ("Match - startPos: "
-            ++ string_of_int(matches[0].startPos)
-            ++ "endPos: " ++ string_of_int(matches[0].endPos));
-          print_endline("Creating token at " ++ string_of_int(ltp) ++ ":" ++ Token.show(newToken));*/
+        /*
+         print_endline ("Match - startPos: "
+             ++ string_of_int(matches[0].startPos)
+             ++ "endPos: " ++ string_of_int(matches[0].endPos));
+           print_endline("Creating token at " ++ string_of_int(ltp) ++ ":" ++ Token.show(newToken));
+         */
         let prevToken = [newToken];
         tokens := [prevToken, ...tokens^];
       };
