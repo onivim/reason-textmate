@@ -81,7 +81,7 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
   {...v, hasBackReferences: false, raw: newRawStr};
 };
 
-let getRegEx = (v: t) => switch (v.regex) {
+let compile = (v: t) => switch (v.regex) {
 | None => RegExp.create(v.raw)
 | _ => RegExp.create(v.raw)
 };
