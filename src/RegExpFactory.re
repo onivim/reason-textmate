@@ -6,17 +6,23 @@
 
 type captureGroup = (int, string);
 
+type anchorCache = {
+    raw_A0: string,
+    raw_A1: string,
+}
+
 type t = {
   hasAnchorA: bool,
   hasBackReferences: bool,
   captureGroups: option(list(captureGroup)),
   raw: string,
+  anchorCache: option(anchorCache),
   // If the regex doesn't have anchors,
   // we can just keep a ready-to-go version around.
   regex: option(RegExp.t),
 };
 
-let hasAnchorA = Str.regexp("\\A");
+let hasAnchorA = Str.regexp("\\\\A");
 let hasAnchors = (v: t) => v.hasAnchorA;
 
 let hasBackRefRegExp = Str.regexp("\\\\\\([0-9]+\\)");
@@ -32,6 +38,18 @@ let escapeRegExpCharacters = (str: string) => {
   |> Str.global_substitute(additionalCharactersToEscape, f);
 };
 
+let _createAnchorCache = (str: string) => {
+  let f = _ => "\\uFFFF";
+ 
+  let raw_A0 = Str.global_substitute(hasAnchorA, f, str);
+  let raw_A1 = str;
+
+  Some({
+    raw_A0,
+    raw_A1,
+    })
+}
+
 let create = str => {
   let hasBackReferences =
     switch (Str.search_forward(hasBackRefRegExp, str, 0)) {
@@ -39,11 +57,23 @@ let create = str => {
     | _ => true
     };
 
+  let anchorA = switch(Str.search_forward(hasAnchorA, str, 0)) {
+  | exception _ => false
+  | _ => true
+  };
+
+  let anchorCache = if (anchorA) {
+    _createAnchorCache(str);
+  } else {
+    None;
+    };
+
   {
     captureGroups: None,
     raw: str,
     regex: None,
-    hasAnchorA: false,
+    anchorCache,
+    hasAnchorA: anchorA,
     hasBackReferences,
   };
 };
@@ -80,10 +110,21 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
   {...v, hasBackReferences: false, raw: newRawStr};
 };
 
-let compile = (v: t) =>
-  switch (v.regex) {
-  | None => RegExp.create(v.raw)
-  | _ => RegExp.create(v.raw)
+let compile = (allowA, v: t) => {
+
+  prerr_endline ("ALLOWA: " ++ string_of_bool(allowA));
+  let rawStr = switch ((v.anchorCache, allowA)) {
+  | (None, _) => v.raw
+  | (Some({raw_A1, _}), allowA) when allowA == true => raw_A1 
+  | (Some({raw_A0, _ }), _) => raw_A0
   };
+
+  prerr_endline ("RAWSTR: " ++ rawStr);
+
+  switch (v.regex) {
+  | None => RegExp.create(rawStr)
+  | _ => RegExp.create(rawStr)
+  };
+};
 
 let show = (v: t) => v.raw;

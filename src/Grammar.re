@@ -161,8 +161,10 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | Some((pos, matchRange)) when pos == position =>
       let filter = (rule: Rule.t) =>
         switch (rule.popStack, rule.pushStack) {
-        | (Some(mr), _) when mr === matchRange => false
-        | (_, Some(mr)) when mr === matchRange => false
+        | (Some(mr), _) when mr === matchRange => 
+            false
+        | (_, Some(mr)) when mr === matchRange => 
+          false
         | _ => true
         };
       List.filter(filter, rules);
@@ -173,6 +175,8 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     (prev, curr: Rule.t) => {
       let matches = RegExp.search(str, position, curr.regex);
       let matchPos = Array.length(matches) > 0 ? matches[0].startPos : (-1);
+
+      prerr_endline ("Checking rule: " ++ Rule.show(curr));
 
       switch (prev) {
       | None when matchPos == (-1) => None
@@ -223,6 +227,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     // ...and then get rules from the patterns.
     let rules =
       Rule.ofPatterns(
+        ~isFirstLine=lineNumber==0,
         ~getScope=v => getScope(v, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
@@ -238,6 +243,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     | Some(v) =>
       open Oniguruma.OnigRegExp.Match;
       let (_, matches, rule) = v;
+      prerr_endline ("Matching rule at " ++ string_of_int(i) ++ ": " ++ Rule.show(rule));
       let ltp = lastTokenPosition^;
       let prevToken =
         if (ltp < matches[0].startPos) {

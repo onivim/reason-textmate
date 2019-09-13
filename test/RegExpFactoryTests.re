@@ -1,12 +1,34 @@
 open TestFramework;
 
 module RegExpFactory = Textmate.RegExpFactory;
+module RegExp = Textmate.RegExp;
 
 let createRegex = str => {
   RegExpFactory.create(str);
 };
 
 describe("RegExpFactory", ({describe, _}) => {
+  describe("hasAnchors", ({test, _}) => {
+    test("returns false if no anchors", ({expect, _}) => {
+      let re = createRegex("a|b|c");
+      expect.bool(RegExpFactory.hasAnchors(re)).toBe(false);
+    });
+    test("returns true if has \\A anchor", ({expect, _}) => {
+      let re = createRegex("\\A^(?!\\1(?=\\S))");
+      expect.bool(RegExpFactory.hasAnchors(re)).toBe(true);
+    });
+  });
+
+  describe("compile", ({test, _}) => {
+    test("allowA", ({expect, _}) => {
+      let re = createRegex("\\A");
+      let re_a0 = RegExpFactory.compile(false, re) |> RegExp.raw;
+      let re_a1 = RegExpFactory.compile(true, re) |> RegExp.raw;
+      expect.string(re_a0).toEqual("\\uFFFF");
+      expect.string(re_a1).toEqual("\\A");
+    });
+  });
+  
   describe("hasBackReferences", ({test, _}) => {
     test("returns false if no backreferences", ({expect, _}) => {
       let re = createRegex("a|b|c");

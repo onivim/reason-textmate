@@ -14,6 +14,7 @@ type t = {
   regexp: option(OnigRegExp.t),
 };
 
+let raw = (v: t) => v.raw;
 let toString = (v: t) => v.raw;
 
 let emptyMatches = [||];
