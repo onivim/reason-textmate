@@ -1664,5 +1664,137 @@
 			"fixtures/forever.json"
 		],
 		"desc": "TEST #48"
+	},
+	{
+		"grammarScopeName": "text.html.ruby",
+		"lines": [
+			{
+				"line": "<div class='name'><% <<-SQL select * from users;",
+				"tokens": [
+					{
+						"value": "<",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html",
+							"punctuation.definition.tag.begin.html"
+						]
+					},
+					{
+						"value": "div",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html",
+							"entity.name.tag.block.any.html"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html"
+						]
+					},
+					{
+						"value": "class",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html",
+							"entity.other.attribute-name.html"
+						]
+					},
+					{
+						"value": "=",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html"
+						]
+					},
+					{
+						"value": "'",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html",
+							"string.quoted.single.html",
+							"punctuation.definition.string.begin.html"
+						]
+					},
+					{
+						"value": "name",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html",
+							"string.quoted.single.html"
+						]
+					},
+					{
+						"value": "'",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html",
+							"string.quoted.single.html",
+							"punctuation.definition.string.end.html"
+						]
+					},
+					{
+						"value": ">",
+						"scopes": [
+							"text.html.ruby",
+							"meta.tag.block.any.html",
+							"punctuation.definition.tag.end.html"
+						]
+					},
+					{
+						"value": "<%",
+						"scopes": [
+							"text.html.ruby",
+							"source.ruby.rails.embedded.html",
+							"punctuation.section.embedded.ruby"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"text.html.ruby",
+							"source.ruby.rails.embedded.html"
+						]
+					},
+					{
+						"value": "<<-SQL",
+						"scopes": [
+							"text.html.ruby",
+							"source.ruby.rails.embedded.html",
+							"meta.embedded.block.sql",
+							"string.unquoted.heredoc.ruby",
+							"punctuation.definition.string.begin.ruby"
+						]
+					},
+					{
+						"value": " select * from users;",
+						"scopes": [
+							"text.html.ruby",
+							"source.ruby.rails.embedded.html",
+							"meta.embedded.block.sql",
+							"string.unquoted.heredoc.ruby",
+							"source.sql"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/html-rails.json",
+			"fixtures/ruby-on-rails.json"
+		],
+		"desc": "TEST #28"
 	}
 ]
