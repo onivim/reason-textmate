@@ -232,6 +232,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     // And figure out if any of the rules applies.
     let bestRule = _getBestRule(lastMatchedRange^, rules, line, i);
 
+
     switch (bestRule) {
     // No matching rule... just increment position and try again
     | None => incr(idx)
@@ -240,6 +241,12 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       open Oniguruma.OnigRegExp.Match;
       let (_, matches, rule) = v;
       let ltp = lastTokenPosition^;
+
+      // Logging around rule evaluation
+      /*
+      print_endline ("Last anchor position: " ++ string_of_int(lastAnchorPosition^));
+      print_endline ("Matching rule: " ++ Rule.show(rule));
+      */
 
       if (ltp < matches[0].startPos) {
         let newToken =
@@ -250,12 +257,15 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
             (),
           );
         lastTokenPosition := matches[0].startPos;
+        
+        // Logging around token creation
         /*
          print_endline ("Match - startPos: "
              ++ string_of_int(matches[0].startPos)
              ++ "endPos: " ++ string_of_int(matches[0].endPos));
            print_endline("Creating token at " ++ string_of_int(ltp) ++ ":" ++ Token.show(newToken));
          */
+         
         let prevToken = [newToken];
         tokens := [prevToken, ...tokens^];
       };
@@ -320,7 +330,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       let prevIndex = idx^;
       idx := max(matches[0].endPos, prevIndex);
 
-      lastAnchorPosition := matches[0].endPos;
 
       let pos = idx^;
       switch (rule.popStack, rule.pushStack) {
@@ -328,7 +337,9 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       // in a loop - we'll push forward a character in that case.
       | (None, None) when pos <= prevIndex => incr(idx)
       // Otherwise, if it's a push rule, record that we pushed so that we can break an infinite loop
-      | (None, Some(mr)) => lastMatchedRange := Some((prevIndex, mr))
+      | (None, Some(mr)) => 
+        lastMatchedRange := Some((prevIndex, mr))
+        lastAnchorPosition := matches[0].endPos;
       | _ => ()
       };
     };
