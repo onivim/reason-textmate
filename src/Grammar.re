@@ -161,8 +161,10 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | Some((pos, matchRange)) when pos == position =>
       let filter = (rule: Rule.t) =>
         switch (rule.popStack, rule.pushStack) {
-        | (Some(mr), _) when mr === matchRange => false
-        | (_, Some(mr)) when mr === matchRange => false
+        | (Some(mr), _) when mr === matchRange => 
+          prerr_endline ("LOOP DETECTED at position " ++ string_of_int(position) ++ ": " ++ Pattern.show(Pattern.MatchRange(mr)));
+          false
+    //    | (_, Some(mr)) when mr === matchRange => false
         | _ => true
         };
       List.filter(filter, rules);
@@ -315,12 +317,12 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       let prevIndex = idx^;
       idx := max(matches[0].endPos, prevIndex);
 
+      let pos = idx^;
+      switch (rule.popStack, rule.pushStack) {
       // If the rule isn't a push or pop rule, and we're at the same index, we're stuck
       // in a loop - we'll push forward a character in that case.
-      prerr_endline("IDX: " ++ string_of_int(idx^));
-      switch (rule.popStack, rule.pushStack) {
-      | (None, None) when idx^ <= prevIndex => incr(idx)
-      | (Some(mr), None) => lastMatchedRange := Some((prevIndex, mr))
+      | (None, None) when pos <= prevIndex => incr(idx)
+//      | (Some(mr), None) => lastMatchedRange := Some((pos, mr))
       | (None, Some(mr)) => lastMatchedRange := Some((prevIndex, mr))
       | _ => ()
       };
