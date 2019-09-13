@@ -16,18 +16,23 @@ let noopGrammarRepository: grammarRepository = _ => None;
 let getScope = (grammarScope, scope: string, v: t) => {
   let len = String.length(scope);
 
-  prerr_endline ("Getting scope: " ++ grammarScope ++ " - " ++ scope);
+  let grammar =
+    if (String.equal(grammarScope, v.scopeName)) {
+      Some(v);
+    } else {
+      v.grammarRepository(grammarScope);
+    };
 
-  switch (v.grammarRepository(grammarScope)) {
+  switch (grammar) {
   | Some(g) =>
     if (len > 0 && scope.[0] == '#') {
       StringMap.find_opt(scope, g.repository);
     } else {
       // This is implicity '$self'
       Some(g.patterns);
-        }
-  | None => None;
-  }
+    }
+  | None => None
+  };
 };
 
 let setGrammarRepository = (grammarRepository: grammarRepository, v: t) => {
@@ -138,8 +143,10 @@ module Json = {
 
   let of_yojson = (json: Yojson.Safe.t) => {
     let%bind scopeName = string_of_yojson(member("scopeName", json));
-    let%bind patterns = patterns_of_yojson(scopeName, member("patterns", json));
-    let%bind repository = repository_of_yojson(scopeName, member("repository", json));
+    let%bind patterns =
+      patterns_of_yojson(scopeName, member("patterns", json));
+    let%bind repository =
+      repository_of_yojson(scopeName, member("repository", json));
 
     Ok(create(~scopeName, ~patterns, ~repository, ()));
   };
@@ -221,7 +228,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       Rule.ofPatterns(
         ~isFirstLine=lineNumber == 0,
         ~isAnchorPos=lastAnchorPosition^ == i,
-        ~getScope=(scope,inc) => getScope(scope, inc, grammar),
+        ~getScope=(scope, inc) => getScope(scope, inc, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
       );

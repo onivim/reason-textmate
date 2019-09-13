@@ -103,7 +103,7 @@ describe("Grammar", ({describe, _}) => {
       (),
     );
 
-  let grammar = Grammar.setGrammarRepository((_) => Some(grammar), grammar);
+  let grammar = Grammar.setGrammarRepository(_ => Some(grammar), grammar);
 
   describe("tokenize", ({test, describe, _}) => {
     describe("begin / end rules", ({test, _}) => {

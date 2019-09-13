@@ -150,13 +150,19 @@ module Json = {
       let beg = member("begin", json);
 
       switch (incl, mat, beg) {
-      | (`String(inc), _, _) => 
-          let len = String.length(inc);
-          if (len > 0 
-            && (inc.[0] == '#' || inc.[0] == '$'))
-          Ok(Include(scope, inc))
-          else 
-          Ok(Include(inc, "$self"));
+      | (`String(inc), _, _) =>
+        let len = String.length(inc);
+        if (len > 0 && (inc.[0] == '#' || inc.[0] == '$')) {
+          Ok(Include(scope, inc));
+        } else {
+          switch (String.index_opt(inc, '#')) {
+          | None => Ok(Include(inc, "$self"))
+          | Some(idx) =>
+            let scope = String.sub(inc, 0, idx);
+            let id = String.sub(inc, idx, len - idx);
+            Ok(Include(scope, id));
+          };
+        };
       | (_, `String(_), _) => match_of_yojson(json)
       | (_, _, `String(_)) => matchRange_of_yojson(scope, json)
       | _ => Ok(Include("noop", "#no-op"))

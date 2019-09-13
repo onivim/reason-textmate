@@ -1349,35 +1349,6 @@
 		"desc": "TEST #26"
 	},
 	{
-		"grammarPath": "fixtures/forever.json",
-		"lines": [
-			{
-				"line": "forever and ever",
-				"tokens": [{
-					"value": "forever and ever",
-					"scopes": [
-						"source.forever",
-						"text"
-					]
-				}]
-			}
-		],
-		"grammars": [
-			"fixtures/text.json",
-			"fixtures/javascript.json",
-			"fixtures/javascript-regex.json",
-			"fixtures/coffee-script.json",
-			"fixtures/ruby.json",
-			"fixtures/html-erb.json",
-			"fixtures/html.json",
-			"fixtures/php.json",
-			"fixtures/python.json",
-			"fixtures/python-regex.json",
-			"fixtures/forever.json"
-		],
-		"desc": "TEST #48"
-	},
-	{
 		"grammarScopeName": "source.loops",
 		"lines": [
 			{
@@ -1664,5 +1635,34 @@
 			"fixtures/ruby-on-rails.json"
 		],
 		"desc": "TEST #27"
+	},
+	{
+		"grammarPath": "fixtures/forever.json",
+		"lines": [
+			{
+				"line": "forever and ever",
+				"tokens": [{
+					"value": "forever and ever",
+					"scopes": [
+						"source.forever",
+						"text"
+					]
+				}]
+			}
+		],
+		"grammars": [
+			"fixtures/text.json",
+			"fixtures/javascript.json",
+			"fixtures/javascript-regex.json",
+			"fixtures/coffee-script.json",
+			"fixtures/ruby.json",
+			"fixtures/html-erb.json",
+			"fixtures/html.json",
+			"fixtures/php.json",
+			"fixtures/python.json",
+			"fixtures/python-regex.json",
+			"fixtures/forever.json"
+		],
+		"desc": "TEST #48"
 	}
 ]
