@@ -7,12 +7,15 @@
 type captureGroup = (int, string);
 
 type anchorCache = {
-  raw_A0: string,
-  raw_A1: string,
+  raw_A0_G0: string,
+  raw_A1_G0: string,
+  raw_A0_G1: string,
+  raw_A1_G1: string,
 };
 
 type t = {
   hasAnchorA: bool,
+  hasAnchorG: bool,
   hasBackReferences: bool,
   captureGroups: option(list(captureGroup)),
   raw: string,
@@ -23,7 +26,8 @@ type t = {
 };
 
 let hasAnchorA = Str.regexp("\\\\A");
-let hasAnchors = (v: t) => v.hasAnchorA;
+let hasAnchorG = Str.regexp("\\\\G");
+let hasAnchors = (v: t) => v.hasAnchorA || v.hasAnchorG;
 
 let hasBackRefRegExp = Str.regexp("\\\\\\([0-9]+\\)");
 let hasBackReferences = (v: t) => v.hasBackReferences;
@@ -41,10 +45,17 @@ let escapeRegExpCharacters = (str: string) => {
 let _createAnchorCache = (str: string) => {
   let f = _ => "\\uFFFF";
 
-  let raw_A0 = Str.global_substitute(hasAnchorA, f, str);
-  let raw_A1 = str;
+  let raw_A0_G0 = str
+    |> Str.global_substitute(hasAnchorA, f)
+    |> Str.global_substitute(hasAnchorG, f);
+    
+  let raw_A0_G1 = Str.global_substitute(hasAnchorA, f, str);
 
-  Some({raw_A0, raw_A1});
+  let raw_A1_G0 = Str.global_substitute(hasAnchorG, f, str);
+
+  let raw_A1_G1 = str;
+
+  Some({raw_A0_G1, raw_A1_G1, raw_A0_G0, raw_A1_G0});
 };
 
 let create = str => {
@@ -59,9 +70,15 @@ let create = str => {
     | exception _ => false
     | _ => true
     };
+  
+  let anchorG =
+    switch (Str.search_forward(hasAnchorG, str, 0)) {
+    | exception _ => false
+    | _ => true
+    };
 
   let anchorCache =
-    if (anchorA) {
+    if (anchorA || anchorG) {
       _createAnchorCache(str);
     } else {
       None;
@@ -73,6 +90,7 @@ let create = str => {
     regex: None,
     anchorCache,
     hasAnchorA: anchorA,
+    hasAnchorG: anchorG,
     hasBackReferences,
   };
 };
@@ -109,12 +127,14 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
   {...v, hasBackReferences: false, raw: newRawStr};
 };
 
-let compile = (allowA, v: t) => {
+let compile = (allowA, allowG, v: t) => {
   let rawStr =
-    switch (v.anchorCache, allowA) {
-    | (None, _) => v.raw
-    | (Some({raw_A1, _}), allowA) when allowA == true => raw_A1
-    | (Some({raw_A0, _}), _) => raw_A0
+    switch (v.anchorCache, allowA, allowG) {
+    | (None, _, _) => v.raw
+    | (Some({raw_A1_G1, _}), allowA, allowG) when allowA == true && allowG == true => raw_A1_G1
+    | (Some({raw_A1_G0, _}), allowA, _) when allowA == true => raw_A1_G0
+    | (Some({raw_A0_G1, _}), _, allowG) when allowG == true => raw_A0_G1
+    | (Some({raw_A0_G0, _}), _, _) => raw_A0_G0
     };
 
   switch (v.regex) {
