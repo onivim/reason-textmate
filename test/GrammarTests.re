@@ -1,15 +1,12 @@
 open TestFramework;
 
 module Grammar = Textmate.Grammar;
+module RegExpFactory = Textmate.RegExpFactory;
 module RegExp = Textmate.RegExp;
 module Token = Textmate.Token;
 
 let createRegex = str => {
-  switch (RegExp.create(str)) {
-  | Ok(v) => v
-  | Error(msg) =>
-    failwith("Unable to parse regex: " ++ str ++ " message: " ++ msg)
-  };
+  RegExpFactory.create(str);
 };
 
 let getExecutingDirectory = () => {

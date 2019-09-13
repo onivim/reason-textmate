@@ -108,7 +108,7 @@ let pushPattern =
   ignore(line);
 
   let newMatchRange =
-    if (RegExp.hasBackReferences(matchRange.endRegex)) {
+    if (RegExpFactory.hasBackReferences(matchRange.endRegex)) {
       // If the end range has back references, we need to resolve them from the provided matches
 
       let matchGroups =
@@ -120,7 +120,7 @@ let pushPattern =
            });
 
       let resolvedEndRegex =
-        RegExp.supplyReferences(matchGroups, matchRange.endRegex);
+        RegExpFactory.supplyReferences(matchGroups, matchRange.endRegex);
       {...matchRange, endRegex: resolvedEndRegex};
     } else {
       matchRange;

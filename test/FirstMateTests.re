@@ -119,7 +119,12 @@ module FirstMateTest = {
       );
       let scopes = scopeStack^;
       let (tokens, newScopeStack) =
-        Grammar.tokenize(~scopes=Some(scopes), ~grammar, l.line);
+        Grammar.tokenize(
+          ~lineNumber=idx^,
+          ~scopes=Some(scopes),
+          ~grammar,
+          l.line,
+        );
       List.iter(t => prerr_endline(Token.show(t)), tokens);
 
       let expectedTokens = l.tokens;
