@@ -48,13 +48,18 @@ let ofMatchRangeEnd = (allowA, matchRange: Pattern.matchRange) => {
   pushStack: None,
 };
 
-let rec ofPatterns = (~isFirstLine, ~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
+let rec ofPatterns =
+        (~isFirstLine, ~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
   let f = (prev, pattern) => {
     switch (pattern) {
     | Pattern.Include(inc) =>
       switch (getScope(inc)) {
       | None => prev
-      | Some(v) => List.concat([ofPatterns(~isFirstLine, ~getScope, ~scopeStack, v), prev])
+      | Some(v) =>
+        List.concat([
+          ofPatterns(~isFirstLine, ~getScope, ~scopeStack, v),
+          prev,
+        ])
       }
     | Pattern.Match(match) =>
       switch (ofMatch(isFirstLine, match)) {
@@ -73,7 +78,9 @@ let rec ofPatterns = (~isFirstLine, ~getScope, ~scopeStack, patterns: list(Patte
 
   let initialRules =
     switch (activeRange) {
-    | Some(v) when v.applyEndPatternLast == true => [ofMatchRangeEnd(isFirstLine, v)]
+    | Some(v) when v.applyEndPatternLast == true => [
+        ofMatchRangeEnd(isFirstLine, v),
+      ]
     | _ => []
     };
 

@@ -119,7 +119,12 @@ module FirstMateTest = {
       );
       let scopes = scopeStack^;
       let (tokens, newScopeStack) =
-        Grammar.tokenize(~lineNumber=idx^, ~scopes=Some(scopes), ~grammar, l.line);
+        Grammar.tokenize(
+          ~lineNumber=idx^,
+          ~scopes=Some(scopes),
+          ~grammar,
+          l.line,
+        );
       List.iter(t => prerr_endline(Token.show(t)), tokens);
 
       let expectedTokens = l.tokens;
@@ -241,5 +246,5 @@ describe("FirstMate", ({test, _}) => {
   let _ = firstMateTestSuite;
   let _ = onivimTestSuite;
   FirstMateTestSuite.run(runTest, firstMateTestSuite);
-   FirstMateTestSuite.run(runTest, onivimTestSuite);
+  FirstMateTestSuite.run(runTest, onivimTestSuite);
 });

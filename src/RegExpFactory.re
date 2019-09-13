@@ -7,9 +7,9 @@
 type captureGroup = (int, string);
 
 type anchorCache = {
-    raw_A0: string,
-    raw_A1: string,
-}
+  raw_A0: string,
+  raw_A1: string,
+};
 
 type t = {
   hasAnchorA: bool,
@@ -40,15 +40,12 @@ let escapeRegExpCharacters = (str: string) => {
 
 let _createAnchorCache = (str: string) => {
   let f = _ => "\\uFFFF";
- 
+
   let raw_A0 = Str.global_substitute(hasAnchorA, f, str);
   let raw_A1 = str;
 
-  Some({
-    raw_A0,
-    raw_A1,
-    })
-}
+  Some({raw_A0, raw_A1});
+};
 
 let create = str => {
   let hasBackReferences =
@@ -57,15 +54,17 @@ let create = str => {
     | _ => true
     };
 
-  let anchorA = switch(Str.search_forward(hasAnchorA, str, 0)) {
-  | exception _ => false
-  | _ => true
-  };
+  let anchorA =
+    switch (Str.search_forward(hasAnchorA, str, 0)) {
+    | exception _ => false
+    | _ => true
+    };
 
-  let anchorCache = if (anchorA) {
-    _createAnchorCache(str);
-  } else {
-    None;
+  let anchorCache =
+    if (anchorA) {
+      _createAnchorCache(str);
+    } else {
+      None;
     };
 
   {
@@ -111,12 +110,12 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
 };
 
 let compile = (allowA, v: t) => {
-
-  let rawStr = switch ((v.anchorCache, allowA)) {
-  | (None, _) => v.raw
-  | (Some({raw_A1, _}), allowA) when allowA == true => raw_A1 
-  | (Some({raw_A0, _ }), _) => raw_A0
-  };
+  let rawStr =
+    switch (v.anchorCache, allowA) {
+    | (None, _) => v.raw
+    | (Some({raw_A1, _}), allowA) when allowA == true => raw_A1
+    | (Some({raw_A0, _}), _) => raw_A0
+    };
 
   switch (v.regex) {
   | None => RegExp.create(rawStr)

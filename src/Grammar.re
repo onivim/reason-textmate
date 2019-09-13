@@ -161,10 +161,8 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | Some((pos, matchRange)) when pos == position =>
       let filter = (rule: Rule.t) =>
         switch (rule.popStack, rule.pushStack) {
-        | (Some(mr), _) when mr === matchRange => 
-            false
-        | (_, Some(mr)) when mr === matchRange => 
-          false
+        | (Some(mr), _) when mr === matchRange => false
+        | (_, Some(mr)) when mr === matchRange => false
         | _ => true
         };
       List.filter(filter, rules);
@@ -225,7 +223,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     // ...and then get rules from the patterns.
     let rules =
       Rule.ofPatterns(
-        ~isFirstLine=lineNumber==0,
+        ~isFirstLine=lineNumber == 0,
         ~getScope=v => getScope(v, grammar),
         ~scopeStack=currentScopeStack,
         patterns,

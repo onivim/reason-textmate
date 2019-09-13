@@ -26,9 +26,9 @@ describe("RegExpFactory", ({describe, _}) => {
       let re_a1 = RegExpFactory.compile(true, re) |> RegExp.raw;
       expect.string(re_a0).toEqual("\\uFFFF");
       expect.string(re_a1).toEqual("\\A");
-    });
+    })
   });
-  
+
   describe("hasBackReferences", ({test, _}) => {
     test("returns false if no backreferences", ({expect, _}) => {
       let re = createRegex("a|b|c");
