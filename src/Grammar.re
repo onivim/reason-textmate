@@ -198,6 +198,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
   let idx = ref(0);
   let lastTokenPosition = ref(0);
+  let lastAnchorPosition = ref(-1);
   let len = String.length(line);
   let lastMatchedRange = ref(None);
 
@@ -224,6 +225,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     let rules =
       Rule.ofPatterns(
         ~isFirstLine=lineNumber == 0,
+        ~isAnchorPos=lastAnchorPosition^ == i,
         ~getScope=v => getScope(v, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
@@ -315,6 +317,8 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
 
       let prevIndex = idx^;
       idx := max(matches[0].endPos, prevIndex);
+
+      lastAnchorPosition := matches[0].endPos;
 
       let pos = idx^;
       switch (rule.popStack, rule.pushStack) {

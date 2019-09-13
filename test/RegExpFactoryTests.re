@@ -21,11 +21,15 @@ describe("RegExpFactory", ({describe, _}) => {
 
   describe("compile", ({test, _}) => {
     test("allowA", ({expect, _}) => {
-      let re = createRegex("\\A");
-      let re_a0 = RegExpFactory.compile(false, re) |> RegExp.raw;
-      let re_a1 = RegExpFactory.compile(true, re) |> RegExp.raw;
-      expect.string(re_a0).toEqual("\\uFFFF");
-      expect.string(re_a1).toEqual("\\A");
+      let re = createRegex("\\A\\G");
+      let re_a0_g0 = RegExpFactory.compile(false, false, re) |> RegExp.raw;
+      let re_a1_g0 = RegExpFactory.compile(true, false, re) |> RegExp.raw;
+      let re_a1_g1 = RegExpFactory.compile(true, true, re) |> RegExp.raw;
+      let re_a0_g1 = RegExpFactory.compile(false, true, re) |> RegExp.raw;
+      expect.string(re_a0_g0).toEqual("\\uFFFF\\uFFFF");
+      expect.string(re_a1_g0).toEqual("\\A\\uFFFF");
+      expect.string(re_a0_g1).toEqual("\\uFFFF\\G");
+      expect.string(re_a1_g1).toEqual("\\A\\G");
     })
   });
 

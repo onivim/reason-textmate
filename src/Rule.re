@@ -20,9 +20,9 @@ let show = (v: t) => {
   start ++ RegExp.toString(v.regex);
 };
 
-let ofMatch = (allowA, match: Pattern.match_) => {
+let ofMatch = (allowA, allowG, match: Pattern.match_) => {
   Some({
-    regex: RegExpFactory.compile(allowA, match.matchRegex),
+    regex: RegExpFactory.compile(allowA, allowG, match.matchRegex),
     name: match.matchName,
     captures: match.captures,
     popStack: None,
@@ -30,9 +30,9 @@ let ofMatch = (allowA, match: Pattern.match_) => {
   });
 };
 
-let ofMatchRangeBegin = (allowA, matchRange: Pattern.matchRange) => {
+let ofMatchRangeBegin = (allowA, allowG, matchRange: Pattern.matchRange) => {
   Some({
-    regex: RegExpFactory.compile(allowA, matchRange.beginRegex),
+    regex: RegExpFactory.compile(allowA, allowG, matchRange.beginRegex),
     name: matchRange.name,
     captures: matchRange.beginCaptures,
     popStack: None,
@@ -40,8 +40,8 @@ let ofMatchRangeBegin = (allowA, matchRange: Pattern.matchRange) => {
   });
 };
 
-let ofMatchRangeEnd = (allowA, matchRange: Pattern.matchRange) => {
-  regex: RegExpFactory.compile(allowA, matchRange.endRegex),
+let ofMatchRangeEnd = (allowA, allowG, matchRange: Pattern.matchRange) => {
+  regex: RegExpFactory.compile(allowA, allowG, matchRange.endRegex),
   name: matchRange.name,
   captures: matchRange.endCaptures,
   popStack: Some(matchRange),
@@ -49,7 +49,13 @@ let ofMatchRangeEnd = (allowA, matchRange: Pattern.matchRange) => {
 };
 
 let rec ofPatterns =
-        (~isFirstLine, ~getScope, ~scopeStack, patterns: list(Pattern.t)) => {
+        (
+          ~isFirstLine,
+          ~isAnchorPos,
+          ~getScope,
+          ~scopeStack,
+          patterns: list(Pattern.t),
+        ) => {
   let f = (prev, pattern) => {
     switch (pattern) {
     | Pattern.Include(inc) =>
@@ -57,17 +63,17 @@ let rec ofPatterns =
       | None => prev
       | Some(v) =>
         List.concat([
-          ofPatterns(~isFirstLine, ~getScope, ~scopeStack, v),
+          ofPatterns(~isFirstLine, ~isAnchorPos, ~getScope, ~scopeStack, v),
           prev,
         ])
       }
     | Pattern.Match(match) =>
-      switch (ofMatch(isFirstLine, match)) {
+      switch (ofMatch(isFirstLine, isAnchorPos, match)) {
       | None => prev
       | Some(v) => [v, ...prev]
       }
     | Pattern.MatchRange(matchRange) =>
-      switch (ofMatchRangeBegin(isFirstLine, matchRange)) {
+      switch (ofMatchRangeBegin(isFirstLine, isAnchorPos, matchRange)) {
       | None => prev
       | Some(v) => [v, ...prev]
       }
@@ -79,7 +85,7 @@ let rec ofPatterns =
   let initialRules =
     switch (activeRange) {
     | Some(v) when v.applyEndPatternLast == true => [
-        ofMatchRangeEnd(isFirstLine, v),
+        ofMatchRangeEnd(isFirstLine, isAnchorPos, v),
       ]
     | _ => []
     };
@@ -88,7 +94,7 @@ let rec ofPatterns =
 
   switch (activeRange) {
   | Some(v) when v.applyEndPatternLast == false => [
-      ofMatchRangeEnd(isFirstLine, v),
+      ofMatchRangeEnd(isFirstLine, isAnchorPos, v),
       ...rules,
     ]
   | _ => rules
