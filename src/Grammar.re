@@ -176,8 +176,6 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
       let matches = RegExp.search(str, position, curr.regex);
       let matchPos = Array.length(matches) > 0 ? matches[0].startPos : (-1);
 
-      prerr_endline ("Checking rule: " ++ Rule.show(curr));
-
       switch (prev) {
       | None when matchPos == (-1) => None
       | None => Some((matchPos, matches, curr))
@@ -243,7 +241,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
     | Some(v) =>
       open Oniguruma.OnigRegExp.Match;
       let (_, matches, rule) = v;
-      prerr_endline ("Matching rule at " ++ string_of_int(i) ++ ": " ++ Rule.show(rule));
       let ltp = lastTokenPosition^;
       let prevToken =
         if (ltp < matches[0].startPos) {

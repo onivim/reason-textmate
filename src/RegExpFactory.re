@@ -112,14 +112,11 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
 
 let compile = (allowA, v: t) => {
 
-  prerr_endline ("ALLOWA: " ++ string_of_bool(allowA));
   let rawStr = switch ((v.anchorCache, allowA)) {
   | (None, _) => v.raw
   | (Some({raw_A1, _}), allowA) when allowA == true => raw_A1 
   | (Some({raw_A0, _ }), _) => raw_A0
   };
-
-  prerr_endline ("RAWSTR: " ++ rawStr);
 
   switch (v.regex) {
   | None => RegExp.create(rawStr)
