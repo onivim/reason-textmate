@@ -163,13 +163,18 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | Some((pos, matchRange)) when pos == position =>
       let filter = (rule: Rule.t) =>
         switch (rule.popStack, rule.pushStack) {
-        | (Some(mr), _) when mr === matchRange => false
+        | (Some(mr), _) when mr === matchRange => {
+          prerr_endline ("Filtering out rule: " ++ Rule.show(mr));
+          false
+                }
         | (_, Some(mr)) when mr === matchRange => false
         | _ => true
         };
       List.filter(filter, rules);
     | _ => rules
     };
+
+  //List.iter((r) => print_endline("-- Candidate rule: " ++ Rule.show(r)), rules);
 
   List.fold_left(
     (prev, curr: Rule.t) => {

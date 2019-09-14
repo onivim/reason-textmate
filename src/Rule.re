@@ -58,10 +58,12 @@ let ofPatterns =
     ) => {
   let rec f = (prev, pattern) => {
     switch (pattern) {
-    | Pattern.Include(scope, inc) =>
+    | Pattern.Include(scope, inc) => {
+      prerr_endline ("ofPatterns - f scope: " ++ scope ++ " | inc: " ++ inc);
       switch (getScope(scope, inc)) {
       | None => prev
       | Some(v) => List.fold_left(f, prev, v)
+      };
       }
     | Pattern.Match(match) =>
       switch (ofMatch(isFirstLine, isAnchorPos, match)) {
