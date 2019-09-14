@@ -223,5 +223,57 @@
 			"fixtures/anchor-a.json"
 		],
 		"desc": "ONIVIM TEST #4 - anchor A"
+	},
+	{
+		"grammarPath": "fixtures/reason.json",
+		"lines": [
+			{
+				"line": "<Test abc/>",
+				"tokens": [
+					{
+						"value": "<",
+						"scopes": [
+							"source.reason",
+							"punctuation.definition.tag.begin.js"
+						]
+					},
+					{
+						"value": "Test",
+						"scopes": [
+							"source.reason",
+							"support.class",
+							"entity.name.class"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "abc",
+						"scopes": [
+							"source.reason",
+							"markup.inserted",
+							"constant.language",
+							"support.property-value",
+							"entity.name.filename"
+						]
+					},
+					{
+						"value": "/>",
+						"scopes": [
+							"source.reason",
+							"punctuation.definition.tag.end.js"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/reason.json"
+		],
+		"desc": "ONIVIM TEST #5 - ReasonML JSX"
 	}
 ]
