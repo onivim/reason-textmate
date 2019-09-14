@@ -177,7 +177,7 @@ module Json = {
       let%bind endRegex =
         switch (er) {
         | Ok(v) => Ok(v)
-        | Error(_) => RegExp.create("\\uFFFF")
+        | Error(_) => Ok(RegExpFactory.create("\\uFFFF"))
         };
 
       let applyEndPatternLast =

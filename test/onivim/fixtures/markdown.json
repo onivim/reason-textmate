@@ -9,9 +9,6 @@
 	"scopeName": "text.html.markdown",
 	"patterns": [
 		{
-			"include": "#frontMatter"
-		},
-		{
 			"include": "#block"
 		}
 	],
@@ -19,28 +16,7 @@
 		"block": {
 			"patterns": [
 				{
-					"include": "#separator"
-				},
-				{
 					"include": "#heading"
-				},
-				{
-					"include": "#blockquote"
-				},
-				{
-					"include": "#lists"
-				},
-				{
-					"include": "#fenced_code_block"
-				},
-				{
-					"include": "#raw_block"
-				},
-				{
-					"include": "#link-def"
-				},
-				{
-					"include": "#html"
 				},
 				{
 					"include": "#paragraph"

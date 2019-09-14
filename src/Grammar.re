@@ -194,6 +194,7 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
 };
 
 let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
+  prerr_endline ("HELLO!");
   let idx = ref(0);
   let lastTokenPosition = ref(0);
   let lastAnchorPosition = ref(-1);
@@ -229,8 +230,11 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         patterns,
       );
 
+    prerr_endline ("TOTAL RULES: " ++ string_of_int(List.length(rules)));
+
     // And figure out if any of the rules applies.
     let bestRule = _getBestRule(lastMatchedRange^, rules, line, i);
+
 
     switch (bestRule) {
     // No matching rule... just increment position and try again
@@ -240,6 +244,10 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       open Oniguruma.OnigRegExp.Match;
       let (_, matches, rule) = v;
       let ltp = lastTokenPosition^;
+          prerr_endline ("Matching rule: " ++ Rule.show(rule));
+         prerr_endline ("Match - startPos: "
+             ++ string_of_int(matches[0].startPos)
+             ++ "endPos: " ++ string_of_int(matches[0].endPos));
 
       if (ltp < matches[0].startPos) {
         let newToken =
@@ -250,12 +258,9 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
             (),
           );
         lastTokenPosition := matches[0].startPos;
-        /*
-         print_endline ("Match - startPos: "
-             ++ string_of_int(matches[0].startPos)
-             ++ "endPos: " ++ string_of_int(matches[0].endPos));
-           print_endline("Creating token at " ++ string_of_int(ltp) ++ ":" ++ Token.show(newToken));
-         */
+        
+          prerr_endline("Creating token at " ++ string_of_int(ltp) ++ ":" ++ Token.show(newToken));
+        
         let prevToken = [newToken];
         tokens := [prevToken, ...tokens^];
       };
