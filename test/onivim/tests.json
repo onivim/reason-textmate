@@ -1,45 +1,5 @@
 [
 	{
-		"grammarPath": "fixtures/markdown.json",
-		"lines": [
-			{
-				"line": "# Hello",
-				"tokens": [
-					{
-						"value": "#",
-						"scopes": [
-							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown",
-							"punctuation.definition.heading.markdown"
-						]
-					},
-					{
-						"value": " ",
-						"scopes": [
-							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown"
-						]
-					},
-					{
-						"value": "Hello",
-						"scopes": [
-							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown",
-							"entity.name.section.markdown"
-						]
-					}
-				]
-			}
-		],
-		"grammars": [
-			"fixtures/markdown.json"
-		],
-		"desc": "ONIVIM TEST #5 - markdown header"
-	}
-	{
 		"grammarPath": "fixtures/hello.json",
 		"lines": [
 			{
@@ -264,4 +224,96 @@
 		],
 		"desc": "ONIVIM TEST #4 - anchor A"
 	},
+	{
+		"grammarPath": "fixtures/reason.json",
+		"lines": [
+			{
+				"line": "<Test abc/>",
+				"tokens": [
+					{
+						"value": "<",
+						"scopes": [
+							"source.reason",
+							"punctuation.definition.tag.begin.js"
+						]
+					},
+					{
+						"value": "Test",
+						"scopes": [
+							"source.reason",
+							"support.class",
+							"entity.name.class"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"source.reason"
+						]
+					},
+					{
+						"value": "abc",
+						"scopes": [
+							"source.reason",
+							"markup.inserted",
+							"constant.language",
+							"support.property-value",
+							"entity.name.filename"
+						]
+					},
+					{
+						"value": "/>",
+						"scopes": [
+							"source.reason",
+							"punctuation.definition.tag.end.js"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/reason.json"
+		],
+		"desc": "ONIVIM TEST #5 - ReasonML JSX"
+	},
+	{
+		"grammarPath": "fixtures/markdown.json",
+		"lines": [
+			{
+				"line": "# Hello",
+				"tokens": [
+					{
+						"value": "#",
+						"scopes": [
+							"text.html.markdown",
+							"markup.heading.markdown",
+							"heading.1.markdown",
+							"punctuation.definition.heading.markdown"
+						]
+					},
+					{
+						"value": " ",
+						"scopes": [
+							"text.html.markdown",
+							"markup.heading.markdown",
+							"heading.1.markdown"
+						]
+					},
+					{
+						"value": "Hello",
+						"scopes": [
+							"text.html.markdown",
+							"markup.heading.markdown",
+							"heading.1.markdown",
+							"entity.name.section.markdown"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/markdown.json"
+		],
+		"desc": "ONIVIM TEST #6 - markdown header"
+	}
 ]
