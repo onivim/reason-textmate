@@ -1,0 +1,6 @@
+(library
+    (name TextMateBenchLib)
+    (public_name textmate-bench.lib)
+    (ocamlopt_flags -linkall)
+    (libraries textmate reperf.lib)
+)

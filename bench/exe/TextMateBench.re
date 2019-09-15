@@ -1,0 +1,1 @@
+TextMateBenchLib.BenchFramework.cli();
