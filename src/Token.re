@@ -139,11 +139,17 @@ let ofMatch =
     );
 
     let rec scopesAreEqual = (scopeList1, scopeList2) => {
+
+      if (scopeList1 === scopeList2) {
+        true
+            } else {
+
       switch (scopeList1, scopeList2) {
       | ([h1, ...t1], [h2, ...t2]) =>
         h1 == h2 ? scopesAreEqual(t1, t2) : false
       | ([], []) => true
       | _ => false
+      };
       };
     };
 
@@ -160,12 +166,14 @@ let ofMatch =
       let curScopes = scopeArray[i];
       let prevScopes = scopeArray[prev];
 
-      if (!scopesAreEqual(curScopes, prevScopes)) {
+      let ltp = lastTokenPosition^;
+
+      if (!scopesAreEqual(curScopes, prevScopes) && (i - ltp) > 0) {
         tokens :=
           [
             _create2(
-              ~position=lastTokenPosition^ + initialMatch.startPos,
-              ~length=i - lastTokenPosition^,
+              ~position=ltp + initialMatch.startPos,
+              ~length=i - ltp,
               ~scopes=prevScopes,
               (),
             ),
@@ -177,12 +185,14 @@ let ofMatch =
       incr(idx);
     };
 
-    if (lastTokenPosition^ < len) {
+      
+    let ltp = lastTokenPosition^;
+    if (ltp < len && (len - ltp) > 0) {
       tokens :=
         [
           _create2(
-            ~position=lastTokenPosition^ + initialMatch.startPos,
-            ~length=len - lastTokenPosition^,
+            ~position=ltp + initialMatch.startPos,
+            ~length=len - ltp,
             ~scopes=scopeArray[len - 1],
             (),
           ),
@@ -190,6 +200,6 @@ let ofMatch =
         ];
     };
 
-    tokens^ |> List.filter(t => t.length > 0) |> List.rev;
+    tokens^;
   };
 };

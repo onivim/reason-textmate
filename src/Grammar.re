@@ -366,7 +366,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       tokens^;
     };
 
-  let retTokens = tokens |> List.rev |> List.flatten;
+  let retTokens = tokens |> List.flatten |> List.rev;
 
   let scopeStack = scopeStack^;
 
