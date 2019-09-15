@@ -138,20 +138,17 @@ let ofMatch =
       v,
     );
 
-    let rec scopesAreEqual = (scopeList1, scopeList2) => {
-
+    let rec scopesAreEqual = (scopeList1, scopeList2) =>
       if (scopeList1 === scopeList2) {
-        true
-            } else {
-
-      switch (scopeList1, scopeList2) {
-      | ([h1, ...t1], [h2, ...t2]) =>
-        h1 == h2 ? scopesAreEqual(t1, t2) : false
-      | ([], []) => true
-      | _ => false
+        true;
+      } else {
+        switch (scopeList1, scopeList2) {
+        | ([h1, ...t1], [h2, ...t2]) =>
+          h1 == h2 ? scopesAreEqual(t1, t2) : false
+        | ([], []) => true
+        | _ => false
+        };
       };
-      };
-    };
 
     // Iterate across array and make tokens
 
@@ -168,7 +165,7 @@ let ofMatch =
 
       let ltp = lastTokenPosition^;
 
-      if (!scopesAreEqual(curScopes, prevScopes) && (i - ltp) > 0) {
+      if (!scopesAreEqual(curScopes, prevScopes) && i - ltp > 0) {
         tokens :=
           [
             _create2(
@@ -185,9 +182,8 @@ let ofMatch =
       incr(idx);
     };
 
-      
     let ltp = lastTokenPosition^;
-    if (ltp < len && (len - ltp) > 0) {
+    if (ltp < len && len - ltp > 0) {
       tokens :=
         [
           _create2(
