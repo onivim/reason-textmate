@@ -79,11 +79,12 @@ let create = str => {
     };
 
   // If no back-references, and no anchors, we can just cache the regex
-  let regex = if(!hasBackReferences && !anchorA && !anchorG) {
-      Some(RegExp.create(str)) 
+  let regex =
+    if (!hasBackReferences && !anchorA && !anchorG) {
+      Some(RegExp.create(str));
     } else {
-    None 
-        }
+      None;
+    };
 
   let anchorCache =
     if (anchorA || anchorG) {

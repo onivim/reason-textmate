@@ -11,12 +11,12 @@ open Oniguruma;
 
 let _allowCache = ref(true);
 
-let setAllowCache = (v) => _allowCache := v;
+let setAllowCache = v => _allowCache := v;
 
 type cachedResult = {
-    str: string,
-    position: int,
-    matches: array(OnigRegExp.Match.t),
+  str: string,
+  position: int,
+  matches: array(OnigRegExp.Match.t),
 };
 
 type t = {
@@ -41,8 +41,6 @@ let create = (str: string) => {
 };
 
 let search = (str: string, position: int, v: t) => {
-
-
   let run = () => {
     switch (v.regexp) {
     | Some(re) => OnigRegExp.search(str, position, re)
@@ -50,25 +48,23 @@ let search = (str: string, position: int, v: t) => {
     };
   };
 
-  if (!_allowCache^) {
-      run()
-    } else {
-      switch (v.cachedResult) {
-      | Some(cachedResult)  when (cachedResult.position >= position && cachedResult.str === str) => cachedResult.matches
-      | _ =>
-        let newResult = run();
-        let len = Array.length(newResult);
-        if (len >= 1) {
-        v.cachedResult = Some({
-          str,
-          position: newResult[0].startPos,
-          matches: newResult,
-        });
-        } else {
+  if (! _allowCache^) {
+    run();
+  } else {
+    switch (v.cachedResult) {
+    | Some(cachedResult)
+        when cachedResult.position >= position && cachedResult.str === str =>
+      cachedResult.matches
+    | _ =>
+      let newResult = run();
+      let len = Array.length(newResult);
+      if (len >= 1) {
+        v.cachedResult =
+          Some({str, position: newResult[0].startPos, matches: newResult});
+      } else {
         v.cachedResult = None;
-                }
-        newResult
-    }
-}
-
+      };
+      newResult;
+    };
+  };
 };
