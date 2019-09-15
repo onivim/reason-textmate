@@ -242,10 +242,9 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       let ltp = lastTokenPosition^;
 
       // Logging around rule evaluation
-      /*
-       print_endline ("Last anchor position: " ++ string_of_int(lastAnchorPosition^));
-       print_endline ("Matching rule: " ++ Rule.show(rule));
-       */
+
+      // print_endline ("Last anchor position: " ++ string_of_int(lastAnchorPosition^));
+      // print_endline ("Matching rule: " ++ Rule.show(rule));
 
       if (ltp < matches[0].startPos) {
         let newToken =
@@ -258,12 +257,10 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         lastTokenPosition := matches[0].startPos;
 
         // Logging around token creation
-        /*
-         print_endline ("Match - startPos: "
-             ++ string_of_int(matches[0].startPos)
-             ++ "endPos: " ++ string_of_int(matches[0].endPos));
-           print_endline("Creating token at " ++ string_of_int(ltp) ++ ":" ++ Token.show(newToken));
-         */
+        /* print_endline ("Match - startPos: "
+            ++ string_of_int(matches[0].startPos)
+            ++ "endPos: " ++ string_of_int(matches[0].endPos));
+           print_endline("Creating token at " ++ string_of_int(ltp) ++ ":" ++ Token.show(newToken));*/
 
         let prevToken = [newToken];
         tokens := [prevToken, ...tokens^];
