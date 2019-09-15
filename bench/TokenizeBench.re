@@ -2,9 +2,10 @@ open Textmate;
 open BenchFramework;
 
 let reasonJson = Yojson.Safe.from_file("test/onivim/fixtures/reason.json");
-let javascriptJson = Yojson.Safe.from_file("test/first-mate/fixtures/javascript.json");
+let javascriptJson =
+  Yojson.Safe.from_file("test/first-mate/fixtures/javascript.json");
 
-let getGrammar = (json) =>
+let getGrammar = json =>
   switch (Grammar.Json.of_yojson(json)) {
   | Ok(v) => v
   | Error(msg) => failwith("Unable to load grammar: " ++ msg)
@@ -35,23 +36,23 @@ let read_file = filename => {
 let largeJs = Array.of_list(read_file("bench/large.js"));
 
 let tokenizeFile = (grammar, lines, ()) => {
-      let len = Array.length(lines);
-      let idx = ref(0);
-      let scopeStack = ref(Grammar.getScopeStack(grammar));
+  let len = Array.length(lines);
+  let idx = ref(0);
+  let scopeStack = ref(Grammar.getScopeStack(grammar));
 
-      while ((idx^) < len) {
-          let line = lines[idx^] ++ "\n";
-          let ( _, newScopeStack) =  Grammar.tokenize(
-            ~lineNumber=idx^,
-            ~scopes=Some(scopeStack^),
-            ~grammar,
-            line,
-          );
+  while (idx^ < len) {
+    let line = lines[idx^] ++ "\n";
+    let (_, newScopeStack) =
+      Grammar.tokenize(
+        ~lineNumber=idx^,
+        ~scopes=Some(scopeStack^),
+        ~grammar,
+        line,
+      );
 
-
-        scopeStack := newScopeStack;
-        incr (idx);
-      };
+    scopeStack := newScopeStack;
+    incr(idx);
+  };
 };
 
 let simpleTokenization = () => {
@@ -82,5 +83,5 @@ bench(
   ~options=singleOption,
   ~setup,
   ~f=tokenizeFile(javascriptGrammar, largeJs),
-  ()
-)
+  (),
+);
