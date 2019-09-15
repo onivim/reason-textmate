@@ -14,7 +14,7 @@ let simpleTokenization = () => {
 };
 
 let setup = () => ();
-let options = Reperf.Options.create(~iterations=1000, ());
+let options = Reperf.Options.create(~iterations=10000, ());
 
 bench(
   ~name="tokenize: simple case (reason)",
