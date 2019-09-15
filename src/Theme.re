@@ -203,31 +203,25 @@ let match = (theme: t, scopes: string) => {
     | [scope, ...scopeParents] =>
       let p = Trie.matches(theme.trie, scope);
 
-      prerr_endline("CHECKING SCOPE: " ++ String.concat("|", scope));
       // If there were no matches... try the next scope up.
       switch (p) {
       | [] => f(scopeParents)
       | _ =>
-        let result: option(ThemeScopes.TokenStyle.t) =
+        let result =
           List.fold_left(
             (prev: option(TokenStyle.t), curr) => {
               let (_, selector: option(selectorWithParents)) = curr;
 
               switch (selector) {
-              | None => None
+              | None => prev
               | Some({style, parents}) =>
+                prerr_endline ("Got match");
                 let prevStyle =
                   switch (prev) {
                   | None => TokenStyle.default
                   | Some(v) => v
                   };
                 let newStyle = _applyStyle(prevStyle, style);
-
-                let parentsScopesToApply =
-                  parents
-                  |> List.filter(selector =>
-                       Selector.matches(selector, scopeParents)
-                     );
 
                 // Apply any parent selectors that match...
                 // we should be sorting this by score!
