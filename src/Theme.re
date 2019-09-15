@@ -215,13 +215,19 @@ let match = (theme: t, scopes: string) => {
               switch (selector) {
               | None => prev
               | Some({style, parents}) =>
-                prerr_endline ("Got match");
+                prerr_endline("Got match");
                 let prevStyle =
                   switch (prev) {
                   | None => TokenStyle.default
                   | Some(v) => v
                   };
                 let newStyle = _applyStyle(prevStyle, style);
+
+                let parentsScopesToApply =
+                  parents
+                  |> List.filter(selector =>
+                       Selector.matches(selector, scopeParents)
+                     );
 
                 // Apply any parent selectors that match...
                 // we should be sorting this by score!

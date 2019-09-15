@@ -286,13 +286,13 @@ describe("Theme", ({describe, _}) => {
           json,
         );
 
-      prerr_endline ("STARTING CONSTANT HEX");
+      prerr_endline("STARTING CONSTANT HEX");
       let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.hex");
       expect.string(style.foreground).toEqual("#bbbbbb");
       expect.string(style.background).toEqual("#000");
       expect.bool(style.bold).toBe(false);
       expect.bool(style.italic).toBe(true);
-      prerr_endline ("ENDING CONSTANT HEX");
+      prerr_endline("ENDING CONSTANT HEX");
 
       let style: ResolvedStyle.t = Theme.match(theme, "constant.numeric.oct");
       expect.string(style.foreground).toEqual("#0f0");
