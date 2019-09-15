@@ -259,6 +259,7 @@ describe("FirstMate", ({test, _}) => {
   let _ = runTest;
   let _ = firstMateTestSuite;
   let _ = onivimTestSuite;
-  FirstMateTestSuite.run(runTest, firstMateTestSuite);
-  FirstMateTestSuite.run(runTest, onivimTestSuite);
+  ();
+  //  FirstMateTestSuite.run(runTest, firstMateTestSuite);
+  //FirstMateTestSuite.run(runTest, onivimTestSuite);
 });

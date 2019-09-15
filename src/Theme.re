@@ -203,19 +203,25 @@ let match = (theme: t, scopes: string) => {
     | [scope, ...scopeParents] =>
       let p = Trie.matches(theme.trie, scope);
 
+      prerr_endline("CHECKING SCOPE: " ++ String.concat("|", scope));
       // If there were no matches... try the next scope up.
       switch (p) {
       | [] => f(scopeParents)
       | _ =>
-        let result =
+        let result: option(ThemeScopes.TokenStyle.t) =
           List.fold_left(
-            (prev: TokenStyle.t, curr) => {
+            (prev: option(TokenStyle.t), curr) => {
               let (_, selector: option(selectorWithParents)) = curr;
 
               switch (selector) {
-              | None => prev
+              | None => None
               | Some({style, parents}) =>
-                let newStyle = _applyStyle(prev, style);
+                let prevStyle =
+                  switch (prev) {
+                  | None => TokenStyle.default
+                  | Some(v) => v
+                  };
+                let newStyle = _applyStyle(prevStyle, style);
 
                 let parentsScopesToApply =
                   parents
@@ -225,48 +231,54 @@ let match = (theme: t, scopes: string) => {
 
                 // Apply any parent selectors that match...
                 // we should be sorting this by score!
-                List.fold_left(
-                  (prev, curr: Selector.t) => {
-                    open Selector;
-                    let {style, _} = curr;
-                    // Reversing the order because the parent style
-                    // should take precedence over previous style
-                    _applyStyle(style, prev);
-                  },
-                  newStyle,
-                  parentsScopesToApply,
+                Some(
+                  List.fold_left(
+                    (prev, curr: Selector.t) => {
+                      open Selector;
+                      let {style, _} = curr;
+                      // Reversing the order because the parent style
+                      // should take precedence over previous style
+                      _applyStyle(style, prev);
+                    },
+                    newStyle,
+                    parentsScopesToApply,
+                  ),
                 );
               };
             },
-            TokenStyle.default,
+            None,
             p,
           );
 
-        let foreground =
-          switch (result.foreground) {
-          | Some(v) => v
-          | None => default.foreground
-          };
+        switch (result) {
+        | None => f(scopeParents)
+        | Some(result) =>
+          let foreground =
+            switch (result.foreground) {
+            | Some(v) => v
+            | None => default.foreground
+            };
 
-        let bold =
-          switch (result.bold) {
-          | Some(v) => v
-          | None => default.bold
-          };
+          let bold =
+            switch (result.bold) {
+            | Some(v) => v
+            | None => default.bold
+            };
 
-        let italic =
-          switch (result.italic) {
-          | Some(v) => v
-          | None => default.italic
-          };
+          let italic =
+            switch (result.italic) {
+            | Some(v) => v
+            | None => default.italic
+            };
 
-        let background =
-          switch (result.background) {
-          | Some(v) => v
-          | None => default.background
-          };
+          let background =
+            switch (result.background) {
+            | Some(v) => v
+            | None => default.background
+            };
 
-        {background, foreground, bold, italic};
+          {background, foreground, bold, italic};
+        };
       };
     };
   };
