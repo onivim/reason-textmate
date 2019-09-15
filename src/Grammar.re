@@ -171,14 +171,19 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | _ => rules
     };
 
+  // Now, iterate through the candidate rules and figure out which one matches
+  // first - that's the rule we want to apply.
   List.fold_left(
     (prev, curr: Rule.t) => {
       let matches = RegExp.search(str, position, curr.regex);
       let matchPos = Array.length(matches) > 0 ? matches[0].startPos : (-1);
 
       switch (prev) {
+      // Case 1: No current matching rule, and no match for this rule -> no-op
       | None when matchPos == (-1) => None
+      // Case 2: No current matching rule, and a match -> set current matching rule to this rule
       | None => Some((matchPos, matches, curr))
+      // Case 3: Current matching rule, and a new match -> does the new match match earlier?
       | Some(v) =>
         let (oldMatchPos, _, _) = v;
         if (matchPos < oldMatchPos && matchPos >= position) {
@@ -246,6 +251,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       // print_endline ("Last anchor position: " ++ string_of_int(lastAnchorPosition^));
       // print_endline ("Matching rule: " ++ Rule.show(rule));
 
+      // If we skipped a bunch of characters, we need to add a token for it.
       if (ltp < matches[0].startPos) {
         let newToken =
           Token.create(
@@ -266,8 +272,8 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         tokens := [prevToken, ...tokens^];
       };
 
+      // Check if the rule pushes onto the scope stack, and handle it!
       switch (rule.pushStack) {
-      // If there is nothing to push... nothing to worry about
       | None => ()
       | Some(matchRange) =>
         scopeStack :=
@@ -293,7 +299,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         }
       };
 
-      // Only add token if there was actually a match!
+      // If there was a match, and it is non-zero-length, we'll create a token for it.
       if (matches[0].endPos > matches[0].startPos) {
         tokens :=
           [
@@ -304,7 +310,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       };
 
       switch (rule.pushStack) {
-      // If there is nothing to push... nothing to worry about
       | None => ()
       | Some(matchRange) =>
         switch (matchRange.contentName) {
