@@ -9,6 +9,10 @@
 
 open Oniguruma;
 
+let _allowCache = ref(true);
+
+let setCache = (v) => _allowCache := v;
+
 type t = {
   raw: string,
   regexp: option(OnigRegExp.t),

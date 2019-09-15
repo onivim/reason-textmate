@@ -78,6 +78,13 @@ let create = str => {
     | _ => true
     };
 
+  // If no back-references, and no anchors, we can just cache the regex
+  let regex = if(!hasBackReferences && !anchorA && !anchorG) {
+      Some(RegExp.create(str)) 
+    } else {
+    None 
+        }
+
   let anchorCache =
     if (anchorA || anchorG) {
       _createAnchorCache(str);
@@ -88,7 +95,7 @@ let create = str => {
   {
     captureGroups: None,
     raw: str,
-    regex: None,
+    regex,
     anchorCache,
     hasAnchorA: anchorA,
     hasAnchorG: anchorG,
@@ -141,7 +148,7 @@ let compile = (allowA, allowG, v: t) => {
 
   switch (v.regex) {
   | None => RegExp.create(rawStr)
-  | _ => RegExp.create(rawStr)
+  | Some(v) => v
   };
 };
 
