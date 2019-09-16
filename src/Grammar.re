@@ -152,10 +152,7 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | Some((pos, matchRange)) when pos == position =>
       let filter = (rule: Rule.t) =>
         switch (rule.popStack, rule.pushStack) {
-        | (Some(mr), _) when mr === matchRange => {
-          prerr_endline ("Filtering out rule: " ++ Rule.show(mr));
-          false
-                }
+        | (Some(mr), _) when mr === matchRange => false
         | (_, Some(mr)) when mr === matchRange => false
         | _ => true
         };
@@ -243,11 +240,8 @@ let tokenize =
         patterns,
       );
 
-    prerr_endline ("TOTAL RULES: " ++ string_of_int(List.length(rules)));
-
     // And figure out if any of the rules applies.
     let bestRule = _getBestRule(lastMatchedRange^, rules, line, i);
-
 
     switch (bestRule) {
     // No matching rule... just increment position and try again
