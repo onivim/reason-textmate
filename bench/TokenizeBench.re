@@ -14,8 +14,10 @@ let getGrammar = json =>
 let reasonGrammar = getGrammar(reasonJson);
 let javascriptGrammar = getGrammar(javascriptJson);
 
-let reasonGrammarRepository = GrammarRepository.ofGrammar("source.reason", reasonGrammar);
-let javascriptGrammarRepository = GrammarRepository.ofGrammar("source.js", javascriptGrammar);
+let reasonGrammarRepository =
+  GrammarRepository.ofGrammar("source.reason", reasonGrammar);
+let javascriptGrammarRepository =
+  GrammarRepository.ofGrammar("source.js", javascriptGrammar);
 
 let read_file = filename => {
   let lines = ref([]);
@@ -89,6 +91,6 @@ bench(
   ~name="tokenize: Large JS file",
   ~options=singleOption,
   ~setup,
-  ~f=tokenizeFile(javascriptGrammarRepository,"source.js", largeJs),
+  ~f=tokenizeFile(javascriptGrammarRepository, "source.js", largeJs),
   (),
 );

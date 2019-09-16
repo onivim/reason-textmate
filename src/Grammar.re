@@ -7,7 +7,7 @@ type t = {
   scopeName: string,
   patterns: list(Pattern.t),
   repository: StringMap.t(list(Pattern.t)),
-}
+};
 
 type grammarRepository = string => option(t);
 
@@ -192,7 +192,14 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
   checkRule(None, rules);
 };
 
-let tokenize = (~lineNumber=0, ~scopes=None, ~grammarRepository, ~grammar: t, line: string) => {
+let tokenize =
+    (
+      ~lineNumber=0,
+      ~scopes=None,
+      ~grammarRepository,
+      ~grammar: t,
+      line: string,
+    ) => {
   let idx = ref(0);
   let lastTokenPosition = ref(0);
   let lastAnchorPosition = ref(-1);
@@ -223,7 +230,8 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammarRepository, ~grammar: t, li
       Rule.ofPatterns(
         ~isFirstLine=lineNumber == 0,
         ~isAnchorPos=lastAnchorPosition^ == i,
-        ~getScope=(scope, inc) => getScope(grammarRepository, scope, inc, grammar),
+        ~getScope=
+          (scope, inc) => getScope(grammarRepository, scope, inc, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
       );

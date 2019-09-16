@@ -89,9 +89,10 @@ module FirstMateTest = {
     ignore(fail);
 
     let grammarMap = _loadGrammars(rootPath, v);
-    let grammarRepository = GrammarRepository.create((scopeName: string) => {
-      StringMap.find_opt(scopeName, grammarMap);
-    });
+    let grammarRepository =
+      GrammarRepository.create((scopeName: string) => {
+        StringMap.find_opt(scopeName, grammarMap)
+      });
     prerr_endline("Loaded grammars!");
     pass("Grammars loaded");
 
@@ -108,7 +109,7 @@ module FirstMateTest = {
       };
 
     let scope = Grammar.getScopeName(grammar);
-    
+
     let idx = ref(0);
     let linesArray = Array.of_list(v.lines);
     let len = Array.length(linesArray);

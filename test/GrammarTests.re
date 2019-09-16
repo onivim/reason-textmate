@@ -13,7 +13,7 @@ let getExecutingDirectory = () => {
   Filename.dirname(Sys.argv[0]);
 };
 
-let grammarRepository = (_) => None;
+let grammarRepository = _ => None;
 
 describe("Grammar", ({describe, _}) => {
   /* Test case inspired by:
@@ -28,11 +28,16 @@ describe("Grammar", ({describe, _}) => {
       switch (gr) {
       | Ok(grammar) =>
         expect.string(Grammar.getScopeName(grammar)).toEqual("source.json");
-        let (tokens, _) = Grammar.tokenize(~grammarRepository, ~grammar, "[1, true]");
+        let (tokens, _) =
+          Grammar.tokenize(~grammarRepository, ~grammar, "[1, true]");
         List.iter(t => prerr_endline(Token.show(t)), tokens);
 
         let (tokens, _) =
-          Grammar.tokenize(~grammarRepository, ~grammar, {|{ "name": ["a", "b"]}|});
+          Grammar.tokenize(
+            ~grammarRepository,
+            ~grammar,
+            {|{ "name": ["a", "b"]}|},
+          );
         List.iter(t => prerr_endline(Token.show(t)), tokens);
       | _ => failwith("Unable to load grammar")
       };
@@ -108,11 +113,22 @@ describe("Grammar", ({describe, _}) => {
   describe("tokenize", ({test, describe, _}) => {
     describe("begin / end rules", ({test, _}) => {
       test("multi-line begin/end", ({expect, _}) => {
-        let (line1Token, line1Scope) = Grammar.tokenize(~grammarRepository, ~grammar, "(");
+        let (line1Token, line1Scope) =
+          Grammar.tokenize(~grammarRepository, ~grammar, "(");
         let (line2Token, line2Scope) =
-          Grammar.tokenize(~grammarRepository, ~grammar, ~scopes=Some(line1Scope), "a");
+          Grammar.tokenize(
+            ~grammarRepository,
+            ~grammar,
+            ~scopes=Some(line1Scope),
+            "a",
+          );
         let (line3Token, _) =
-          Grammar.tokenize(~grammarRepository, ~grammar, ~scopes=Some(line2Scope), ")");
+          Grammar.tokenize(
+            ~grammarRepository,
+            ~grammar,
+            ~scopes=Some(line2Scope),
+            ")",
+          );
         expect.int(List.length(line1Token)).toBe(1);
         expect.int(List.length(line2Token)).toBe(1);
         expect.int(List.length(line3Token)).toBe(1);
@@ -153,7 +169,8 @@ describe("Grammar", ({describe, _}) => {
       });
       test("nested begin/end", ({expect, _}) => {
         prerr_endline("!!! BEGIN");
-        let (tokens, _) = Grammar.tokenize(~grammarRepository, ~grammar, "((a))");
+        let (tokens, _) =
+          Grammar.tokenize(~grammarRepository, ~grammar, "((a))");
         List.iter(t => prerr_endline(Token.show(t)), tokens);
         expect.int(List.length(tokens)).toBe(5);
         let firstToken = List.hd(tokens);
@@ -202,7 +219,8 @@ describe("Grammar", ({describe, _}) => {
       });
       test("simple begin/end", ({expect, _}) => {
         prerr_endline("!!! BEGIN");
-        let (tokens, _) = Grammar.tokenize(~grammarRepository, ~grammar, "(a)");
+        let (tokens, _) =
+          Grammar.tokenize(~grammarRepository, ~grammar, "(a)");
         List.iter(t => prerr_endline(Token.show(t)), tokens);
         expect.int(List.length(tokens)).toBe(3);
         let firstToken = List.hd(tokens);
@@ -252,7 +270,8 @@ describe("Grammar", ({describe, _}) => {
       expect.int(firstToken.length).toBe(1);
     });
     test("simple word tokens", ({expect, _}) => {
-      let (tokens, _) = Grammar.tokenize(~grammarRepository, ~grammar, " def");
+      let (tokens, _) =
+        Grammar.tokenize(~grammarRepository, ~grammar, " def");
       expect.int(List.length(tokens)).toBe(2);
 
       let secondToken = List.nth(tokens, 1);
@@ -263,7 +282,8 @@ describe("Grammar", ({describe, _}) => {
       expect.int(secondToken.length).toBe(3);
     });
     test("different tokens", ({expect, _}) => {
-      let (tokens, _) = Grammar.tokenize(~grammarRepository, ~grammar, " adef b");
+      let (tokens, _) =
+        Grammar.tokenize(~grammarRepository, ~grammar, " adef b");
       expect.int(List.length(tokens)).toBe(5);
 
       let secondToken = List.nth(tokens, 1);
@@ -290,7 +310,11 @@ describe("Grammar", ({describe, _}) => {
     });
     test("capture groups", ({expect, _}) => {
       let (tokens, _) =
-        Grammar.tokenize(~grammarRepository, ~grammar, "@selector(windowWillClose:)");
+        Grammar.tokenize(
+          ~grammarRepository,
+          ~grammar,
+          "@selector(windowWillClose:)",
+        );
       expect.int(List.length(tokens)).toBe(3);
       let firstToken = List.hd(tokens);
       expect.bool(

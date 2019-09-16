@@ -6,7 +6,7 @@ type t;
 
 type grammarRepository = string => option(t);
 
-let getScopeName : t => string;
+let getScopeName: t => string;
 
 let create:
   (
