@@ -9,7 +9,9 @@
 open TestFramework;
 
 module Grammar = Textmate.Grammar;
+module GrammarRepository = Textmate.GrammarRepository;
 module Token = Textmate.Token;
+module Tokenizer = Textmate.Tokenizer;
 module StringMap =
   Map.Make({
     type t = string;
@@ -51,8 +53,6 @@ module FirstMateTest = {
   };
 
   let _loadGrammars = (rootPath, v: t) => {
-    open Grammar;
-
     let allGrammars =
       switch (v.grammarPath) {
       | Some(g) => [g, ...v.grammars]
@@ -62,7 +62,7 @@ module FirstMateTest = {
     List.fold_left(
       (prev, curr) => {
         let grammar = _loadGrammar(rootPath, curr);
-        let scopeName = grammar.scopeName;
+        let scopeName = Grammar.getScopeName(grammar);
 
         StringMap.add(scopeName, grammar, prev);
       },
@@ -89,11 +89,13 @@ module FirstMateTest = {
     ignore(fail);
 
     let grammarMap = _loadGrammars(rootPath, v);
-    let grammarRepository = (scopeName: string) => {
+    let grammarRepository = GrammarRepository.create((scopeName: string) => {
       StringMap.find_opt(scopeName, grammarMap);
-    };
+    });
     prerr_endline("Loaded grammars!");
     pass("Grammars loaded");
+
+    let tokenizer = Tokenizer.create(~repository=grammarRepository, ());
 
     let grammar =
       switch (v.grammarPath) {
@@ -104,12 +106,13 @@ module FirstMateTest = {
         | None => failwith("Unable to locate grammar")
         }
       };
-    let grammar = Grammar.setGrammarRepository(grammarRepository, grammar);
 
+    let scope = Grammar.getScopeName(grammar);
+    
     let idx = ref(0);
     let linesArray = Array.of_list(v.lines);
     let len = Array.length(linesArray);
-    let scopeStack = ref(Grammar.getScopeStack(grammar));
+    let scopeStack = ref(None);
 
     while (idx^ < len) {
       let l = linesArray[idx^];
@@ -118,12 +121,12 @@ module FirstMateTest = {
         "Tokenizing line: " ++ string_of_int(idx^) ++ "|" ++ l.line ++ "|",
       );
       let line = l.line ++ "\n";
-      let scopes = scopeStack^;
       let (tokens, newScopeStack) =
-        Grammar.tokenize(
+        Tokenizer.tokenize(
           ~lineNumber=idx^,
-          ~scopes=Some(scopes),
-          ~grammar,
+          ~scopeStack=scopeStack^,
+          ~scope,
+          tokenizer,
           line,
         );
       List.iter(t => prerr_endline(Token.show(t)), tokens);
@@ -188,7 +191,7 @@ module FirstMateTest = {
 
       validateTokens(0, expectedTokens, actualTokens);
 
-      scopeStack := newScopeStack;
+      scopeStack := Some(newScopeStack);
 
       incr(idx);
     };

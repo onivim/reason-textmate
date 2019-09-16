@@ -2,15 +2,17 @@
  Grammar.rei
  */
 
-type t
-and grammarRepository = string => option(t);
+type t;
+
+type grammarRepository = string => option(t);
+
+let getScopeName : t => string;
 
 let create:
   (
     ~scopeName: string,
     ~patterns: list(Pattern.t),
     ~repository: list((string, list(Pattern.t))),
-    ~grammarRepository: grammarRepository=?,
     unit
   ) =>
   t;
@@ -21,6 +23,7 @@ let tokenize:
   (
     ~lineNumber: int=?,
     ~scopes: option(ScopeStack.t)=?,
+    ~grammarRepository: grammarRepository,
     ~grammar: t,
     string
   ) =>

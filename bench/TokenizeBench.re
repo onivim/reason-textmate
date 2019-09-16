@@ -14,6 +14,9 @@ let getGrammar = json =>
 let reasonGrammar = getGrammar(reasonJson);
 let javascriptGrammar = getGrammar(javascriptJson);
 
+let reasonGrammarRepository = GrammarRepository.ofGrammar("source.reason", reasonGrammar);
+let javascriptGrammarRepository = GrammarRepository.ofGrammar("source.js", javascriptGrammar);
+
 let read_file = filename => {
   let lines = ref([]);
   let chan = open_in(filename);
@@ -35,32 +38,36 @@ let read_file = filename => {
 
 let largeJs = Array.of_list(read_file("bench/large.js"));
 
-let tokenizeFile = (grammar, lines, ()) => {
+let tokenizeFile = (grammarRepo, scope, lines, ()) => {
   let len = Array.length(lines);
   let idx = ref(0);
-  let scopeStack = ref(Grammar.getScopeStack(grammar));
+  let scopeStack = ref(None);
+  let tokenizer = Tokenizer.create(~repository=grammarRepo, ());
 
   while (idx^ < len) {
     let line = lines[idx^] ++ "\n";
     let (_, newScopeStack) =
-      Grammar.tokenize(
+      Tokenizer.tokenize(
         ~lineNumber=idx^,
-        ~scopes=Some(scopeStack^),
-        ~grammar,
+        ~scopeStack=scopeStack^,
+        ~scope,
+        tokenizer,
         line,
       );
 
-    scopeStack := newScopeStack;
+    scopeStack := Some(newScopeStack);
     incr(idx);
   };
 };
 
 let simpleTokenization = () => {
+  let tokenizer = Tokenizer.create(~repository=reasonGrammarRepository, ());
   let _ =
-    Grammar.tokenize(
-      ~grammar=reasonGrammar,
+    Tokenizer.tokenize(
       ~lineNumber=0,
-      ~scopes=None,
+      ~scopeStack=None,
+      ~scope="source.reason",
+      tokenizer,
       "let add = (a, b) => a + b;",
     );
   ();
@@ -82,6 +89,6 @@ bench(
   ~name="tokenize: Large JS file",
   ~options=singleOption,
   ~setup,
-  ~f=tokenizeFile(javascriptGrammar, largeJs),
+  ~f=tokenizeFile(javascriptGrammarRepository,"source.js", largeJs),
   (),
 );
