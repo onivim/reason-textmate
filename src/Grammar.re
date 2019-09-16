@@ -199,10 +199,6 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
   checkRule(None, rules);
 };
 
-<<<<<<< HEAD
-let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
-  prerr_endline ("HELLO!");
-=======
 let tokenize =
     (
       ~lineNumber=0,
@@ -211,7 +207,6 @@ let tokenize =
       ~grammar: t,
       line: string,
     ) => {
->>>>>>> master
   let idx = ref(0);
   let lastTokenPosition = ref(0);
   let lastAnchorPosition = ref(-1);
@@ -263,13 +258,6 @@ let tokenize =
       let (_, matches, rule) = v;
       let ltp = lastTokenPosition^;
       // Logging around rule evaluation
-<<<<<<< HEAD
-      
-       print_endline ("Last anchor position: " ++ string_of_int(lastAnchorPosition^));
-       print_endline ("Matching rule: " ++ Rule.show(rule));
-       
-=======
->>>>>>> master
 
       // print_endline ("Last anchor position: " ++ string_of_int(lastAnchorPosition^));
       // print_endline ("Matching rule: " ++ Rule.show(rule));
