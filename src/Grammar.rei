@@ -17,7 +17,10 @@ let create:
   ) =>
   t;
 
-module Json: {let of_yojson: Yojson.Safe.t => result(t, string);};
+module Json: {
+  let of_yojson: Yojson.Safe.t => result(t, string);
+  let of_file: string => result(t, string);
+};
 
 let tokenize:
   (
