@@ -14,10 +14,10 @@ let ofGrammar = (scope, grammar, s) =>
   };
 
 let ofFilePath = (scope: string, path: string) => {
-  switch(Grammar.Json.of_file(path)) {
+  switch (Grammar.Json.of_file(path)) {
   | Ok(g) => ofGrammar(scope, g)
-  | Error(_) => (_) => None;
-  }
+  | Error(_) => (_ => None)
+  };
 };
 
 let create = v => v;

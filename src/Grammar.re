@@ -140,7 +140,7 @@ module Json = {
 
   let of_file = (path: string) => {
     Yojson.Safe.from_file(path) |> of_yojson;
-  }
+  };
 };
 
 let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
