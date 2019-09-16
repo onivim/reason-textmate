@@ -171,31 +171,40 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | _ => rules
     };
 
-  // Now, iterate through the candidate rules and figure out which one matches
-  // first - that's the rule we want to apply.
-  List.fold_left(
-    (prev, curr: Rule.t) => {
-      let matches = RegExp.search(str, position, curr.regex);
+  let rec checkRule =
+          (
+            prev: option((int, array(Oniguruma.OnigRegExp.Match.t), Rule.t)),
+            rules: list(Rule.t),
+          ) => {
+    switch (rules) {
+    | [] => prev
+    | [hd, ...tail] =>
+      let matches = RegExp.search(str, position, hd.regex);
       let matchPos = Array.length(matches) > 0 ? matches[0].startPos : (-1);
 
       switch (prev) {
-      // Case 1: No current matching rule, and no match for this rule -> no-op
-      | None when matchPos == (-1) => None
-      // Case 2: No current matching rule, and a match -> set current matching rule to this rule
-      | None => Some((matchPos, matches, curr))
-      // Case 3: Current matching rule, and a new match -> does the new match match earlier?
+      // Case 1: No match, but we have a match at the checked position -> apply rule
+      | None when matchPos == position => Some((matchPos, matches, hd))
+      // Case 2: No current match, and no new match -> check next rules
+      | None when matchPos == (-1) => checkRule(None, tail)
+      // Case 3: We have a match, and we didn't have one before, but we don't know it is the best one -> compare with next rules
+      | None => checkRule(Some((matchPos, matches, hd)), tail)
+      // Case 4: We had a previous match, but we now have a match that matches the current position -> use this match
+      | Some(_) when matchPos == position => Some((matchPos, matches, hd))
+      // Case 5: We had a previous match, and a new match, but there still could be a better rule.
+      // Pick the best one out of the prev / new, and look for new matches.
       | Some(v) =>
         let (oldMatchPos, _, _) = v;
         if (matchPos < oldMatchPos && matchPos >= position) {
-          Some((matchPos, matches, curr));
+          checkRule(Some((matchPos, matches, hd)), tail);
         } else {
-          Some(v);
+          checkRule(Some(v), tail);
         };
       };
-    },
-    None,
-    rules,
-  );
+    };
+  };
+
+  checkRule(None, rules);
 };
 
 let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
