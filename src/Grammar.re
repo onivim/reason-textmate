@@ -251,7 +251,6 @@ let tokenize =
       open Oniguruma.OnigRegExp.Match;
       let (_, matches, rule) = v;
       let ltp = lastTokenPosition^;
-
       // Logging around rule evaluation
 
       // print_endline ("Last anchor position: " ++ string_of_int(lastAnchorPosition^));

@@ -275,5 +275,26 @@
 			"fixtures/reason.json"
 		],
 		"desc": "ONIVIM TEST #5 - ReasonML JSX"
+	},
+	{
+		"grammarPath": "fixtures/markdown.json",
+		"lines": [
+			{
+				"line": "# Hello",
+				"tokens": [
+					{
+						"value": "# Hello",
+						"scopes": [
+							"text.html.markdown",
+							"markup.heading.markdown"
+						]
+					}
+				]
+			}
+		],
+		"grammars": [
+			"fixtures/markdown.json"
+		],
+		"desc": "ONIVIM TEST #6 - markdown header"
 	}
 ]
