@@ -18,13 +18,11 @@ describe("OneDark", ({test, _}) => {
     );
 
   test("matches multiple scopes", ({expect, _}) => {
-    prerr_endline("STARTING");
     let token =
       Theme.match(
         oneDarkTheme,
-        "entity.name.filename support.property-value constant.language markup.inserted source.reason",
+        "source.reason markup.inserted constant.language support.property-value entity.name.filename",
       );
     expect.string(token.foreground).toEqual("#d19a66");
-    prerr_endline("ENDING");
   });
 });

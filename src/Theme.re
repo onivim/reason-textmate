@@ -215,7 +215,6 @@ let match = (theme: t, scopes: string) => {
               switch (selector) {
               | None => prev
               | Some({style, parents}) =>
-                prerr_endline("Got match");
                 let prevStyle =
                   switch (prev) {
                   | None => TokenStyle.default
