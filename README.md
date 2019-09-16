@@ -16,32 +16,22 @@ ReasonML native library for working with TextMate grammars
 - `esy '@bench' install`
 - `esy '@bench' run`
 
-### Example
-
-- `esy '@example' install`
-- `esy '@example' run`
-
 ## Usage
 
 ```
 open Textmate;
 
 // Create a grammar repository
-let grammarRepository = (scopeName) => switch(scopeName) {
-| "source.js" => Some(Grammar.of_file("/path/to/js-grammar.json"))
-| _ => None
-};
+let grammarRepository = GrammarRepository.ofFilePath("source.js", "/path/to/js-grammar.json");
 
 // Create a tokenizer
 let tokenizer = Tokenizer.create(grammarRepository);
 
 // Tokenize a line. Tokenizing returns a scope stack and a set of tokens.
-let (scopeStack, tokens) = Tokenizer.tokenize(~lineNumber=0, ~scopeStack=None, ~scopeName="source.js", "console.log('Hello, world!')");
+let (scopeStack, tokens) = Tokenizer.tokenize(~lineNumber=0, ~scopeStack=None, ~scope="source.js", tokenizer, "console.log('Hello, world!')");
 
 // Print tokens:
 List.iter((token) => print_endline("Token: " ++ Token.show(token), tokens);
-
-// Result:
 
 
 // Tokenize a second line, using the scope stack from the previous line.

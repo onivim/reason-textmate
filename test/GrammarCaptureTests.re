@@ -6,6 +6,7 @@
 open TestFramework;
 
 module Grammar = Textmate.Grammar;
+module GrammarRepository = Textmate.GrammarRepository;
 module RegExp = Textmate.RegExp;
 module RegExpFactory = Textmate.RegExpFactory;
 module Token = Textmate.Token;
@@ -44,9 +45,12 @@ describe("GrammarCaptureTests", ({test, _}) => {
       (),
     );
 
+  let grammarRepository = _ => None;
+
   test(
     "match with both name + capture gets both scopes applied", ({expect, _}) => {
-    let (tokens, _) = Grammar.tokenize(~grammar, "world!");
+    let (tokens, _) =
+      Grammar.tokenize(~grammarRepository, ~grammar, "world!");
 
     expect.int(List.length(tokens)).toBe(2);
 
@@ -69,7 +73,8 @@ describe("GrammarCaptureTests", ({test, _}) => {
   });
 
   test("capture with back-reference", ({expect, _}) => {
-    let (tokens, _) = Grammar.tokenize(~grammar, "<HERE> abc </HERE>");
+    let (tokens, _) =
+      Grammar.tokenize(~grammarRepository, ~grammar, "<HERE> abc </HERE>");
 
     expect.int(List.length(tokens)).toBe(3);
     List.iter(t => prerr_endline(Token.show(t)), tokens);
