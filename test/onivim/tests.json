@@ -283,29 +283,10 @@
 				"line": "# Hello",
 				"tokens": [
 					{
-						"value": "#",
+						"value": "# Hello",
 						"scopes": [
 							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown",
-							"punctuation.definition.heading.markdown"
-						]
-					},
-					{
-						"value": " ",
-						"scopes": [
-							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown"
-						]
-					},
-					{
-						"value": "Hello",
-						"scopes": [
-							"text.html.markdown",
-							"markup.heading.markdown",
-							"heading.1.markdown",
-							"entity.name.section.markdown"
+							"markup.heading.markdown"
 						]
 					}
 				]
