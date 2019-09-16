@@ -171,10 +171,14 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | _ => rules
     };
 
-  let rec checkRule = (prev: option((int, array(Oniguruma.OnigRegExp.Match.t), Rule.t)), rules: list(Rule.t)) => {
-  switch (rules) {
-  | [] => prev
-  | [hd, ...tail] => 
+  let rec checkRule =
+          (
+            prev: option((int, array(Oniguruma.OnigRegExp.Match.t), Rule.t)),
+            rules: list(Rule.t),
+          ) => {
+    switch (rules) {
+    | [] => prev
+    | [hd, ...tail] =>
       let matches = RegExp.search(str, position, hd.regex);
       let matchPos = Array.length(matches) > 0 ? matches[0].startPos : (-1);
 
@@ -192,14 +196,12 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
       | Some(v) =>
         let (oldMatchPos, _, _) = v;
         if (matchPos < oldMatchPos && matchPos >= position) {
-          checkRule(Some((matchPos, matches, hd)), tail)
+          checkRule(Some((matchPos, matches, hd)), tail);
         } else {
-          checkRule(Some(v), tail)
+          checkRule(Some(v), tail);
         };
-        
-            }
-    
-    }
+      };
+    };
   };
 
   checkRule(None, rules);
