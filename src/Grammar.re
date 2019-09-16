@@ -7,20 +7,20 @@ type t = {
   scopeName: string,
   patterns: list(Pattern.t),
   repository: StringMap.t(list(Pattern.t)),
-  grammarRepository,
-}
-and grammarRepository = string => option(t);
+};
 
-let noopGrammarRepository: grammarRepository = _ => None;
+type grammarRepository = string => option(t);
 
-let getScope = (grammarScope, scope: string, v: t) => {
+let getScopeName = (v: t) => v.scopeName;
+
+let getScope = (repo: grammarRepository, grammarScope, scope: string, v: t) => {
   let len = String.length(scope);
 
   let grammar =
     if (String.equal(grammarScope, v.scopeName)) {
       Some(v);
     } else {
-      v.grammarRepository(grammarScope);
+      repo(grammarScope);
     };
 
   switch (grammar) {
@@ -35,23 +35,11 @@ let getScope = (grammarScope, scope: string, v: t) => {
   };
 };
 
-let setGrammarRepository = (grammarRepository: grammarRepository, v: t) => {
-  ...v,
-  grammarRepository,
-};
-
-let getScopeName = (v: t) => v.scopeName;
-
-let getScopeStack = (v: t) => {
-  ScopeStack.ofTopLevelScope(v.patterns, v.scopeName);
-};
-
 let create =
     (
       ~scopeName: string,
       ~patterns: list(Pattern.t),
       ~repository: list((string, list(Pattern.t))),
-      ~grammarRepository: grammarRepository=noopGrammarRepository,
       (),
     ) => {
   let repositoryMap =
@@ -69,7 +57,6 @@ let create =
     scopeName,
     patterns,
     repository: repositoryMap,
-    grammarRepository,
   };
   ret;
 };
@@ -150,9 +137,11 @@ module Json = {
 
     Ok(create(~scopeName, ~patterns, ~repository, ()));
   };
-};
 
-type lastMatchedRange = option((int, Pattern.matchRange));
+  let of_file = (path: string) => {
+    Yojson.Safe.from_file(path) |> of_yojson;
+  };
+};
 
 let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
   let rules =
@@ -207,7 +196,14 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
   checkRule(None, rules);
 };
 
-let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
+let tokenize =
+    (
+      ~lineNumber=0,
+      ~scopes=None,
+      ~grammarRepository,
+      ~grammar: t,
+      line: string,
+    ) => {
   let idx = ref(0);
   let lastTokenPosition = ref(0);
   let lastAnchorPosition = ref(-1);
@@ -238,7 +234,8 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       Rule.ofPatterns(
         ~isFirstLine=lineNumber == 0,
         ~isAnchorPos=lastAnchorPosition^ == i,
-        ~getScope=(scope, inc) => getScope(scope, inc, grammar),
+        ~getScope=
+          (scope, inc) => getScope(grammarRepository, scope, inc, grammar),
         ~scopeStack=currentScopeStack,
         patterns,
       );
