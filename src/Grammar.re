@@ -171,26 +171,40 @@ let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
     | _ => rules
     };
 
-  List.fold_left(
-    (prev, curr: Rule.t) => {
-      let matches = RegExp.search(str, position, curr.regex);
+  let rec checkRule =
+          (
+            prev: option((int, array(Oniguruma.OnigRegExp.Match.t), Rule.t)),
+            rules: list(Rule.t),
+          ) => {
+    switch (rules) {
+    | [] => prev
+    | [hd, ...tail] =>
+      let matches = RegExp.search(str, position, hd.regex);
       let matchPos = Array.length(matches) > 0 ? matches[0].startPos : (-1);
 
       switch (prev) {
-      | None when matchPos == (-1) => None
-      | None => Some((matchPos, matches, curr))
+      // Case 1: No match, but we have a match at the checked position -> apply rule
+      | None when matchPos == position => Some((matchPos, matches, hd))
+      // Case 2: No current match, and no new match -> check next rules
+      | None when matchPos == (-1) => checkRule(None, tail)
+      // Case 3: We have a match, and we didn't have one before, but we don't know it is the best one -> compare with next rules
+      | None => checkRule(Some((matchPos, matches, hd)), tail)
+      // Case 4: We had a previous match, but we now have a match that matches the current position -> use this match
+      | Some(_) when matchPos == position => Some((matchPos, matches, hd))
+      // Case 5: We had a previous match, and a new match, but there still could be a better rule.
+      // Pick the best one out of the prev / new, and look for new matches.
       | Some(v) =>
         let (oldMatchPos, _, _) = v;
         if (matchPos < oldMatchPos && matchPos >= position) {
-          Some((matchPos, matches, curr));
+          checkRule(Some((matchPos, matches, hd)), tail);
         } else {
-          Some(v);
+          checkRule(Some(v), tail);
         };
       };
-    },
-    None,
-    rules,
-  );
+    };
+  };
+
+  checkRule(None, rules);
 };
 
 let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
@@ -246,6 +260,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       // print_endline ("Last anchor position: " ++ string_of_int(lastAnchorPosition^));
       // print_endline ("Matching rule: " ++ Rule.show(rule));
 
+      // If we skipped a bunch of characters, we need to add a token for it.
       if (ltp < matches[0].startPos) {
         let newToken =
           Token.create(
@@ -266,8 +281,8 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         tokens := [prevToken, ...tokens^];
       };
 
+      // Check if the rule pushes onto the scope stack, and handle it!
       switch (rule.pushStack) {
-      // If there is nothing to push... nothing to worry about
       | None => ()
       | Some(matchRange) =>
         scopeStack :=
@@ -293,7 +308,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
         }
       };
 
-      // Only add token if there was actually a match!
+      // If there was a match, and it is non-zero-length, we'll create a token for it.
       if (matches[0].endPos > matches[0].startPos) {
         tokens :=
           [
@@ -304,7 +319,6 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       };
 
       switch (rule.pushStack) {
-      // If there is nothing to push... nothing to worry about
       | None => ()
       | Some(matchRange) =>
         switch (matchRange.contentName) {
@@ -361,7 +375,7 @@ let tokenize = (~lineNumber=0, ~scopes=None, ~grammar: t, line: string) => {
       tokens^;
     };
 
-  let retTokens = tokens |> List.rev |> List.flatten;
+  let retTokens = tokens |> List.flatten |> List.rev;
 
   let scopeStack = scopeStack^;
 

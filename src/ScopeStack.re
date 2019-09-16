@@ -115,8 +115,9 @@ let pushPattern =
         matches
         |> Array.to_list
         |> List.map((match: OnigRegExp.Match.t) => {
-             let {index, match, _}: OnigRegExp.Match.t = match;
-             (index, match);
+             let {index, _}: OnigRegExp.Match.t = match;
+             let text = OnigRegExp.Match.getText(match);
+             (index, text);
            });
 
       let resolvedEndRegex =
