@@ -1,0 +1,7 @@
+(executable
+    (name TextMateBench)
+    (public_name TextMateBench)
+    (modules TextMateBench)
+    (libraries textmate-bench.lib)
+    (package textmate-bench)
+)
