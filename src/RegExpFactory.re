@@ -13,7 +13,7 @@ type anchorCache = {
   raw_A1_G1: string,
 };
 
-// If there are no back references, we can cache the 
+// If there are no back references, we can cache the
 // compiled anchor caches, too
 type compiledAnchorCache = {
   a0_G0: RegExp.t,
@@ -73,13 +73,13 @@ let _createAnchorCache = (str: string) => {
 let _createCompiledAnchorCache = (ac: option(anchorCache)) => {
   switch (ac) {
   | None => None
-  | Some(v) => 
+  | Some(v) =>
     let a0_G0 = RegExp.create(v.raw_A0_G0);
     let a0_G1 = RegExp.create(v.raw_A0_G1);
     let a1_G1 = RegExp.create(v.raw_A1_G1);
     let a1_G0 = RegExp.create(v.raw_A1_G0);
     Some({a0_G0, a0_G1, a1_G1, a1_G0});
-    } 
+  };
 };
 
 let create = str => {
@@ -113,16 +113,16 @@ let create = str => {
     if (anchorA || anchorG) {
       let anchorCache = _createAnchorCache(str);
 
-      let compiledAnchorCache = if (!hasBackReferences) {
-        _createCompiledAnchorCache(anchorCache);
-      } else {
-        None;
-      };
+      let compiledAnchorCache =
+        if (!hasBackReferences) {
+          _createCompiledAnchorCache(anchorCache);
+        } else {
+          None;
+        };
       (anchorCache, compiledAnchorCache);
     } else {
       (None, None);
     };
-
 
   {
     captureGroups: None,
@@ -161,8 +161,7 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
   create(newRawStr);
 };
 
-let compile = (allowA, allowG, v: t) => {
-
+let compile = (allowA, allowG, v: t) =>
   if (v.hasBackReferences) {
     let rawStr =
       switch (v.anchorCache, allowA, allowG) {
@@ -174,23 +173,20 @@ let compile = (allowA, allowG, v: t) => {
       | (Some({raw_A0_G0, _}), _, _) => raw_A0_G0
       };
     RegExp.create(rawStr);
-    } else {
-  
-      switch (v.regex) {
-      | Some(v) => v
-      | None => switch((v.compiledAnchorCache, allowA, allowG)) {
-        | (None, _, _) => failwith("Should never hit this!")
-  
+  } else {
+    switch (v.regex) {
+    | Some(v) => v
+    | None =>
+      switch (v.compiledAnchorCache, allowA, allowG) {
+      | (None, _, _) => failwith("Should never hit this!")
+
       | (Some({a1_G1, _}), allowA, allowG)
           when allowA == true && allowG == true => a1_G1
       | (Some({a1_G0, _}), allowA, _) when allowA == true => a1_G0
       | (Some({a0_G1, _}), _, allowG) when allowG == true => a0_G1
-      | (Some({a0_G0, _}), _, _) => 
-        a0_G0
-            }
-      };
-        }
-
-};
+      | (Some({a0_G0, _}), _, _) => a0_G0
+      }
+    };
+  };
 
 let show = (v: t) => v.raw;
