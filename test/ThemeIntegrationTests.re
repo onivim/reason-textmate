@@ -25,4 +25,24 @@ describe("OneDark", ({test, _}) => {
       );
     expect.string(token.foreground).toEqual("#d19a66");
   });
+
+  test("c: matches include", ({expect, _}) => {
+    let token =
+      Theme.match(
+        oneDarkTheme,
+        "source.c meta.preprocessor.include.c keyword.control.directive.$3.c",
+      );
+    expect.string(token.foreground).toEqual("#c678dd");
+  });
+
+  test("c: matches include punctuation ('#')", ({expect, _}) => {
+    prerr_endline("============ BEGIN ===============");
+    let token =
+      Theme.match(
+        oneDarkTheme,
+        "source.c meta.preprocessor.include.c keyword.control.directive.$3.c punctuation.definition.directive.c",
+      );
+    expect.string(token.foreground).toEqual("#c678dd");
+    prerr_endline("============ END ===============");
+  });
 });
