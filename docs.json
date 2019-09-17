@@ -1,0 +1,18 @@
+{
+  "source": "./package.json",
+  "scripts": {
+    "update": "esy '@docs' x cp -r #{self.target_dir}/default/_doc/_html/ #{self.root}/docs",
+    "open": "esy '@docs' x http-server #{self.target_dir}/default/_doc/_html",
+    "print": "esy '@doc' echo #{self.target_dir}/default/_doc/_html"
+  },
+  "override": {
+      "build": [
+	"dune build -p textmate",
+	"dune build @doc -p textmate -j4"
+      ],
+      "dependencies": {
+	  "@opam/odoc": "*",
+	  "http-server": "*"
+	}
+  }
+}
