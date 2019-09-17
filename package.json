@@ -27,7 +27,7 @@
     "@opam/ppx_deriving_yojson": "*",
     "refmterr": "*",
     "ocaml": "~4.7.0",
-    "reason-oniguruma": "^2.0.0",
+    "reason-oniguruma": "^2.0.1",
     "reperf": "^1.3.0"
   },
   "devDependencies": {
