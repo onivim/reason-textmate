@@ -10,6 +10,9 @@ module ResolvedStyle = ThemeScopes.ResolvedStyle;
 type themeSelector = (string, TokenStyle.t);
 
 type selectorWithParents = {
+  // Style is optional, because it's possible for a Trie node to _only_
+  // have parent selectors. In that case, if no parent selectors match,
+  // we want to continue evaluating styles.
   style: option(TokenStyle.t),
   parents: list(Selector.t),
 };
@@ -24,13 +27,7 @@ type t = {
 let _explodeSelectors = (s: string) => {
   s
   |> String.split_on_char(',')
-  |> List.map(s => String.trim(s))
-  |> List.filter(s =>
-       switch (String.index_opt(s, '>')) {
-       | None => true
-       | Some(_) => false
-       }
-     );
+  |> List.map(s => String.trim(s));
 };
 
 let create =
@@ -72,7 +69,8 @@ let create =
             switch (prev) {
             | None =>
               Some({
-                // TODO: Change this to have None
+                // This is the 'parent selector' case - we're adding a parent selector to a Trie node,
+                // but it has no non-parent style of its own.
                 style: None,
                 parents: [{style, scopes: tail}],
               })
@@ -218,37 +216,32 @@ let match = (theme: t, scopes: string) => {
     switch (scopes) {
     | [] => default
     | [scope, ...scopeParents] =>
+      // Get the matching path from the Trie
       let p = Trie.matches(theme.trie, scope);
 
-      prerr_endline(
-        "Checking scope: "
-        ++ String.concat("|", scope)
-        ++ " trie length: "
-        ++ string_of_int(List.length(p)),
-      );
-      // If there were no matches... try the next scope up.
       switch (p) {
+      // If there were no matches... try the next scope up.
       | [] => f(scopeParents)
+      // Got matches - we'll apply them in sequence
       | _ =>
         let result =
           List.fold_left(
             (prev: option(TokenStyle.t), curr) => {
-              let (name, selector: option(selectorWithParents)) = curr;
+              let (_name, selector: option(selectorWithParents)) = curr;
 
               switch (selector) {
+              // No selector at this node. This can happen when a node is on the
+              // path to a node with a style. Nothing to do here; continue on.
               | None => prev
+              // We have a selector at this node. Let's check it out.  
               | Some({style, parents}) =>
-                prerr_endline(
-                  "Got a selector?? "
-                  ++ name
-                  ++ string_of_int(List.length(parents)),
-                );
                 let prevStyle =
                   switch (prev) {
                   | None => TokenStyle.default
                   | Some(v) => v
                   };
 
+                // Get the list of matching parent selectors to apply
                 let parentsScopesToApply =
                   parents
                   |> List.filter(selector =>
@@ -256,8 +249,12 @@ let match = (theme: t, scopes: string) => {
                      );
 
                 switch (parentsScopesToApply, style) {
+                // Case 1: No parent selectors match AND there is no style. We should continue on.
                 | ([], None) => None
+                // Case 2: No parent selectors match, but there is a style at the Node. We should apply the style.
                 | ([], Some(style)) => Some(_applyStyle(prevStyle, style))
+                // Case 3: We have parent selectors that match, and may or may not have a style at the node.
+                // Apply the parent styles, and the node style, if applicable.
                 | (_, style) =>
                   let newStyle =
                     switch (style) {

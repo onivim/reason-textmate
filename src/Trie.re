@@ -27,9 +27,6 @@ let rec update =
     {...tree, children};
   | [] =>
     let newVal = f(tree.v);
-    if (String.equal(tree.prefix, "punctuation")) {
-      prerr_endline("!!!!!!! SETTING PUNCTUATION");
-    };
     {...tree, v: newVal};
   };
 };
