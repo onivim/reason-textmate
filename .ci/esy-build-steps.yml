@@ -14,6 +14,10 @@ steps:
     displayName: 'bench: esy install'
   - script: esy @bench run
     displayName: 'bench: run'
+  - script: esy @docs install
+    displayName: 'docs: esy install'
+  - script: esy @docs build
+    displayName: 'docs: build'
   - script: esy @test install
     displayName: 'test: esy install'
   - script: esy @test run
