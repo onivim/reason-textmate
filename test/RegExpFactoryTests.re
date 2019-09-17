@@ -17,7 +17,9 @@ describe("RegExpFactory", ({describe, _}) => {
       let re = createRegex("\\A^a|b|c");
       expect.bool(RegExpFactory.hasAnchors(re)).toBe(true);
     });
-    test("returns true if has \\A anchor and unresolved back-reference", ({expect, _}) => {
+    test(
+      "returns true if has \\A anchor and unresolved back-reference",
+      ({expect, _}) => {
       let re = createRegex(~allowBackReferences=false, "\\A^(?!\\1(?=\\S))");
       expect.bool(RegExpFactory.hasAnchors(re)).toBe(true);
     });
