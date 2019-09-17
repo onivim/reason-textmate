@@ -16,6 +16,14 @@ ReasonML native library for working with TextMate grammars
 - `esy '@bench' install`
 - `esy '@bench' run`
 
+### Documentation
+
+Latest docs are available here: https://onivim.github.io/reason-textmate/textmate/index.html
+
+- `esy '@docs' install`
+- `esy '@docs' build`
+- `esy '@docs' update`
+
 ## Usage
 
 ```
