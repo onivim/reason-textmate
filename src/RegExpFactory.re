@@ -82,9 +82,11 @@ let _createCompiledAnchorCache = (ac: option(anchorCache)) => {
   };
 };
 
-Printexc.record_backtrace(true);
-
 let create = (~allowBackReferences=true, str) => {
+  // We allow some regular expressions to have backreferences - 
+  // for example, 'begin' and 'match' rules can have them.
+  // However, 'end' rules need the matches from the 'begin'
+  // to be plugged-in.
   let hasUnresolvedBackReferences =
     !allowBackReferences
     && (
