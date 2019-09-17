@@ -25,7 +25,7 @@ type compiledAnchorCache = {
 type t = {
   hasAnchorA: bool,
   hasAnchorG: bool,
-  hasBackReferences: bool,
+  hasUnresolvedBackReferences: bool,
   captureGroups: option(list(captureGroup)),
   raw: string,
   anchorCache: option(anchorCache),
@@ -41,7 +41,7 @@ let hasAnchorG = Str.regexp("\\\\G");
 let hasAnchors = (v: t) => v.hasAnchorA || v.hasAnchorG;
 
 let hasBackRefRegExp = Str.regexp("\\\\\\([0-9]+\\)");
-let hasBackReferences = (v: t) => v.hasBackReferences;
+let hasBackReferences = (v: t) => v.hasUnresolvedBackReferences;
 
 let charactersToEscape = Str.regexp("[\\?\\,\\.\\$\\^\\+\\*{}\\\\\\|\\-]");
 let additionalCharactersToEscape = Str.regexp("[][()]");
@@ -82,8 +82,10 @@ let _createCompiledAnchorCache = (ac: option(anchorCache)) => {
   };
 };
 
-let create = str => {
-  let hasBackReferences =
+Printexc.record_backtrace(true);
+
+let create = (~allowBackReferences=true, str) => {
+  let hasUnresolvedBackReferences = !allowBackReferences &&
     switch (Str.search_forward(hasBackRefRegExp, str, 0)) {
     | exception _ => false
     | _ => true
@@ -103,7 +105,7 @@ let create = str => {
 
   // If no back-references, and no anchors, we can just cache the regex
   let regex =
-    if (!hasBackReferences && !anchorA && !anchorG) {
+    if (!hasUnresolvedBackReferences && !anchorA && !anchorG) {
       Some(RegExp.create(str));
     } else {
       None;
@@ -114,7 +116,7 @@ let create = str => {
       let anchorCache = _createAnchorCache(str);
 
       let compiledAnchorCache =
-        if (!hasBackReferences) {
+        if (!hasUnresolvedBackReferences) {
           _createCompiledAnchorCache(anchorCache);
         } else {
           None;
@@ -132,7 +134,7 @@ let create = str => {
     compiledAnchorCache,
     hasAnchorA: anchorA,
     hasAnchorG: anchorG,
-    hasBackReferences,
+    hasUnresolvedBackReferences,
   };
 };
 
@@ -162,7 +164,7 @@ let supplyReferences = (references: list(captureGroup), v: t) => {
 };
 
 let compile = (allowA, allowG, v: t) =>
-  if (v.hasBackReferences) {
+  if (v.hasUnresolvedBackReferences) {
     let rawStr =
       switch (v.anchorCache, allowA, allowG) {
       | (None, _, _) => v.raw
