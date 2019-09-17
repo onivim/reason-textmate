@@ -3,8 +3,8 @@ open TestFramework;
 module RegExpFactory = Textmate.RegExpFactory;
 module RegExp = Textmate.RegExp;
 
-let createRegex = str => {
-  RegExpFactory.create(str);
+let createRegex = (~allowBackReferences=true, str) => {
+  RegExpFactory.create(~allowBackReferences, str);
 };
 
 describe("RegExpFactory", ({describe, _}) => {
@@ -14,7 +14,13 @@ describe("RegExpFactory", ({describe, _}) => {
       expect.bool(RegExpFactory.hasAnchors(re)).toBe(false);
     });
     test("returns true if has \\A anchor", ({expect, _}) => {
-      let re = createRegex("\\A^(?!\\1(?=\\S))");
+      let re = createRegex("\\A^a|b|c");
+      expect.bool(RegExpFactory.hasAnchors(re)).toBe(true);
+    });
+    test(
+      "returns true if has \\A anchor and unresolved back-reference",
+      ({expect, _}) => {
+      let re = createRegex(~allowBackReferences=false, "\\A^(?!\\1(?=\\S))");
       expect.bool(RegExpFactory.hasAnchors(re)).toBe(true);
     });
   });
@@ -39,14 +45,14 @@ describe("RegExpFactory", ({describe, _}) => {
       expect.bool(RegExpFactory.hasBackReferences(re)).toBe(false);
     });
     test("returns true if has backreferences", ({expect, _}) => {
-      let re = createRegex("^(?!\\1(?=\\S))");
+      let re = createRegex(~allowBackReferences=false, "^(?!\\1(?=\\S))");
       expect.bool(RegExpFactory.hasBackReferences(re)).toBe(true);
     });
   });
 
   describe("supplyReferences", ({test, _}) => {
     test("back references get replaced", ({expect, _}) => {
-      let re = createRegex("\\1");
+      let re = createRegex(~allowBackReferences=false, "\\1");
 
       let newRe = RegExpFactory.supplyReferences([(1, "abc")], re);
       expect.bool(RegExpFactory.hasBackReferences(newRe)).toBe(false);

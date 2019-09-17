@@ -4,6 +4,7 @@ open BenchFramework;
 let reasonJson = Yojson.Safe.from_file("test/onivim/fixtures/reason.json");
 let javascriptJson =
   Yojson.Safe.from_file("test/first-mate/fixtures/javascript.json");
+let cssJson = Yojson.Safe.from_file("test/first-mate/fixtures/css.json");
 
 let getGrammar = json =>
   switch (Grammar.Json.of_yojson(json)) {
@@ -13,11 +14,15 @@ let getGrammar = json =>
 
 let reasonGrammar = getGrammar(reasonJson);
 let javascriptGrammar = getGrammar(javascriptJson);
+let cssGrammar = getGrammar(cssJson);
 
 let reasonGrammarRepository =
   GrammarRepository.ofGrammar("source.reason", reasonGrammar);
 let javascriptGrammarRepository =
   GrammarRepository.ofGrammar("source.js", javascriptGrammar);
+
+let cssGrammarRepository =
+  GrammarRepository.ofGrammar("source.css", cssGrammar);
 
 let read_file = filename => {
   let lines = ref([]);
@@ -39,6 +44,7 @@ let read_file = filename => {
 };
 
 let largeJs = Array.of_list(read_file("bench/large.js"));
+let largeCss = Array.of_list(read_file("bench/bootstrap.css"));
 
 let tokenizeFile = (grammarRepo, scope, lines, ()) => {
   let len = Array.length(lines);
@@ -88,9 +94,17 @@ bench(
 );
 
 bench(
-  ~name="tokenize: Large JS file",
+  ~name="tokenize: Large JS file (jQuery)",
   ~options=singleOption,
   ~setup,
   ~f=tokenizeFile(javascriptGrammarRepository, "source.js", largeJs),
+  (),
+);
+
+bench(
+  ~name="tokenize: Large CSS file (bootstrap)",
+  ~options=singleOption,
+  ~setup,
+  ~f=tokenizeFile(cssGrammarRepository, "source.css", largeCss),
   (),
 );
