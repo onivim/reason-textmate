@@ -94,6 +94,13 @@ module TokenStyle = {
     bold: None,
     italic: None,
   };
+
+  let default2 = {
+    foreground: Some("#FF0000"),
+    background: None,
+    bold: None,
+    italic: None,
+  };
 };
 
 module ResolvedStyle = {

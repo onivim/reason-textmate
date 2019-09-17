@@ -10,7 +10,7 @@ module ResolvedStyle = ThemeScopes.ResolvedStyle;
 type themeSelector = (string, TokenStyle.t);
 
 type selectorWithParents = {
-  style: TokenStyle.t,
+  style: option(TokenStyle.t),
   parents: list(Selector.t),
 };
 
@@ -22,7 +22,15 @@ type t = {
 
 /* Helper to split the selectors on ',' for groups */
 let _explodeSelectors = (s: string) => {
-  s |> String.split_on_char(',') |> List.map(s => String.trim(s));
+  s
+  |> String.split_on_char(',')
+  |> List.map(s => String.trim(s))
+  |> List.filter(s =>
+       switch (String.index_opt(s, '>')) {
+       | None => true
+       | Some(_) => false
+       }
+     );
 };
 
 let create =
@@ -54,8 +62,8 @@ let create =
           // we just want to set the selector directly on the node
           let f = prev =>
             switch (prev) {
-            | None => Some({parents: [], style})
-            | Some(v) => Some({...v, style})
+            | None => Some({parents: [], style: Some(style)})
+            | Some(v) => Some({...v, style: Some(style)})
             };
 
           Trie.update(hd, f, prev);
@@ -64,7 +72,8 @@ let create =
             switch (prev) {
             | None =>
               Some({
-                style: TokenStyle.default,
+                // TODO: Change this to have None
+                style: None,
                 parents: [{style, scopes: tail}],
               })
             | Some(v) =>
@@ -152,7 +161,15 @@ let of_yojson = (~defaultBackground, ~defaultForeground, json: Yojson.Safe.t) =>
 let empty = create(~defaultBackground="#000", ~defaultForeground="#fff", []);
 
 let show = (v: t) => {
-  Trie.show((i: selectorWithParents) => TokenStyle.show(i.style), v.trie);
+  Trie.show(
+    (i: selectorWithParents) => {
+      switch (i.style) {
+      | Some(v) => TokenStyle.show(v)
+      | None => "(None)"
+      }
+    },
+    v.trie,
+  );
 };
 
 let _applyStyle: (TokenStyle.t, TokenStyle.t) => TokenStyle.t =
@@ -203,6 +220,12 @@ let match = (theme: t, scopes: string) => {
     | [scope, ...scopeParents] =>
       let p = Trie.matches(theme.trie, scope);
 
+      prerr_endline(
+        "Checking scope: "
+        ++ String.concat("|", scope)
+        ++ " trie length: "
+        ++ string_of_int(List.length(p)),
+      );
       // If there were no matches... try the next scope up.
       switch (p) {
       | [] => f(scopeParents)
@@ -210,17 +233,21 @@ let match = (theme: t, scopes: string) => {
         let result =
           List.fold_left(
             (prev: option(TokenStyle.t), curr) => {
-              let (_, selector: option(selectorWithParents)) = curr;
+              let (name, selector: option(selectorWithParents)) = curr;
 
               switch (selector) {
               | None => prev
               | Some({style, parents}) =>
+                prerr_endline(
+                  "Got a selector?? "
+                  ++ name
+                  ++ string_of_int(List.length(parents)),
+                );
                 let prevStyle =
                   switch (prev) {
                   | None => TokenStyle.default
                   | Some(v) => v
                   };
-                let newStyle = _applyStyle(prevStyle, style);
 
                 let parentsScopesToApply =
                   parents
@@ -228,21 +255,31 @@ let match = (theme: t, scopes: string) => {
                        Selector.matches(selector, scopeParents)
                      );
 
-                // Apply any parent selectors that match...
-                // we should be sorting this by score!
-                Some(
-                  List.fold_left(
-                    (prev, curr: Selector.t) => {
-                      open Selector;
-                      let {style, _} = curr;
-                      // Reversing the order because the parent style
-                      // should take precedence over previous style
-                      _applyStyle(style, prev);
-                    },
-                    newStyle,
-                    parentsScopesToApply,
-                  ),
-                );
+                switch (parentsScopesToApply, style) {
+                | ([], None) => None
+                | ([], Some(style)) => Some(_applyStyle(prevStyle, style))
+                | (_, style) =>
+                  let newStyle =
+                    switch (style) {
+                    | Some(v) => _applyStyle(prevStyle, v)
+                    | None => TokenStyle.default
+                    };
+                  // Apply any parent selectors that match...
+                  // we should be sorting this by score!
+                  Some(
+                    List.fold_left(
+                      (prev, curr: Selector.t) => {
+                        open Selector;
+                        let {style, _} = curr;
+                        // Reversing the order because the parent style
+                        // should take precedence over previous style
+                        _applyStyle(style, prev);
+                      },
+                      newStyle,
+                      parentsScopesToApply,
+                    ),
+                  );
+                };
               };
             },
             None,
