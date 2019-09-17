@@ -4,8 +4,7 @@ open BenchFramework;
 let reasonJson = Yojson.Safe.from_file("test/onivim/fixtures/reason.json");
 let javascriptJson =
   Yojson.Safe.from_file("test/first-mate/fixtures/javascript.json");
-let cssJson =
-  Yojson.Safe.from_file("test/first-mate/fixtures/css.json");
+let cssJson = Yojson.Safe.from_file("test/first-mate/fixtures/css.json");
 
 let getGrammar = json =>
   switch (Grammar.Json.of_yojson(json)) {

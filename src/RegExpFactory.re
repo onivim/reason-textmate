@@ -85,11 +85,14 @@ let _createCompiledAnchorCache = (ac: option(anchorCache)) => {
 Printexc.record_backtrace(true);
 
 let create = (~allowBackReferences=true, str) => {
-  let hasUnresolvedBackReferences = !allowBackReferences &&
-    switch (Str.search_forward(hasBackRefRegExp, str, 0)) {
-    | exception _ => false
-    | _ => true
-    };
+  let hasUnresolvedBackReferences =
+    !allowBackReferences
+    && (
+      switch (Str.search_forward(hasBackRefRegExp, str, 0)) {
+      | exception _ => false
+      | _ => true
+      }
+    );
 
   let anchorA =
     switch (Str.search_forward(hasAnchorA, str, 0)) {

@@ -108,13 +108,12 @@ module Json = {
       };
     };
 
-  let regex_of_yojson =
-    (~allowBackReferences=true, json) => {
-      switch (json) {
-      | `String(v) => Ok(RegExpFactory.create(~allowBackReferences, v))
-      | _ => Error("Regular expression not specified")
-      };
+  let regex_of_yojson = (~allowBackReferences=true, json) => {
+    switch (json) {
+    | `String(v) => Ok(RegExpFactory.create(~allowBackReferences, v))
+    | _ => Error("Regular expression not specified")
     };
+  };
 
   let match_of_yojson: Yojson.Safe.t => result(t, string) =
     json => {
@@ -172,12 +171,14 @@ module Json = {
     (scope, json) => {
       open Yojson.Safe.Util;
       let%bind beginRegex = regex_of_yojson(member("begin", json));
-      let er = regex_of_yojson(~allowBackReferences=false, member("end", json));
+      let er =
+        regex_of_yojson(~allowBackReferences=false, member("end", json));
 
       let%bind endRegex =
         switch (er) {
         | Ok(v) => Ok(v)
-        | Error(_) => Ok(RegExpFactory.create(~allowBackReferences=false, "\\uFFFF"))
+        | Error(_) =>
+          Ok(RegExpFactory.create(~allowBackReferences=false, "\\uFFFF"))
         };
 
       let applyEndPatternLast =
