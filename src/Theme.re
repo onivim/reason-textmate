@@ -25,9 +25,7 @@ type t = {
 
 /* Helper to split the selectors on ',' for groups */
 let _explodeSelectors = (s: string) => {
-  s
-  |> String.split_on_char(',')
-  |> List.map(s => String.trim(s));
+  s |> String.split_on_char(',') |> List.map(s => String.trim(s));
 };
 
 let create =
@@ -233,7 +231,7 @@ let match = (theme: t, scopes: string) => {
               // No selector at this node. This can happen when a node is on the
               // path to a node with a style. Nothing to do here; continue on.
               | None => prev
-              // We have a selector at this node. Let's check it out.  
+              // We have a selector at this node. Let's check it out.
               | Some({style, parents}) =>
                 let prevStyle =
                   switch (prev) {
