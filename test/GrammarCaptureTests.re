@@ -11,8 +11,8 @@ module RegExp = Textmate.RegExp;
 module RegExpFactory = Textmate.RegExpFactory;
 module Token = Textmate.Token;
 
-let createRegex = str => {
-  RegExpFactory.create(str);
+let createRegex = (~allowBackReferences=true, str) => {
+  RegExpFactory.create(~allowBackReferences, str);
 };
 
 describe("GrammarCaptureTests", ({test, _}) => {
@@ -32,7 +32,7 @@ describe("GrammarCaptureTests", ({test, _}) => {
         }),
         MatchRange({
           beginRegex: createRegex("<(\\w+)>"),
-          endRegex: createRegex("</\\1>"),
+          endRegex: createRegex(~allowBackReferences=false, "</\\1>"),
           beginCaptures: [(0, "html.tag.open")],
           endCaptures: [(0, "html.tag.close")],
           name: Some("html.tag.contents"),
