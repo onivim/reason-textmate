@@ -63,7 +63,7 @@ List.iter((token) => print_endline("Token: " ++ Token.show(token), tokens);
 
 
 // Tokenize a second line, using the scope stack from the previous line.
-let (scopeStack, tokens) = Tokenizer.tokenize(~lineNumber=1, ~scopeStack=Some(scopeStack), ~scopeName, "console.log('Hello, again!')");
+let (scopeStack, tokens) = Tokenizer.tokenize(~lineNumber=1, ~scopeStack=Some(scopeStack), ~scopeName, tokenizer, "console.log('Hello, again!')");
 ```
 
 ## Contributing
