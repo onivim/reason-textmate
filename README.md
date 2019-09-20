@@ -46,7 +46,7 @@ Most of the textmate grammar syntax is supported, but there are a few missing fe
 
 ## Usage
 
-```
+```reason
 open Textmate;
 
 // Create a grammar repository
