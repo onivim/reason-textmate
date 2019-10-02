@@ -16,4 +16,6 @@ let of_yojson:
 
 let of_map: (StringMap.t(string)) => t;
 
-let getColor: string => option(string);
+let getColor: (string, t) => option(string);
+
+let getFirstOrDefault: (~default: string, list(string), t) => string;

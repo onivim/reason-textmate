@@ -3,6 +3,7 @@ module GrammarRepository = GrammarRepository;
 module RegExpFactory = RegExpFactory;
 module RegExp = RegExp;
 module ScopeStack = ScopeStack;
+module ColorTheme = ColorTheme;
 module TokenTheme = TokenTheme;
 module ThemeScopes = ThemeScopes;
 module Token = Token;
