@@ -11,10 +11,9 @@ let empty: t;
 /*
     [of_yojson] instantiates a TokenTheme [t] from JSON
  */
-let of_yojson:
-  (Yojson.Safe.t) => t;
+let of_yojson: Yojson.Safe.t => t;
 
-let of_map: (StringMap.t(string)) => t;
+let of_map: StringMap.t(string) => t;
 
 let getColor: (string, t) => option(string);
 
