@@ -1,6 +1,6 @@
 open TestFramework;
 
-module Theme = Textmate.Theme;
+module TokenTheme = Textmate.TokenTheme;
 module Scope = Textmate.ThemeScopes.Scope;
 module Selector = Textmate.ThemeScopes.Selector;
 module ResolvedStyle = Textmate.ThemeScopes.ResolvedStyle;
@@ -11,7 +11,7 @@ describe("OneDark", ({test, _}) => {
     Yojson.Safe.from_file("test/onivim/fixtures/OneDark-Pro.json");
   let oneDarkTokens = Yojson.Safe.Util.member("tokenColors", oneDarkJson);
   let oneDarkTheme =
-    Theme.of_yojson(
+    TokenTheme.of_yojson(
       ~defaultBackground="#000",
       ~defaultForeground="#FFF",
       oneDarkTokens,
@@ -19,7 +19,7 @@ describe("OneDark", ({test, _}) => {
 
   test("matches multiple scopes", ({expect, _}) => {
     let token =
-      Theme.match(
+      TokenTheme.match(
         oneDarkTheme,
         "source.reason markup.inserted constant.language support.property-value entity.name.filename",
       );
@@ -28,7 +28,7 @@ describe("OneDark", ({test, _}) => {
 
   test("c: matches include", ({expect, _}) => {
     let token =
-      Theme.match(
+      TokenTheme.match(
         oneDarkTheme,
         "source.c meta.preprocessor.include.c keyword.control.directive.$3.c",
       );
@@ -38,7 +38,7 @@ describe("OneDark", ({test, _}) => {
   test("c: matches include punctuation ('#')", ({expect, _}) => {
     prerr_endline("============ BEGIN ===============");
     let token =
-      Theme.match(
+      TokenTheme.match(
         oneDarkTheme,
         "source.c meta.preprocessor.include.c keyword.control.directive.$3.c punctuation.definition.directive.c",
       );

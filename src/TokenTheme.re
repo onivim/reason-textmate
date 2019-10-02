@@ -1,5 +1,5 @@
 /*
- Theme.re
+ TokenTheme.re
  */
 
 open ThemeScopes;

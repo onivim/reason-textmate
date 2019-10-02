@@ -1,5 +1,5 @@
 /*
- Theme.rei
+ TokenTheme.rei
 
  Interface for textmate theme matching
  */
@@ -18,7 +18,7 @@ type themeSelector = (string, TokenStyle.t);
 type t;
 
 /*
-   [create] builds a Theme [t] from a list of styles
+   [create] builds a TokenTheme [t] from a list of styles
  */
 let create:
   (
@@ -29,13 +29,13 @@ let create:
   t;
 
 /*
-    [of_yojson] instantiates a Theme [t] from JSON
+    [of_yojson] instantiates a TokenTheme [t] from JSON
  */
 let of_yojson:
   (~defaultBackground: string, ~defaultForeground: string, Yojson.Safe.t) => t;
 
 /*
-   [empty] is an empty Theme [t] with no selectors
+   [empty] is an empty TokenTheme [t] with no selectors
  */
 let empty: t;
 
@@ -50,6 +50,6 @@ let empty: t;
 let match: (t, string) => ResolvedStyle.t;
 
 /*
-   [show] returns a string representation of the Theme [t]
+   [show] returns a string representation of the TokenTheme [t]
  */
 let show: t => string;
