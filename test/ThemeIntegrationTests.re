@@ -1,6 +1,7 @@
 open TestFramework;
 
 module Theme = Textmate.Theme;
+module ColorTheme = Textmate.ColorTheme;
 module TokenTheme = Textmate.TokenTheme;
 module Scope = Textmate.ThemeScopes.Scope;
 module Selector = Textmate.ThemeScopes.Selector;
@@ -10,6 +11,7 @@ module TokenStyle = Textmate.ThemeScopes.TokenStyle;
 describe("OneDark", ({test, _}) => {
   let oneDark = Theme.from_file("test/onivim/fixtures/OneDark-Pro.json");
   let oneDarkTheme = Theme.getTokenColors(oneDark);
+  let oneDarkColors = Theme.getColors(oneDark);
   /*let oneDarkTheme =
     TokenTheme.of_yojson(
       ~defaultBackground="#000",
@@ -17,6 +19,13 @@ describe("OneDark", ({test, _}) => {
       oneDarkTokens,
     );*/
 
+  test("colors: activityBar.background", ({expect, _}) => {
+    switch (ColorTheme.getColor("activityBar.background", oneDarkColors)) {
+    | None => expect.int(0).toBe(1);
+    | Some(v) => expect.string(v).toEqual("#282c34");
+    }
+  });
+  
   test("matches multiple scopes", ({expect, _}) => {
     let token =
       TokenTheme.match(
