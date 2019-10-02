@@ -21,11 +21,11 @@ describe("OneDark", ({test, _}) => {
 
   test("colors: activityBar.background", ({expect, _}) => {
     switch (ColorTheme.getColor("activityBar.background", oneDarkColors)) {
-    | None => expect.int(0).toBe(1);
-    | Some(v) => expect.string(v).toEqual("#282c34");
+    | None => expect.int(0).toBe(1)
+    | Some(v) => expect.string(v).toEqual("#282c34")
     }
   });
-  
+
   test("matches multiple scopes", ({expect, _}) => {
     let token =
       TokenTheme.match(
