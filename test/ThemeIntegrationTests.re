@@ -11,7 +11,7 @@ module TokenStyle = Textmate.ThemeScopes.TokenStyle;
 describe("OneDark", ({test, _}) => {
   let oneDark = Theme.from_file("test/onivim/fixtures/OneDark-Pro.json");
   let oneDarkLight =
-    Theme.from_file("test/onivim/fixtures/OneDark-Light.json");
+    Theme.from_file("test/onivim/fixtures/OneDarkPro-Light.json");
   let oneDarkTheme = Theme.getTokenColors(oneDark);
   let oneDarkColors = Theme.getColors(oneDark);
 
