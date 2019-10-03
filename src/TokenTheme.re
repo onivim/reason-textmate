@@ -21,6 +21,7 @@ type t = {
   defaultBackground: string,
   defaultForeground: string,
   trie: Trie.t(selectorWithParents),
+  selectors: list(themeSelector),
 };
 
 /* Helper to split the selectors on ',' for groups */
@@ -30,6 +31,7 @@ let _explodeSelectors = (s: string) => {
 
 let create =
     (~defaultBackground, ~defaultForeground, selectors: list(themeSelector)) => {
+  let originalSelectors = selectors;
   let f = (v: themeSelector) => {
     let (s, style) = v;
 
@@ -83,9 +85,17 @@ let create =
       selectors,
     );
 
-  let ret: t = {defaultBackground, defaultForeground, trie};
+  let ret: t = {defaultBackground, defaultForeground, trie, selectors: originalSelectors};
 
   ret;
+};
+
+let union = (~defaultBackground, ~defaultForeground, a: t, b: t) => {
+  let allSelectors = List.flatten([a.selectors, b.selectors]);
+  create(
+    ~defaultBackground,
+    ~defaultForeground,
+    allSelectors);
 };
 
 let of_yojson = (~defaultBackground, ~defaultForeground, json: Yojson.Safe.t) => {

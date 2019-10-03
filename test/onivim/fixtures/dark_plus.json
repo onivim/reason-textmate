@@ -2,6 +2,9 @@
 	"$schema": "vscode://schemas/color-theme",
 	"name": "Dark+ (default dark)",
 	"include": "./dark_vs.json",
+	"colors": {
+		"editor.inactiveSelectionBackground": "#AABBCC"
+	},
 	"tokenColors": [
 		{
 			"name": "Function declarations",
@@ -176,7 +179,7 @@
 		{
 			"scope": "entity.name.label",
 			"settings": {
-				"foreground": "#C8C8C8"
+				"foreground": "#C9C9C9"
 			}
 		}
 	]

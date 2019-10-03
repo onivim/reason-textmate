@@ -12,12 +12,42 @@ describe("OneDark", ({test, _}) => {
   let oneDark = Theme.from_file("test/onivim/fixtures/OneDark-Pro.json");
   let oneDarkTheme = Theme.getTokenColors(oneDark);
   let oneDarkColors = Theme.getColors(oneDark);
-  /*let oneDarkTheme =
-    TokenTheme.of_yojson(
-      ~defaultBackground="#000",
-      ~defaultForeground="#FFF",
-      oneDarkTokens,
-    );*/
+
+  let darkPlus = Theme.from_file("test/onivim/fixtures/dark_plus.json");
+  let darkPlusTheme = Theme.getTokenColors(darkPlus);
+  let darkPlusColors = Theme.getColors(darkPlus);
+
+  test("dark_plus - colors: load nested", ({expect, _}) => {
+    // Load a color that is _only_ in parent
+    switch (ColorTheme.getColor("editor.background", darkPlusColors)) {
+    | None => expect.int(0).toBe(1)
+    | Some(v) => expect.string(v).toEqual("#1E1E1E")
+    };
+
+    // Load a color that is _overridden_
+    switch (ColorTheme.getColor("editor.inactiveSelectionBackground", darkPlusColors)) {
+    | None => expect.int(0).toBe(1)
+    | Some(v) => expect.string(v).toEqual("#AABBCC")
+    };
+  });
+  
+  test("dark_plus - tokenColors: load nested", ({expect, _}) => {
+    // Load a token that is _only_ available in parent
+    let token =
+      TokenTheme.match(
+        darkPlusTheme,
+        "comment",
+      );
+    expect.string(token.foreground).toEqual("#6A9955");
+
+    // Load a token that is _overridden_ 
+    let token =
+      TokenTheme.match(
+        darkPlusTheme,
+        "entity.name.label",
+      );
+    expect.string(token.foreground).toEqual("#C9C9C9");
+  });
 
   test("colors: activityBar.background", ({expect, _}) => {
     switch (ColorTheme.getColor("activityBar.background", oneDarkColors)) {

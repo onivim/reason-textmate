@@ -39,6 +39,8 @@ let of_yojson:
  */
 let empty: t;
 
+let union: (~defaultBackground: string, ~defaultForeground: string, t, t) => t;
+
 /*
     [match] returns the resolved style information,
     given the scopes [string]. The [scopes] should include

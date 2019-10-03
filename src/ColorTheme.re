@@ -27,6 +27,14 @@ let of_yojson = json => {
   };
 };
 
+let union = (a, b) => {
+  let f = (_key, v1, _v2) => {
+    Some(v1);
+  };
+  
+  StringMap.union(f, b, a);
+};
+
 let getColor = (name, v) => StringMap.find_opt(name, v);
 
 let getFirstOrDefault = (~default, candidates, v) => {
