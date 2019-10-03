@@ -85,17 +85,19 @@ let create =
       selectors,
     );
 
-  let ret: t = {defaultBackground, defaultForeground, trie, selectors: originalSelectors};
+  let ret: t = {
+    defaultBackground,
+    defaultForeground,
+    trie,
+    selectors: originalSelectors,
+  };
 
   ret;
 };
 
 let union = (~defaultBackground, ~defaultForeground, a: t, b: t) => {
   let allSelectors = List.flatten([a.selectors, b.selectors]);
-  create(
-    ~defaultBackground,
-    ~defaultForeground,
-    allSelectors);
+  create(~defaultBackground, ~defaultForeground, allSelectors);
 };
 
 let of_yojson = (~defaultBackground, ~defaultForeground, json: Yojson.Safe.t) => {

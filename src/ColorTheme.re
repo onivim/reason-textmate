@@ -31,7 +31,7 @@ let union = (a, b) => {
   let f = (_key, v1, _v2) => {
     Some(v1);
   };
-  
+
   StringMap.union(f, b, a);
 };
 

@@ -25,27 +25,24 @@ describe("OneDark", ({test, _}) => {
     };
 
     // Load a color that is _overridden_
-    switch (ColorTheme.getColor("editor.inactiveSelectionBackground", darkPlusColors)) {
+    switch (
+      ColorTheme.getColor(
+        "editor.inactiveSelectionBackground",
+        darkPlusColors,
+      )
+    ) {
     | None => expect.int(0).toBe(1)
     | Some(v) => expect.string(v).toEqual("#AABBCC")
     };
   });
-  
+
   test("dark_plus - tokenColors: load nested", ({expect, _}) => {
     // Load a token that is _only_ available in parent
-    let token =
-      TokenTheme.match(
-        darkPlusTheme,
-        "comment",
-      );
+    let token = TokenTheme.match(darkPlusTheme, "comment");
     expect.string(token.foreground).toEqual("#6A9955");
 
-    // Load a token that is _overridden_ 
-    let token =
-      TokenTheme.match(
-        darkPlusTheme,
-        "entity.name.label",
-      );
+    // Load a token that is _overridden_
+    let token = TokenTheme.match(darkPlusTheme, "entity.name.label");
     expect.string(token.foreground).toEqual("#C9C9C9");
   });
 

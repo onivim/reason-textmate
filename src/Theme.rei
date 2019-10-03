@@ -6,7 +6,7 @@
 
 type t;
 
-type themeLoader = (string) => t;
+type themeLoader = string => t;
 
 let of_yojson: (~themeLoader: themeLoader, Yojson.Safe.t) => t;
 let from_file: string => t;
