@@ -13,3 +13,5 @@ let from_file: string => t;
 
 let getColors: t => ColorTheme.t;
 let getTokenColors: t => TokenTheme.t;
+
+let isDark: t => bool;

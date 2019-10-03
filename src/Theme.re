@@ -7,6 +7,7 @@ open Rench;
 type t = {
   colors: ColorTheme.t,
   tokenColors: TokenTheme.t,
+  isDark: bool,
 };
 
 type themeLoader = string => t;
@@ -39,6 +40,11 @@ let of_yojson = (~themeLoader, json: Yojson.Safe.t) => {
         ~defaultForeground,
         tokenColorsJson,
       );
+
+    let isDark = switch(Yojson.Safe.Util.member("type", json)) {
+    | `String("dark") => true
+    | _ => false
+    };
 
     // Is there an included theme? If so - we need to parse that
     let incl = Yojson.Safe.Util.member("include", json);
@@ -78,7 +84,7 @@ let of_yojson = (~themeLoader, json: Yojson.Safe.t) => {
       | _ => (colorTheme, tokenTheme)
       };
 
-    {colors: colorTheme, tokenColors: tokenTheme};
+    {isDark, colors: colorTheme, tokenColors: tokenTheme};
   };
 
   parse(json);
@@ -103,3 +109,5 @@ let rec from_file = (path: string) => {
 
 let getColors = v => v.colors;
 let getTokenColors = v => v.tokenColors;
+
+let isDark = v => v.isDark;
