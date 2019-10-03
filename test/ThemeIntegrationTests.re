@@ -10,7 +10,8 @@ module TokenStyle = Textmate.ThemeScopes.TokenStyle;
 
 describe("OneDark", ({test, _}) => {
   let oneDark = Theme.from_file("test/onivim/fixtures/OneDark-Pro.json");
-  let oneDarkLight = Theme.from_file("test/onivim/fixtures/OneDark-Light.json");
+  let oneDarkLight =
+    Theme.from_file("test/onivim/fixtures/OneDark-Light.json");
   let oneDarkTheme = Theme.getTokenColors(oneDark);
   let oneDarkColors = Theme.getColors(oneDark);
 
@@ -19,10 +20,10 @@ describe("OneDark", ({test, _}) => {
   let darkPlusColors = Theme.getColors(darkPlus);
 
   test("OneDark-Pro: isDark", ({expect, _}) => {
-    expect.bool(Theme.isDark(oneDark)).toBe(true);
+    expect.bool(Theme.isDark(oneDark)).toBe(true)
   });
   test("OneDark-Light: isDark", ({expect, _}) => {
-    expect.bool(Theme.isDark(oneDarkLight)).toBe(false);
+    expect.bool(Theme.isDark(oneDarkLight)).toBe(false)
   });
 
   test("dark_plus - colors: load nested", ({expect, _}) => {

@@ -41,10 +41,11 @@ let of_yojson = (~themeLoader, json: Yojson.Safe.t) => {
         tokenColorsJson,
       );
 
-    let isDark = switch(Yojson.Safe.Util.member("type", json)) {
-    | `String("dark") => true
-    | _ => false
-    };
+    let isDark =
+      switch (Yojson.Safe.Util.member("type", json)) {
+      | `String("dark") => true
+      | _ => false
+      };
 
     // Is there an included theme? If so - we need to parse that
     let incl = Yojson.Safe.Util.member("include", json);
