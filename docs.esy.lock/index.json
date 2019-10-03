@@ -1,5 +1,5 @@
 {
-  "checksum": "ea291decd470adf49ac5b7f429e0e0cf",
+  "checksum": "d847ce6acee96f2dcf382b9dda585b38",
   "root": "reason-textmate@link-dev:./package.json",
   "node": {
     "wordwrap@0.0.3@d41d8cd9": {
@@ -77,20 +77,19 @@
       ],
       "devDependencies": []
     },
-    "rench@1.9.0@d41d8cd9": {
-      "id": "rench@1.9.0@d41d8cd9",
+    "rench@1.9.1@d41d8cd9": {
+      "id": "rench@1.9.1@d41d8cd9",
       "name": "rench",
-      "version": "1.9.0",
+      "version": "1.9.1",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://registry.npmjs.org/rench/-/rench-1.9.0.tgz#sha1:7926087f9fc51567e347f64a8d74518d45ef7c5b"
+          "archive:https://registry.npmjs.org/rench/-/rench-1.9.1.tgz#sha1:ad050a25752890d3ed52a780c6fe35e7634f7451"
         ]
       },
       "overrides": [],
       "dependencies": [
-        "refmterr@3.2.2@d41d8cd9", "ocaml@4.8.1000@d41d8cd9",
-        "@reason-native/rely@1.3.1@d41d8cd9",
+        "refmterr@3.2.2@d41d8cd9", "@reason-native/rely@1.3.1@d41d8cd9",
         "@reason-native/console@0.1.0@d41d8cd9",
         "@opam/lwt@opam:4.3.1@14b6a62e",
         "@opam/lambda-term@opam:2.0.2@119fb081",
@@ -130,7 +129,7 @@
       },
       "overrides": [ "docs.json" ],
       "dependencies": [
-        "reperf@1.4.0@d41d8cd9", "rench@1.9.0@d41d8cd9",
+        "reperf@1.4.0@d41d8cd9", "rench@1.9.1@d41d8cd9",
         "refmterr@3.2.2@d41d8cd9", "reason-oniguruma@2.0.2@d41d8cd9",
         "ocaml@4.8.1000@d41d8cd9", "http-server@0.11.1@d41d8cd9",
         "@reason-native/rely@1.3.1@d41d8cd9",

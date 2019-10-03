@@ -27,7 +27,7 @@
     "ocaml": ">=4.7.0 <4.9.0",
     "reason-oniguruma": "^2.0.2",
     "reperf": "^1.3.0",
-    "rench": "^1.7.1"
+    "rench": "^1.9.1"
   },
   "devDependencies": {
     "ocaml": ">=4.7.0 <4.9.0",
