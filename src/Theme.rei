@@ -8,7 +8,8 @@ type t;
 
 type themeLoader = string => t;
 
-let of_yojson: (~isDark: bool=?, ~themeLoader: themeLoader, Yojson.Safe.t) => t;
+let of_yojson:
+  (~isDark: bool=?, ~themeLoader: themeLoader, Yojson.Safe.t) => t;
 let from_file: (~isDark: bool=?, string) => t;
 
 let getColors: t => ColorTheme.t;

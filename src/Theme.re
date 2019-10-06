@@ -22,10 +22,10 @@ let of_yojson = (~isDark=?, ~themeLoader, json: Yojson.Safe.t) => {
       switch (isDark) {
       | Some(v) => v
       | None =>
-      switch (Yojson.Safe.Util.member("type", json)) {
-      | `String("dark") => true
-      | _ => false
-      };
+        switch (Yojson.Safe.Util.member("type", json)) {
+        | `String("dark") => true
+        | _ => false
+        }
       };
 
     let defaultBackground = isDark ? "#1E1E1E" : "#FFFFFF";
@@ -109,7 +109,8 @@ let rec from_file = (~isDark=?, path: string) => {
       let fullPath = Path.join(currentDirectory, p);
       from_file(fullPath);
     };
-    let ret = Yojson.Safe.from_file(path) |> of_yojson(~isDark?, ~themeLoader);
+    let ret =
+      Yojson.Safe.from_file(path) |> of_yojson(~isDark?, ~themeLoader);
     Hashtbl.add(_themeCache, path, ret);
     ret;
   };
