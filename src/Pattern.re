@@ -8,9 +8,9 @@ module Capture = {
 
 type t =
   | Include(string, string)
-  | Match(match_)
+  | Match(patternMatch)
   | MatchRange(matchRange)
-and match = {
+and patternMatch = {
   matchRegex: RegExpFactory.t,
   matchName: option(string),
   captures: list(Capture.t),
