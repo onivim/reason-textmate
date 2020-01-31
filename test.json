@@ -4,7 +4,7 @@
     "run": "esy '@test' x TextMateUnitTestRunner"
   },
   "override": {
-      "build": ["dune build --root . -j4"],
+      "build": ["dune build @all -j4"],
       "dependencies": {
         "@opam/ppx_deriving_yojson": "*"
       },
