@@ -20,7 +20,7 @@ let show = (v: t) => {
   start ++ RegExp.toString(v.regex);
 };
 
-let ofMatch = (allowA, allowG, match: Pattern.match_) => {
+let ofMatch = (allowA, allowG, match: Pattern.patternMatch) => {
   Some({
     regex: RegExpFactory.compile(allowA, allowG, match.matchRegex),
     name: match.matchName,

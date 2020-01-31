@@ -12,10 +12,6 @@
         "esy-installer textmate.install"
     ]
   },
-  "resolutions": {
-    "@opam/biniou": "1.2.0",
-    "@opam/easy-format": "1.3.1"
-  },
   "dependencies": {
     "@opam/dune": "^1.6.0",
     "@opam/ppx_let": "*",
@@ -24,14 +20,17 @@
     "@reason-native/rely": "^1.3.1",
     "@opam/ppx_deriving_yojson": "*",
     "refmterr": "*",
-    "ocaml": ">=4.7.0 <4.9.0",
+    "ocaml": ">=4.7.0 <4.10.0",
     "reason-oniguruma": "^6.94.1000",
-    "reperf": "^1.3.0",
     "rench": "^1.9.1"
   },
+  "resolutions": {
+    "@opam/biniou": "1.2.0",
+    "@opam/easy-format": "1.3.1",
+    "@esy-ocaml/reason": "facebook/reason#8f71db0"
+  },
   "devDependencies": {
-    "ocaml": ">=4.7.0 <4.9.0",
-    "@opam/merlin": "*",
+    "ocaml": "~4.9.0",
     "@opam/odoc": "*"
   }
 }
