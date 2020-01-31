@@ -27,9 +27,7 @@
   "resolutions": {
     "@opam/biniou": "1.2.0",
     "@opam/easy-format": "1.3.1",
-    "@esy-ocaml/reason": "facebook/reason#8f71db0",
-
-    "reperf": "glennsl/reperf#a8fd5b1"
+    "@esy-ocaml/reason": "facebook/reason#8f71db0"
   },
   "devDependencies": {
     "ocaml": "~4.9.0",
