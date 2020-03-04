@@ -17,6 +17,8 @@ let of_map: StringMap.t(string) => t;
 
 let union: (t, t) => t;
 
+let fold: ((string, string, 'a) => 'a, t, 'a) => 'a;
+
 let getColor: (string, t) => option(string);
 
 let getFirstOrDefault: (~default: string, list(string), t) => string;

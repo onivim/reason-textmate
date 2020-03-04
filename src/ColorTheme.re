@@ -50,3 +50,5 @@ let getFirstOrDefault = (~default, candidates, v) => {
 
   f(candidates);
 };
+
+let fold = StringMap.fold;
