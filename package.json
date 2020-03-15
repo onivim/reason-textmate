@@ -17,7 +17,6 @@
     "@opam/ppx_let": "*",
     "@opam/yojson": "^1.5.0",
     "@esy-ocaml/reason": "^3.4.0",
-    "@reason-native/rely": "^1.3.1",
     "@opam/ppx_deriving_yojson": "*",
     "refmterr": "*",
     "ocaml": ">=4.7.0 <4.10.0",
