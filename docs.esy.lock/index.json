@@ -1,5 +1,5 @@
 {
-  "checksum": "c3519c7df1d15657562601fd5efa8ed0",
+  "checksum": "cbc6c22634ef5b593319f5dca2062412",
   "root": "reason-textmate@link-dev:./package.json",
   "node": {
     "wordwrap@0.0.3@d41d8cd9": {
@@ -144,9 +144,8 @@
       "overrides": [ "docs.json" ],
       "dependencies": [
         "rench@1.9.1@d41d8cd9", "refmterr@3.3.0@d41d8cd9",
-        "reason-oniguruma@github:glennsl/reason-oniguruma#18a8287@d41d8cd9",
-        "ocaml@4.8.1000@d41d8cd9", "http-server@0.12.1@d41d8cd9",
-        "@opam/yojson@opam:1.7.0@7056d985",
+        "reason-oniguruma@6.94.1001@d41d8cd9", "ocaml@4.8.1000@d41d8cd9",
+        "http-server@0.12.1@d41d8cd9", "@opam/yojson@opam:1.7.0@7056d985",
         "@opam/ppx_let@opam:v0.13.0@5703d2be",
         "@opam/ppx_deriving_yojson@opam:3.5.2@ca415fbe",
         "@opam/odoc@opam:1.5.0@35218f5f", "@opam/dune@opam:2.4.0@639d28a3",
@@ -156,14 +155,15 @@
         "ocaml@4.8.1000@d41d8cd9", "@opam/odoc@opam:1.5.0@35218f5f"
       ]
     },
-    "reason-oniguruma@github:glennsl/reason-oniguruma#18a8287@d41d8cd9": {
-      "id":
-        "reason-oniguruma@github:glennsl/reason-oniguruma#18a8287@d41d8cd9",
+    "reason-oniguruma@6.94.1001@d41d8cd9": {
+      "id": "reason-oniguruma@6.94.1001@d41d8cd9",
       "name": "reason-oniguruma",
-      "version": "github:glennsl/reason-oniguruma#18a8287",
+      "version": "6.94.1001",
       "source": {
         "type": "install",
-        "source": [ "github:glennsl/reason-oniguruma#18a8287" ]
+        "source": [
+          "archive:https://registry.npmjs.org/reason-oniguruma/-/reason-oniguruma-6.94.1001.tgz#sha1:ee1d3de3d2f91d43162fd6b76c6fad55101c7556"
+        ]
       },
       "overrides": [],
       "dependencies": [
@@ -173,7 +173,7 @@
         "@opam/dune@opam:2.4.0@639d28a3",
         "@esy-ocaml/reason@github:facebook/reason#8f71db0@d41d8cd9"
       ],
-      "devDependencies": [ "ocaml@4.8.1000@d41d8cd9" ]
+      "devDependencies": []
     },
     "qs@6.9.1@d41d8cd9": {
       "id": "qs@6.9.1@d41d8cd9",
@@ -201,7 +201,7 @@
       },
       "overrides": [],
       "dependencies": [
-        "mkdirp@0.5.1@d41d8cd9", "debug@3.2.6@d41d8cd9",
+        "mkdirp@0.5.3@d41d8cd9", "debug@3.2.6@d41d8cd9",
         "async@2.6.3@d41d8cd9"
       ],
       "devDependencies": []
@@ -264,18 +264,18 @@
       "dependencies": [],
       "devDependencies": []
     },
-    "mkdirp@0.5.1@d41d8cd9": {
-      "id": "mkdirp@0.5.1@d41d8cd9",
+    "mkdirp@0.5.3@d41d8cd9": {
+      "id": "mkdirp@0.5.3@d41d8cd9",
       "name": "mkdirp",
-      "version": "0.5.1",
+      "version": "0.5.3",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.1.tgz#sha1:30057438eac6cf7f8c4767f38648d6697d75c903"
+          "archive:https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.3.tgz#sha1:5a514b7179259287952881e94410ec5465659f8c"
         ]
       },
       "overrides": [],
-      "dependencies": [ "minimist@0.0.8@d41d8cd9" ],
+      "dependencies": [ "minimist@1.2.5@d41d8cd9" ],
       "devDependencies": []
     },
     "minimist@1.2.5@d41d8cd9": {
@@ -300,20 +300,6 @@
         "type": "install",
         "source": [
           "archive:https://registry.npmjs.org/minimist/-/minimist-0.0.10.tgz#sha1:de3f98543dbf96082be48ad1a0c7cda836301dcf"
-        ]
-      },
-      "overrides": [],
-      "dependencies": [],
-      "devDependencies": []
-    },
-    "minimist@0.0.8@d41d8cd9": {
-      "id": "minimist@0.0.8@d41d8cd9",
-      "name": "minimist",
-      "version": "0.0.8",
-      "source": {
-        "type": "install",
-        "source": [
-          "archive:https://registry.npmjs.org/minimist/-/minimist-0.0.8.tgz#sha1:857fcabfc3397d2625b8228262e86aa7a011b05d"
         ]
       },
       "overrides": [],
