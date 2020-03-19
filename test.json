@@ -6,6 +6,7 @@
   "override": {
       "build": ["dune build -p textmate,textmate-test -j4"],
       "dependencies": {
+        "@reason-native/rely": "^2.2.0",
         "@opam/ppx_deriving_yojson": "*"
       },
       "install": [
