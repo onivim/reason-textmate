@@ -62,35 +62,34 @@ let of_yojson = (~isDark=?, ~themeLoader, json: Yojson.Safe.t) => {
       | `String(includePath) =>
         themeLoader(includePath)
         |> Result.map(parentTheme => {
+             let mergedColorTheme =
+               ColorTheme.union(parentTheme.colors, colorTheme);
 
-        let mergedColorTheme =
-          ColorTheme.union(parentTheme.colors, colorTheme);
+             let defaultBackground =
+               ColorTheme.getFirstOrDefault(
+                 ~default="#000",
+                 ["background", "editor.background"],
+                 mergedColorTheme,
+               );
 
-        let defaultBackground =
-          ColorTheme.getFirstOrDefault(
-            ~default="#000",
-            ["background", "editor.background"],
-            mergedColorTheme,
-          );
+             let defaultForeground =
+               ColorTheme.getFirstOrDefault(
+                 ~default="#FFF",
+                 ["foreground", "editor.foreground"],
+                 mergedColorTheme,
+               );
 
-        let defaultForeground =
-          ColorTheme.getFirstOrDefault(
-            ~default="#FFF",
-            ["foreground", "editor.foreground"],
-            mergedColorTheme,
-          );
+             let mergedTokenTheme =
+               TokenTheme.union(
+                 ~defaultBackground,
+                 ~defaultForeground,
+                 parentTheme.tokenColors,
+                 tokenTheme,
+               );
 
-        let mergedTokenTheme =
-          TokenTheme.union(
-            ~defaultBackground,
-            ~defaultForeground,
-            parentTheme.tokenColors,
-            tokenTheme,
-          );
-
-        (mergedColorTheme, mergedTokenTheme);
-        })
-        |> Result.value(~default=(colorTheme, tokenTheme));
+             (mergedColorTheme, mergedTokenTheme);
+           })
+        |> Result.value(~default=(colorTheme, tokenTheme))
       // No 'include' - pass through as-is
       | _ => (colorTheme, tokenTheme)
       };

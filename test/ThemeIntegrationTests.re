@@ -8,18 +8,29 @@ module Selector = Textmate.ThemeScopes.Selector;
 module ResolvedStyle = Textmate.ThemeScopes.ResolvedStyle;
 module TokenStyle = Textmate.ThemeScopes.TokenStyle;
 
-let resultValue = fun
-| Ok(v) => v
-| Error(msg) => failwith(msg);
+let resultValue =
+  fun
+  | Ok(v) => v
+  | Error(msg) => failwith(msg);
+
+describe("invalid", ({test, _}) => {
+  test("should give error", ({expect, _}) => {
+    let loadResult = Theme.from_file("test/onivim/fixtures/invalid.json");
+    expect.equal(true, Result.is_error(loadResult));
+  })
+});
 
 describe("OneDark", ({test, _}) => {
-  let oneDark = Theme.from_file("test/onivim/fixtures/OneDark-Pro.json") |> resultValue;
+  let oneDark =
+    Theme.from_file("test/onivim/fixtures/OneDark-Pro.json") |> resultValue;
   let oneDarkLight =
-    Theme.from_file("test/onivim/fixtures/OneDarkPro-Light.json") |> resultValue;
+    Theme.from_file("test/onivim/fixtures/OneDarkPro-Light.json")
+    |> resultValue;
   let oneDarkTheme = Theme.getTokenColors(oneDark);
   let oneDarkColors = Theme.getColors(oneDark);
 
-  let darkPlus = Theme.from_file("test/onivim/fixtures/dark_plus.json") |> resultValue;
+  let darkPlus =
+    Theme.from_file("test/onivim/fixtures/dark_plus.json") |> resultValue;
   let darkPlusTheme = Theme.getTokenColors(darkPlus);
   let darkPlusColors = Theme.getColors(darkPlus);
 

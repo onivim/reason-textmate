@@ -1,6 +1,6 @@
 /*
-Interface for the 'colors' section of a Theme
-*/
+ Interface for the 'colors' section of a Theme
+ */
 module ColorTheme: {
   type t;
 
@@ -68,10 +68,9 @@ module GrammarRepository: {
 };
 
 /*
-Interface for interacting with VSCode-flavored TextMate themes
-*/
+ Interface for interacting with VSCode-flavored TextMate themes
+ */
 module Theme: {
-
   type t;
 
   type themeLoader = string => result(t, string);
