@@ -74,11 +74,11 @@ module Theme: {
 
   type t;
 
-  type themeLoader = string => t;
+  type themeLoader = string => result(t, string);
 
   let of_yojson:
     (~isDark: bool=?, ~themeLoader: themeLoader, Yojson.Safe.t) => t;
-  let from_file: (~isDark: bool=?, string) => t;
+  let from_file: (~isDark: bool=?, string) => result(t, string);
 
   let getColors: t => ColorTheme.t;
   let getTokenColors: t => TokenTheme.t;

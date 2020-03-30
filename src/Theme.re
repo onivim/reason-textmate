@@ -10,7 +10,7 @@ type t = {
   isDark: bool,
 };
 
-type themeLoader = string => t;
+type themeLoader = string => result(t, string);
 
 let of_yojson = (~isDark=?, ~themeLoader, json: Yojson.Safe.t) => {
   let parse = json => {
@@ -60,7 +60,8 @@ let of_yojson = (~isDark=?, ~themeLoader, json: Yojson.Safe.t) => {
     let (colorTheme, tokenTheme) =
       switch (incl) {
       | `String(includePath) =>
-        let parentTheme = themeLoader(includePath);
+        themeLoader(includePath)
+        |> Result.map(parentTheme => {
 
         let mergedColorTheme =
           ColorTheme.union(parentTheme.colors, colorTheme);
@@ -88,6 +89,8 @@ let of_yojson = (~isDark=?, ~themeLoader, json: Yojson.Safe.t) => {
           );
 
         (mergedColorTheme, mergedTokenTheme);
+        })
+        |> Result.value(~default=(colorTheme, tokenTheme));
       // No 'include' - pass through as-is
       | _ => (colorTheme, tokenTheme)
       };
@@ -98,7 +101,7 @@ let of_yojson = (~isDark=?, ~themeLoader, json: Yojson.Safe.t) => {
   parse(json);
 };
 
-let _themeCache: Hashtbl.t(string, t) = Hashtbl.create(16);
+let _themeCache: Hashtbl.t(string, result(t, string)) = Hashtbl.create(16);
 
 let rec from_file = (~isDark=?, path: string) => {
   switch (Hashtbl.find_opt(_themeCache, path)) {
@@ -110,7 +113,10 @@ let rec from_file = (~isDark=?, path: string) => {
       from_file(fullPath);
     };
     let ret =
-      Yojson.Safe.from_file(path) |> of_yojson(~isDark?, ~themeLoader);
+      path
+      |> Utility.JsonEx.from_file
+      |> Result.map(of_yojson(~isDark?, ~themeLoader));
+
     Hashtbl.add(_themeCache, path, ret);
     ret;
   };
