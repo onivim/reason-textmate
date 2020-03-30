@@ -1,5 +1,5 @@
 {
-  "checksum": "cbc6c22634ef5b593319f5dca2062412",
+  "checksum": "2b9651d031a4e4eeaa9bee61e48f4849",
   "root": "reason-textmate@link-dev:./package.json",
   "node": {
     "wordwrap@0.0.3@d41d8cd9": {
@@ -41,7 +41,7 @@
         ]
       },
       "overrides": [],
-      "dependencies": [ "qs@6.9.1@d41d8cd9" ],
+      "dependencies": [ "qs@6.9.3@d41d8cd9" ],
       "devDependencies": []
     },
     "secure-compare@3.0.1@d41d8cd9": {
@@ -152,7 +152,8 @@
         "@esy-ocaml/reason@github:facebook/reason#8f71db0@d41d8cd9"
       ],
       "devDependencies": [
-        "ocaml@4.8.1000@d41d8cd9", "@opam/odoc@opam:1.5.0@35218f5f"
+        "ocaml@4.8.1000@d41d8cd9", "@opam/odoc@opam:1.5.0@35218f5f",
+        "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#04733ed@d41d8cd9"
       ]
     },
     "reason-oniguruma@6.94.1001@d41d8cd9": {
@@ -175,14 +176,14 @@
       ],
       "devDependencies": []
     },
-    "qs@6.9.1@d41d8cd9": {
-      "id": "qs@6.9.1@d41d8cd9",
+    "qs@6.9.3@d41d8cd9": {
+      "id": "qs@6.9.3@d41d8cd9",
       "name": "qs",
-      "version": "6.9.1",
+      "version": "6.9.3",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://registry.npmjs.org/qs/-/qs-6.9.1.tgz#sha1:20082c65cb78223635ab1a9eaca8875a29bf8ec9"
+          "archive:https://registry.npmjs.org/qs/-/qs-6.9.3.tgz#sha1:bfadcd296c2d549f1dffa560619132c977f5008e"
         ]
       },
       "overrides": [],
@@ -201,7 +202,7 @@
       },
       "overrides": [],
       "dependencies": [
-        "mkdirp@0.5.3@d41d8cd9", "debug@3.2.6@d41d8cd9",
+        "mkdirp@0.5.4@d41d8cd9", "debug@3.2.6@d41d8cd9",
         "async@2.6.3@d41d8cd9"
       ],
       "devDependencies": []
@@ -264,14 +265,14 @@
       "dependencies": [],
       "devDependencies": []
     },
-    "mkdirp@0.5.3@d41d8cd9": {
-      "id": "mkdirp@0.5.3@d41d8cd9",
+    "mkdirp@0.5.4@d41d8cd9": {
+      "id": "mkdirp@0.5.4@d41d8cd9",
       "name": "mkdirp",
-      "version": "0.5.3",
+      "version": "0.5.4",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.3.tgz#sha1:5a514b7179259287952881e94410ec5465659f8c"
+          "archive:https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.4.tgz#sha1:fd01504a6797ec5c9be81ff43d204961ed64a512"
         ]
       },
       "overrides": [],
@@ -366,7 +367,7 @@
       },
       "overrides": [],
       "dependencies": [
-        "requires-port@1.0.0@d41d8cd9", "follow-redirects@1.10.0@d41d8cd9",
+        "requires-port@1.0.0@d41d8cd9", "follow-redirects@1.11.0@d41d8cd9",
         "eventemitter3@4.0.0@d41d8cd9"
       ],
       "devDependencies": []
@@ -385,14 +386,14 @@
       "dependencies": [],
       "devDependencies": []
     },
-    "follow-redirects@1.10.0@d41d8cd9": {
-      "id": "follow-redirects@1.10.0@d41d8cd9",
+    "follow-redirects@1.11.0@d41d8cd9": {
+      "id": "follow-redirects@1.11.0@d41d8cd9",
       "name": "follow-redirects",
-      "version": "1.10.0",
+      "version": "1.11.0",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.10.0.tgz#sha1:01f5263aee921c6a54fb91667f08f4155ce169eb"
+          "archive:https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.11.0.tgz#sha1:afa14f08ba12a52963140fe43212658897bc0ecb"
         ]
       },
       "overrides": [],
@@ -813,6 +814,31 @@
         "ocaml@4.8.1000@d41d8cd9", "@opam/ocamlbuild@opam:0.14.0@6ac75d03"
       ]
     },
+    "@opam/stdlib-shims@opam:0.1.0@d957c903": {
+      "id": "@opam/stdlib-shims@opam:0.1.0@d957c903",
+      "name": "@opam/stdlib-shims",
+      "version": "opam:0.1.0",
+      "source": {
+        "type": "install",
+        "source": [
+          "archive:https://opam.ocaml.org/cache/md5/12/12b5704eed70c6bff5ac39a16db1425d#md5:12b5704eed70c6bff5ac39a16db1425d",
+          "archive:https://github.com/ocaml/stdlib-shims/releases/download/0.1.0/stdlib-shims-0.1.0.tbz#md5:12b5704eed70c6bff5ac39a16db1425d"
+        ],
+        "opam": {
+          "name": "stdlib-shims",
+          "version": "0.1.0",
+          "path": "docs.esy.lock/opam/stdlib-shims.0.1.0"
+        }
+      },
+      "overrides": [],
+      "dependencies": [
+        "ocaml@4.8.1000@d41d8cd9", "@opam/dune@opam:2.4.0@639d28a3",
+        "@esy-ocaml/substs@0.0.1@d41d8cd9"
+      ],
+      "devDependencies": [
+        "ocaml@4.8.1000@d41d8cd9", "@opam/dune@opam:2.4.0@639d28a3"
+      ]
+    },
     "@opam/stdio@opam:v0.13.0@eb59d879": {
       "id": "@opam/stdio@opam:v0.13.0@eb59d879",
       "name": "@opam/stdio",
@@ -1074,6 +1100,32 @@
       "devDependencies": [
         "ocaml@4.8.1000@d41d8cd9", "@opam/ocamlfind@opam:1.8.1@ff07b0f9",
         "@opam/ocaml-migrate-parsetree@opam:1.6.0@da2643e7",
+        "@opam/dune@opam:2.4.0@639d28a3"
+      ]
+    },
+    "@opam/ppx_yojson_conv_lib@opam:v0.13.0@97a4cb97": {
+      "id": "@opam/ppx_yojson_conv_lib@opam:v0.13.0@97a4cb97",
+      "name": "@opam/ppx_yojson_conv_lib",
+      "version": "opam:v0.13.0",
+      "source": {
+        "type": "install",
+        "source": [
+          "archive:https://opam.ocaml.org/cache/md5/79/790fade9ecff5767dd48cd49c9bba2f3#md5:790fade9ecff5767dd48cd49c9bba2f3",
+          "archive:https://ocaml.janestreet.com/ocaml-core/v0.13/files/ppx_yojson_conv_lib-v0.13.0.tar.gz#md5:790fade9ecff5767dd48cd49c9bba2f3"
+        ],
+        "opam": {
+          "name": "ppx_yojson_conv_lib",
+          "version": "v0.13.0",
+          "path": "docs.esy.lock/opam/ppx_yojson_conv_lib.v0.13.0"
+        }
+      },
+      "overrides": [],
+      "dependencies": [
+        "ocaml@4.8.1000@d41d8cd9", "@opam/yojson@opam:1.7.0@7056d985",
+        "@opam/dune@opam:2.4.0@639d28a3", "@esy-ocaml/substs@0.0.1@d41d8cd9"
+      ],
+      "devDependencies": [
+        "ocaml@4.8.1000@d41d8cd9", "@opam/yojson@opam:1.7.0@7056d985",
         "@opam/dune@opam:2.4.0@639d28a3"
       ]
     },
@@ -1369,6 +1421,33 @@
       "devDependencies": [
         "ocaml@4.8.1000@d41d8cd9", "@opam/result@opam:1.5@6b753c82",
         "@opam/ppx_derivers@opam:1.2.1@ecf0aa45",
+        "@opam/dune@opam:2.4.0@639d28a3"
+      ]
+    },
+    "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#04733ed@d41d8cd9": {
+      "id":
+        "@opam/ocaml-lsp-server@github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#04733ed@d41d8cd9",
+      "name": "@opam/ocaml-lsp-server",
+      "version": "github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#04733ed",
+      "source": {
+        "type": "install",
+        "source": [ "github:ocaml/ocaml-lsp:ocaml-lsp-server.opam#04733ed" ]
+      },
+      "overrides": [],
+      "dependencies": [
+        "ocaml@4.8.1000@d41d8cd9", "@opam/yojson@opam:1.7.0@7056d985",
+        "@opam/stdlib-shims@opam:0.1.0@d957c903",
+        "@opam/ppx_yojson_conv_lib@opam:v0.13.0@97a4cb97",
+        "@opam/ocamlfind@opam:1.8.1@ff07b0f9",
+        "@opam/menhir@opam:20200211@26571604",
+        "@opam/dune@opam:2.4.0@639d28a3", "@esy-ocaml/substs@0.0.1@d41d8cd9"
+      ],
+      "devDependencies": [
+        "ocaml@4.8.1000@d41d8cd9", "@opam/yojson@opam:1.7.0@7056d985",
+        "@opam/stdlib-shims@opam:0.1.0@d957c903",
+        "@opam/ppx_yojson_conv_lib@opam:v0.13.0@97a4cb97",
+        "@opam/ocamlfind@opam:1.8.1@ff07b0f9",
+        "@opam/menhir@opam:20200211@26571604",
         "@opam/dune@opam:2.4.0@639d28a3"
       ]
     },
