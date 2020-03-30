@@ -5,6 +5,7 @@ module RegExp = RegExp;
 module ScopeStack = ScopeStack;
 module ColorTheme = ColorTheme;
 module TokenTheme = TokenTheme;
+module Theme = Theme;
 module ThemeScopes = ThemeScopes;
 module Token = Token;
 module Tokenizer = Tokenizer;
