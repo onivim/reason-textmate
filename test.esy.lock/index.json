@@ -1,5 +1,5 @@
 {
-  "checksum": "cfef738b429bccf0fd29631d16764fec",
+  "checksum": "01738b7ee2fb68f522c8ba01e3a12ce9",
   "root": "reason-textmate@link-dev:./package.json",
   "node": {
     "reperf@1.5.0@d41d8cd9": {
@@ -33,7 +33,7 @@
       },
       "overrides": [],
       "dependencies": [
-        "refmterr@3.3.0@d41d8cd9", "@reason-native/rely@2.2.0@d41d8cd9",
+        "refmterr@3.3.0@d41d8cd9", "@reason-native/rely@3.2.1@d41d8cd9",
         "@reason-native/console@0.1.0@d41d8cd9",
         "@opam/lwt@opam:5.2.0@647c0bb8",
         "@opam/lambda-term@opam:2.0.3@9465cf1c",
@@ -75,7 +75,7 @@
       "dependencies": [
         "rench@1.9.1@d41d8cd9", "refmterr@3.3.0@d41d8cd9",
         "reason-oniguruma@6.94.1001@d41d8cd9", "ocaml@4.8.1000@d41d8cd9",
-        "@reason-native/rely@2.2.0@d41d8cd9",
+        "@reason-native/rely@3.2.1@d41d8cd9",
         "@opam/yojson@opam:1.7.0@7056d985",
         "@opam/ppx_let@opam:v0.13.0@5703d2be",
         "@opam/ppx_deriving_yojson@opam:3.5.2@ca415fbe",
@@ -135,21 +135,21 @@
       "dependencies": [],
       "devDependencies": []
     },
-    "@reason-native/rely@2.2.0@d41d8cd9": {
-      "id": "@reason-native/rely@2.2.0@d41d8cd9",
+    "@reason-native/rely@3.2.1@d41d8cd9": {
+      "id": "@reason-native/rely@3.2.1@d41d8cd9",
       "name": "@reason-native/rely",
-      "version": "2.2.0",
+      "version": "3.2.1",
       "source": {
         "type": "install",
         "source": [
-          "archive:https://registry.npmjs.org/@reason-native/rely/-/rely-2.2.0.tgz#sha1:85f34f15dcd8547033759d9fccdba03e12a32031"
+          "archive:https://registry.npmjs.org/@reason-native/rely/-/rely-3.2.1.tgz#sha1:7945ac6a51773a97b8f8cfd97d2855ac7ac4ecb2"
         ]
       },
       "overrides": [],
       "dependencies": [
-        "refmterr@3.3.0@d41d8cd9", "ocaml@4.8.1000@d41d8cd9",
-        "@reason-native/pastel@0.1.0@d41d8cd9",
+        "ocaml@4.8.1000@d41d8cd9", "@reason-native/pastel@0.1.0@d41d8cd9",
         "@reason-native/file-context-printer@0.0.3@d41d8cd9",
+        "@reason-native/cli@0.0.1-alpha@d41d8cd9",
         "@opam/re@opam:1.9.0@d4d5e13d", "@opam/junit@opam:2.0.2@0b7bd730",
         "@opam/dune@opam:2.5.0@aef1678b",
         "@esy-ocaml/reason@github:facebook/reason#8f71db0@d41d8cd9"
@@ -204,6 +204,24 @@
       "overrides": [],
       "dependencies": [
         "ocaml@4.8.1000@d41d8cd9", "@opam/dune@opam:2.5.0@aef1678b",
+        "@esy-ocaml/reason@github:facebook/reason#8f71db0@d41d8cd9"
+      ],
+      "devDependencies": []
+    },
+    "@reason-native/cli@0.0.1-alpha@d41d8cd9": {
+      "id": "@reason-native/cli@0.0.1-alpha@d41d8cd9",
+      "name": "@reason-native/cli",
+      "version": "0.0.1-alpha",
+      "source": {
+        "type": "install",
+        "source": [
+          "archive:https://registry.npmjs.org/@reason-native/cli/-/cli-0.0.1-alpha.tgz#sha1:0b911053fa7cc661eac10ead50d6ea6cc1fcd94d"
+        ]
+      },
+      "overrides": [],
+      "dependencies": [
+        "ocaml@4.8.1000@d41d8cd9", "@reason-native/pastel@0.1.0@d41d8cd9",
+        "@opam/re@opam:1.9.0@d4d5e13d", "@opam/dune@opam:2.5.0@aef1678b",
         "@esy-ocaml/reason@github:facebook/reason#8f71db0@d41d8cd9"
       ],
       "devDependencies": []
