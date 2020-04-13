@@ -21,7 +21,8 @@
     "refmterr": "*",
     "ocaml": ">=4.7.0 <4.10.0",
     "reason-oniguruma": "^6.94.1001",
-    "rench": "^1.9.1"
+    "rench": "^1.9.1",
+    "@opam/markup": "^0.8.2"
   },
   "resolutions": {
     "@opam/biniou": "1.2.0",
