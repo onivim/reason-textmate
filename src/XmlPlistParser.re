@@ -29,10 +29,13 @@ module Primitives = {
 
   let plist =
     fun
-    | Element("plist", [Element("dict", proplist)]) => properties(proplist)
+    | Element("plist", [Element("dict", proplist)]) =>
+      Dict(properties(proplist))
     | other => failwith("not plist: " ++ SimpleXml.show(other));
 };
 
-let parse = xml => try (Primitives.plist(xml) |> Result.ok) {
-  | Failure(message) => Error(message)
-};
+let parse = xml =>
+  switch (Primitives.plist(xml)) {
+  | plist => Ok(plist)
+  | exception (Failure(message)) => Error(message)
+  };
