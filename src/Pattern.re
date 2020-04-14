@@ -247,3 +247,49 @@ module Json = {
       Yojson.Safe.from_string(jsonString) |> of_yojson(scope);
     };
 };
+
+module PlistDecoder = {
+  open Plist;
+
+  let regexp = string |> map(RegExpFactory.create);
+
+  let capture = property("name", string);
+  let captures =
+    assoc(capture)
+    |> map(List.map(((n, name)) => (int_of_string(n), name)));
+
+  let include_ = scopeName =>
+    dict(prop => Include(scopeName, prop.required("include", string)));
+  let match =
+    dict(prop =>
+      Match({
+        matchName: prop.optional("name", string),
+        matchRegex: prop.required("match", regexp),
+        captures: prop.withDefault("captures", captures, []),
+      })
+    );
+  let rec matchRange = scopeName =>
+    dict(prop =>
+      MatchRange({
+        beginRegex: prop.required("begin", regexp),
+        endRegex: prop.required("end", regexp),
+        beginCaptures: prop.withDefault("beginCaptures", captures, []),
+        endCaptures: prop.withDefault("endCaptures", captures, []),
+        name: prop.optional("name", string),
+        contentName: prop.optional("contentName", string),
+        patterns:
+          prop.withDefault("patterns", array(pattern(scopeName)), []),
+        applyEndPatternLast:
+          prop.withDefault("applyEndPatternLast", bool, false),
+      })
+    )
+
+  and pattern = scopeName =>
+    oneOf([
+      ("include", include_(scopeName)),
+      ("match", match),
+      ("matchRange", matchRange(scopeName)),
+    ]);
+};
+
+let of_plist = PlistDecoder.pattern;
