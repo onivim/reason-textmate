@@ -43,6 +43,8 @@ module Grammar: {
     let of_file: string => result(t, string);
   };
 
+  module Xml: {let of_file: string => result(t, string);};
+
   let tokenize:
     (
       ~lineNumber: int=?,

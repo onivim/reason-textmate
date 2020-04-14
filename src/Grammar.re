@@ -143,6 +143,24 @@ module Json = {
   };
 };
 
+module Xml = {
+  let of_file = path => {
+    let%bind plist =
+      SimpleXml.of_file(path) |> Option.get |> XmlPlistParser.parse;
+
+    let%bind scopeName = Plist.property("scopeName", Plist.string, plist);
+
+    let%bind patterns =
+      Plist.property(
+        "patterns",
+        Plist.array(Pattern.of_plist(scopeName)),
+        plist,
+      );
+
+    Ok(create(~scopeName, ~patterns, ~repository=[], ()));
+  };
+};
+
 let _getBestRule = (lastMatchedRange, rules: list(Rule.t), str, position) => {
   let rules =
     switch (lastMatchedRange) {
