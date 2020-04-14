@@ -144,20 +144,42 @@ module Json = {
 };
 
 module Xml = {
+  module PlistDecoder = {
+    open Plist;
+
+    let repository = scopeName =>
+      assoc(
+        oneOf([
+          ("pattern", Pattern.of_plist(scopeName) |> map(pat => [pat])),
+          (
+            "patterns",
+            property("patterns", array(Pattern.of_plist(scopeName))),
+          ),
+        ]),
+      );
+
+    let grammar = plist => {
+      let%bind scopeName = Plist.property("scopeName", Plist.string, plist);
+
+      dict(
+        prop =>
+          create(
+            ~scopeName,
+            ~patterns=
+              prop.required("patterns", array(Pattern.of_plist(scopeName))),
+            ~repository=prop.required("repository", repository(scopeName)),
+            (),
+          ),
+        plist,
+      );
+    };
+  };
+
   let of_file = path => {
     let%bind plist =
       SimpleXml.of_file(path) |> Option.get |> XmlPlistParser.parse;
 
-    let%bind scopeName = Plist.property("scopeName", Plist.string, plist);
-
-    let%bind patterns =
-      Plist.property(
-        "patterns",
-        Plist.array(Pattern.of_plist(scopeName)),
-        plist,
-      );
-
-    Ok(create(~scopeName, ~patterns, ~repository=[], ()));
+    PlistDecoder.grammar(plist);
   };
 };
 

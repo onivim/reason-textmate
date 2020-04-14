@@ -277,7 +277,8 @@ module PlistDecoder = {
         endCaptures: prop.withDefault("endCaptures", captures, []),
         name: prop.optional("name", string),
         contentName: prop.optional("contentName", string),
-        patterns: prop.required("patterns", array(pattern(scopeName))),
+        patterns:
+          prop.withDefault("patterns", array(pattern(scopeName)), []),
         applyEndPatternLast:
           prop.withDefault("applyEndPatternLast", bool, false),
       })
