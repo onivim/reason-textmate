@@ -22,9 +22,7 @@ describe("Grammar", ({describe, _}) => {
 
   describe("json parsing", ({test, _}) => {
     test("json grammar", ({expect, _}) => {
-      let json =
-        Yojson.Safe.from_file(getExecutingDirectory() ++ "/json.json");
-      let gr = Grammar.Json.of_yojson(json);
+      let gr = Grammar.Json.of_file(getExecutingDirectory() ++ "/json.json");
       switch (gr) {
       | Ok(grammar) =>
         expect.string(Grammar.getScopeName(grammar)).toEqual("source.json");
@@ -42,6 +40,25 @@ describe("Grammar", ({describe, _}) => {
       | _ => failwith("Unable to load grammar")
       };
     })
+  });
+
+  describe("xml parsing", ({test, _}) => {
+    test("json grammar", ({expect, _}) => {
+      let result =
+        Grammar.Xml.of_file(getExecutingDirectory() ++ "/json.json");
+
+      expect.result(result).toBeError();
+    });
+
+    test("xml grammar", ({expect, _}) => {
+      let result =
+        Grammar.Xml.of_file(getExecutingDirectory() ++ "/haskell.tmLanguage");
+
+      expect.result(result).toBeOk();
+
+      let grammar = Result.get_ok(result);
+      expect.string(grammar.scopeName).toEqual("source.haskell");
+    });
   });
 
   let grammar =

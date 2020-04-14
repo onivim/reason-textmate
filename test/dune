@@ -10,4 +10,4 @@
 (install
     (section bin)
     (package textmate-test)
-    (files json.json))
+    (files json.json haskell.tmLanguage))
