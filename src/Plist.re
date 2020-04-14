@@ -118,16 +118,30 @@ let assoc = decodeValue =>
     }
   | value => Error("Expected dict, got " ++ show(value));
 
-let rec oneOf = (decoders, value) =>
-  switch (decoders) {
-  | [] =>
-    Error("Expected one of several decoders to succeed on: " ++ show(value))
-  | [decode, ...rest] =>
-    switch (decode(value)) {
-    | Ok(value) => Ok(value)
-    | Error(_) => oneOf(rest, value)
-    }
-  };
+let oneOf = (decoders, value) => {
+  let rec loop = (decoders, errors) =>
+    switch (decoders) {
+    | [] =>
+      let errors =
+        errors
+        |> List.map(((name, message)) =>
+             Printf.sprintf("\n%s:\n\t%s", name, message)
+           )
+        |> String.concat("\n");
+
+      Error(
+        "Expected one of several decoders to succeed, but got::\n" ++ errors,
+      );
+
+    | [(name, decode), ...rest] =>
+      switch (decode(value)) {
+      | Ok(value) => Ok(value)
+      | Error(message) => loop(rest, [(name, message), ...errors])
+      }
+    };
+
+  loop(decoders, []);
+};
 
 let map = (f, decode, value) => decode(value) |> Result.map(f);
 
