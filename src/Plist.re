@@ -63,6 +63,7 @@ let property = (key, decodeValue) =>
 type dictGetters = {
   required: 'a. (string, decoder('a)) => 'a,
   optional: 'a. (string, decoder('a)) => option('a),
+  withDefault: 'a. (string, decoder('a), 'a) => 'a,
 };
 
 let dict = f =>
@@ -91,6 +92,11 @@ let dict = f =>
           switch (get(key, decodeValue)) {
           | value => Some(value)
           | exception (DecodeError(_)) => None
+          },
+        withDefault: (key, decodeValue, default) =>
+          switch (get(key, decodeValue)) {
+          | value => value
+          | exception (DecodeError(_)) => default
           },
       };
 
