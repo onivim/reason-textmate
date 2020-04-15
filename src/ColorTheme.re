@@ -27,6 +27,11 @@ let of_yojson = json => {
   };
 };
 
+let of_plist =
+  Plist.(
+    assoc(string) |> map(colors => colors |> List.to_seq |> StringMap.of_seq)
+  );
+
 let union = (a, b) => {
   let f = (_key, v1, _v2) => {
     Some(v1);
