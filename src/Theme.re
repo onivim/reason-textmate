@@ -100,6 +100,55 @@ let of_yojson = (~isDark=?, ~themeLoader, json: Yojson.Safe.t) => {
   parse(json);
 };
 
+module PlistDecoder = {
+  open Plist;
+
+  let repository = scopeName =>
+    assoc(
+      oneOf([
+        ("pattern", Pattern.of_plist(scopeName) |> map(pat => [pat])),
+        (
+          "patterns",
+          property("patterns", array(Pattern.of_plist(scopeName))),
+        ),
+      ]),
+    );
+
+  let theme = (~isDark=?, plist) => {
+    let%bind maybeType = option(property("type", string), plist);
+    let isDark = isDark |> Option.value(~default=maybeType == Some("dark"));
+
+    let%bind settings = property("settings", array(id), plist);
+
+    let%bind (first, rest) =
+      switch (List.rev(settings)) {
+      | [first, ...rest] => Ok((first, Array(rest)))
+      | [] => Error("Expected an array of one or more settings, got none")
+      };
+
+    let%bind colors = property("settings", ColorTheme.of_plist, first);
+
+    let defaultBackground =
+      ColorTheme.getFirstOrDefault(
+        ~default=isDark ? "#1E1E1E" : "#FFFFFF",
+        ["background", "editor.background"],
+        colors,
+      );
+
+    let defaultForeground =
+      ColorTheme.getFirstOrDefault(
+        ~default=isDark ? "#D4D4D4" : "#000000",
+        ["foreground", "editor.foreground"],
+        colors,
+      );
+
+    let%bind tokenColors =
+      TokenTheme.of_plist(~defaultBackground, ~defaultForeground, rest);
+
+    Ok({isDark, colors, tokenColors});
+  };
+};
+
 let _themeCache: Hashtbl.t(string, result(t, string)) = Hashtbl.create(16);
 
 let rec from_file = (~isDark=?, path: string) => {
@@ -111,13 +160,18 @@ let rec from_file = (~isDark=?, path: string) => {
       let fullPath = Path.join(currentDirectory, p);
       from_file(fullPath);
     };
-    let ret =
-      path
-      |> Utility.JsonEx.from_file
-      |> Result.map(of_yojson(~isDark?, ~themeLoader));
+    let theme =
+      switch (Utility.JsonEx.from_file(path)) {
+      | Ok(json) => Ok(of_yojson(~isDark?, ~themeLoader, json))
+      | Error(_) =>
+        let%bind plist =
+          SimpleXml.of_file(path) |> Option.get |> XmlPlistParser.parse;
 
-    Hashtbl.add(_themeCache, path, ret);
-    ret;
+        PlistDecoder.theme(~isDark?, plist);
+      };
+
+    Hashtbl.add(_themeCache, path, theme);
+    theme;
   };
 };
 

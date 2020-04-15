@@ -11,7 +11,12 @@ module TokenStyle = Textmate.ThemeScopes.TokenStyle;
 let resultValue =
   fun
   | Ok(v) => v
-  | Error(msg) => failwith(msg);
+  | Error(msg) => {
+      Console.log(msg);
+      failwith("resultValue");
+    };
+
+// INVALID
 
 describe("invalid", ({test, _}) => {
   test("should give error", ({expect, _}) => {
@@ -19,6 +24,8 @@ describe("invalid", ({test, _}) => {
     expect.equal(true, Result.is_error(loadResult));
   })
 });
+
+// ONE DARK
 
 describe("OneDark", ({test, _}) => {
   let oneDark =
@@ -104,5 +111,58 @@ describe("OneDark", ({test, _}) => {
       );
     expect.string(token.foreground).toEqual("#c678dd");
     prerr_endline("============ END ===============");
+  });
+});
+
+// XML
+
+describe("XML", ({describe, _}) => {
+  describe("Duotone", ({test, _}) => {
+    let theme =
+      Theme.from_file(~isDark=true, "test/onivim/fixtures/duotone-earth.xml")
+      |> resultValue;
+
+    let colors = Theme.getColors(theme);
+    let tokenColors = Theme.getTokenColors(theme);
+
+    test("isDark", ({expect, _}) => {
+      expect.bool(Theme.isDark(theme)).toBe(true)
+    });
+
+    test("colors: selection", ({expect, _}) => {
+      let actual = ColorTheme.getColor("selection", colors);
+      expect.equal(actual, Some("#4D4642"));
+    });
+
+    test("tokenColors: support.type", ({expect, _}) => {
+      let token = TokenTheme.match(tokenColors, "support.type");
+      expect.string(token.foreground).toEqual("#98755d");
+    });
+  });
+
+  describe("Tomorrow Operator Mono", ({test, _}) => {
+    let theme =
+      Theme.from_file(
+        ~isDark=true,
+        "test/onivim/fixtures/tomorrow-operator-mono.xml",
+      )
+      |> resultValue;
+
+    let colors = Theme.getColors(theme);
+    let tokenColors = Theme.getTokenColors(theme);
+
+    test("isDark", ({expect, _}) => {
+      expect.bool(Theme.isDark(theme)).toBe(true)
+    });
+
+    test("colors: selection", ({expect, _}) => {
+      let actual = ColorTheme.getColor("selection", colors);
+      expect.equal(actual, Some("#D6D6D6"));
+    });
+
+    test("tokenColors: support.type", ({expect, _}) => {
+      let token = TokenTheme.match(tokenColors, "support.type");
+      expect.string(token.foreground).toEqual("#C99E00");
+    });
   });
 });

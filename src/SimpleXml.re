@@ -3,9 +3,17 @@ type t =
   | Element(string, list(t))
   | Text(string);
 
+let trim =
+  Markup.filter(
+    fun
+    | `Text(strs) when strs |> String.concat("") |> String.trim == "" =>
+      false
+    | _ => true,
+  );
+
 let simplify = stream =>
   stream
-  |> Markup.trim
+  |> trim
   |> Markup.tree(
        ~text=strings => Text(strings |> String.concat("")),
        ~element=((_ns, name), _attrs, children) => Element(name, children),

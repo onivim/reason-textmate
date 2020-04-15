@@ -1,3 +1,4 @@
+[@deriving show]
 type t =
   | True
   | False
@@ -10,6 +11,8 @@ type t =
   | Dict(list((string, t)));
 
 type decoder('a) = t => result('a, string);
+
+let id: decoder(t);
 
 let bool: decoder(bool);
 let string: decoder(string);

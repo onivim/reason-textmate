@@ -7,6 +7,7 @@ module Primitives = {
     | Element("true", []) => True
     | Element("false", []) => False
     | Element("string", [Text(str)]) => String(str)
+    | Element("string", []) => String("")
     | Element("integer", [Text(str)]) => Integer(int_of_string(str))
     | Element("real", [Text(str)]) => Real(float_of_string(str))
     | Element("array", items) => Array(List.map(value, items))
