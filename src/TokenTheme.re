@@ -166,6 +166,33 @@ let of_yojson = (~defaultBackground, ~defaultForeground, json: Yojson.Safe.t) =>
   create(~defaultBackground, ~defaultForeground, selectors);
 };
 
+module PlistDecoder = {
+  open Plist;
+
+  let settings =
+    dict(prop =>
+      TokenStyle.{
+        foreground: prop.optional("foreground", string),
+        background: prop.optional("background", string),
+        bold: prop.optional("bold", bool),
+        italic: prop.optional("italic", bool),
+      }
+    );
+
+  let selector =
+    dict(prop =>
+      (prop.required("scope", string), prop.required("settings", settings))
+    );
+
+  let tokenTheme = (~defaultBackground, ~defaultForeground) =>
+    array(selector)
+    |> map(selectors =>
+         create(~defaultBackground, ~defaultForeground, selectors)
+       );
+};
+
+let of_plist = PlistDecoder.tokenTheme;
+
 let empty = create(~defaultBackground="#000", ~defaultForeground="#fff", []);
 
 let show = (v: t) => {
