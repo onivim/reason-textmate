@@ -11,6 +11,8 @@ type t =
 
 type decoder('a) = t => result('a, string);
 
+let id: decoder(t);
+
 let bool: decoder(bool);
 let string: decoder(string);
 let integer: decoder(int);

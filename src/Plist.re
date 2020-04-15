@@ -12,6 +12,8 @@ type t =
 
 type decoder('a) = t => result('a, string);
 
+let id = value => Ok(value);
+
 let bool =
   fun
   | True => Ok(true)
