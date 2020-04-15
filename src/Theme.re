@@ -160,13 +160,18 @@ let rec from_file = (~isDark=?, path: string) => {
       let fullPath = Path.join(currentDirectory, p);
       from_file(fullPath);
     };
-    let ret =
-      path
-      |> Utility.JsonEx.from_file
-      |> Result.map(of_yojson(~isDark?, ~themeLoader));
+    let theme =
+      switch (Utility.JsonEx.from_file(path)) {
+      | Ok(json) => Ok(of_yojson(~isDark?, ~themeLoader, json))
+      | Error(_) =>
+        let%bind plist =
+          SimpleXml.of_file(path) |> Option.get |> XmlPlistParser.parse;
 
-    Hashtbl.add(_themeCache, path, ret);
-    ret;
+        PlistDecoder.theme(~isDark?, plist);
+      };
+
+    Hashtbl.add(_themeCache, path, theme);
+    theme;
   };
 };
 
