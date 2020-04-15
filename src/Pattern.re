@@ -251,10 +251,10 @@ module Json = {
 module PlistDecoder = {
   open Plist;
 
-  let regexp =
+  let regexp = (~allowBackReferences) =>
     fun
     | String(str) =>
-      switch (RegExpFactory.create(str)) {
+      switch (RegExpFactory.create(~allowBackReferences, str)) {
       | regexp => Ok(regexp)
       | exception (Failure(error)) => Error(error ++ " in " ++ str)
       }
@@ -271,15 +271,17 @@ module PlistDecoder = {
     dict(prop =>
       Match({
         matchName: prop.optional("name", string),
-        matchRegex: prop.required("match", regexp),
+        matchRegex:
+          prop.required("match", regexp(~allowBackReferences=true)),
         captures: prop.withDefault("captures", captures, []),
       })
     );
   let rec matchRange = scopeName =>
     dict(prop =>
       MatchRange({
-        beginRegex: prop.required("begin", regexp),
-        endRegex: prop.required("end", regexp),
+        beginRegex:
+          prop.required("begin", regexp(~allowBackReferences=true)),
+        endRegex: prop.required("end", regexp(~allowBackReferences=false)),
         beginCaptures: prop.withDefault("beginCaptures", captures, []),
         endCaptures: prop.withDefault("endCaptures", captures, []),
         name: prop.optional("name", string),
