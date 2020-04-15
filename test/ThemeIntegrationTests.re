@@ -11,6 +11,10 @@ module TokenStyle = Textmate.ThemeScopes.TokenStyle;
 let resultValue =
   fun
   | Ok(v) => v
+  | Error(msg) => {
+      Console.log(msg);
+      failwith("resultValue");
+    };
 
 // INVALID
 
