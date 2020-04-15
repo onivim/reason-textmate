@@ -167,7 +167,8 @@ module Xml = {
             ~scopeName,
             ~patterns=
               prop.required("patterns", array(Pattern.of_plist(scopeName))),
-            ~repository=prop.required("repository", repository(scopeName)),
+            ~repository=
+              prop.withDefault("repository", repository(scopeName), []),
             (),
           ),
         plist,
