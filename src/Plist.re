@@ -78,7 +78,8 @@ let dict = f =>
         | Some(value) =>
           switch (decodeValue(value)) {
           | Ok(value) => value
-          | Error(message) => raise(DecodeError(message))
+          | Error(message) =>
+            raise(DecodeError(message ++ "\n\tat " ++ key))
           }
         | None =>
           raise(
@@ -118,7 +119,7 @@ let assoc = decodeValue =>
         | [(key, value), ...rest] =>
           switch (decodeValue(value)) {
           | Ok(value) => loop(rest, [(key, value), ...acc])
-          | Error(message) => Error(message)
+          | Error(message) => Error(message ++ "\n\tat " ++ key)
           }
         };
 
