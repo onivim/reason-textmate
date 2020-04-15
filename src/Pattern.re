@@ -251,7 +251,14 @@ module Json = {
 module PlistDecoder = {
   open Plist;
 
-  let regexp = string |> map(RegExpFactory.create);
+  let regexp =
+    fun
+    | String(str) =>
+      switch (RegExpFactory.create(str)) {
+      | regexp => Ok(regexp)
+      | exception (Failure(error)) => Error(error ++ " in " ++ str)
+      }
+    | value => Error("Expected string, got: " ++ Plist.show(value));
 
   let capture = property("name", string);
   let captures =
