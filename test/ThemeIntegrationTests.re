@@ -140,4 +140,29 @@ describe("XML", ({describe, _}) => {
     });
   });
 
+  describe("Tomorrow Operator Mono", ({test, _}) => {
+    let theme =
+      Theme.from_file(
+        ~isDark=true,
+        "test/onivim/fixtures/tomorrow-operator-mono.xml",
+      )
+      |> resultValue;
+
+    let colors = Theme.getColors(theme);
+    let tokenColors = Theme.getTokenColors(theme);
+
+    test("isDark", ({expect, _}) => {
+      expect.bool(Theme.isDark(theme)).toBe(true)
+    });
+
+    test("colors: selection", ({expect, _}) => {
+      let actual = ColorTheme.getColor("selection", colors);
+      expect.equal(actual, Some("#D6D6D6"));
+    });
+
+    test("tokenColors: support.type", ({expect, _}) => {
+      let token = TokenTheme.match(tokenColors, "support.type");
+      expect.string(token.foreground).toEqual("#C99E00");
+    });
+  });
 });
