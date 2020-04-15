@@ -1,6 +1,6 @@
 {
   "name": "reason-textmate",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Native reason utilities for working with textmate grammars",
   "license": "MIT",
   "scripts": {
