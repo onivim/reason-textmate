@@ -50,7 +50,7 @@ describe("Grammar", ({describe, _}) => {
       expect.result(result).toBeError();
     });
 
-    test("xml grammar", ({expect, _}) => {
+    test("xml grammar: haskell", ({expect, _}) => {
       let result =
         Grammar.Xml.of_file(getExecutingDirectory() ++ "/haskell.tmLanguage");
 
@@ -58,6 +58,16 @@ describe("Grammar", ({describe, _}) => {
 
       let grammar = Result.get_ok(result);
       expect.string(grammar.scopeName).toEqual("source.haskell");
+    });
+
+    test("xml grammar: lua", ({expect, _}) => {
+      let result =
+        Grammar.Xml.of_file(getExecutingDirectory() ++ "/lua.tmLanguage");
+
+      expect.result(result).toBeOk();
+
+      let grammar = Result.get_ok(result);
+      expect.string(grammar.scopeName).toEqual("source.lua");
     });
   });
 
